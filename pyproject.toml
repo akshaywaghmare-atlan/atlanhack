@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "phoenix-postgres-app"
+version = "0.1.0"
+description = ""
+authors = ["Amit Prabhu <amit.dp180@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = {extras = ["standard"], version = "^0.113.0"}
+
+
+[tool.poetry.group.sdk]
+optional = false
+
+[tool.poetry.group.sdk.dependencies]
+fastapi-sqlalchemy = "^0.2.1"
+alembic = "^1.13.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
