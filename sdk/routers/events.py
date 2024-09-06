@@ -34,6 +34,6 @@ async def read_item(event_id: int, db: Session = Depends(get_db)):
     return db_event
 
 
-@router.post("/", response_model=EventCreate)
+@router.post("/", response_model=Event)
 async def create_item(event: EventCreate, db: Session = Depends(get_db)):
     return Events.create_event(db, event)
