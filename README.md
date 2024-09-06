@@ -14,5 +14,5 @@ This application is designed to extract data from a Postgres database and save i
 2. Create a new run configuration for the project
 3. Set the script path to `.venv/bin/fastapi`
 4. Set the parameters to `dev main.py`
-
+5. The application support auto-reload, so you can make changes to the code and the server will automatically restart
 
