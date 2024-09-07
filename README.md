@@ -2,9 +2,21 @@
 
 This application is designed to extract data from a Postgres database and save it to a CSV file. The application is written in Python and uses the `psycopg2` library to connect to the database.
 
-## Building and running the application locally
+
+### Clone the repository
+
+To clone this repository including the submodule, use the following command:
+
+```bash
+git clone --recurse-submodules https://github.com/atlanhq/postgres-extraction-app.git
+```
+
+
+### Building and running the application locally
 1. Install poetry by running `pip install poetry`
 2. Run `poetry install` to install the dependencies
+> [!NOTE]
+> It is suggested to use run `poetry config virtualenvs.in-project true` to configure poetry to create the virtual environment in the project directory. This will create a `.venv` directory in the project root.
 3. Run `source .venv/bin/activate` to activate the virtual environment
 4. Run `fastapi dev main.py` to start the application
 
