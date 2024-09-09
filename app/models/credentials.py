@@ -1,9 +1,9 @@
 from pydantic import BaseModel, Field
 
 class CredentialConfig(BaseModel):
-    host: str = Field(..., alias="host")
-    port: int = Field(..., alias="port")
-    user: str = Field(..., alias="user")
+    host: str
+    port: int
+    user: str
     password: str
     database: str
 

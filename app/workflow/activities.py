@@ -2,6 +2,7 @@ import logging
 import json
 from temporalio import activity
 from app.common.converter import transform_metadata
+from app.common.utils import connect_to_db
 from app.models.credentials import CredentialConfig
 from app.models.schema import PydanticJSONEncoder
 from app.models.workflow import ExtractionConfig
@@ -11,8 +12,6 @@ import os
 
 logger = logging.getLogger(__name__)
 
-def connect_to_db(db_params: CredentialConfig):
-    return psycopg2.connect(**db_params.model_dump())
 
 class ExtractionActivities:
     @activity.defn
@@ -31,7 +30,7 @@ class ExtractionActivities:
         platform = get_platform()
         credentials = platform.extract_credentials(config.credentialsGUID)
         conn = connect_to_db(credentials)
-        
+
         try:
             cursor = conn.cursor()
             cursor.execute(query)

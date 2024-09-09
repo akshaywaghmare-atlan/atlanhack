@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from app.worker import start_worker
 from sdk import models
 from sdk.routers import events, logs
-from app.controllers import workflow
+from app.routers import workflow, preflight
 from sdk.database import engine
 
 
@@ -19,13 +19,14 @@ def start_worker_process():
     worker_process = multiprocessing.Process(target=start_worker)
     worker_process.start()
 
+
 app.include_router(events.router)
 app.include_router(logs.router)
 app.include_router(workflow.router)
+app.include_router(preflight.router)
 
 
 app.mount("/", StaticFiles(directory="frontend/.output/public", html=True), name="static")
-
 @app.get("/")
 async def ui():
     return FileResponse("frontend/.output/public/index.html")

@@ -57,4 +57,6 @@ class ExtractionWorkflow:
             start_to_close_timeout=timedelta(minutes=10)
         )
 
+        # TODO: cleanup output directory
+
         workflow.logger.info(f"Extraction workflow completed for {config.workflowId}")

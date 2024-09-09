@@ -8,6 +8,15 @@ OBJECT_CREATE_OPERATION = "create"
 
 
 # Queries
+
+TEST_AUTHENTICATION_SQL = "SELECT 1;"
+
+FILTER_METADATA_SQL = """
+SELECT schema_name, catalog_name 
+FROM INFORMATION_SCHEMA.SCHEMATA 
+WHERE schema_name NOT LIKE 'pg_%' AND schema_name != 'information_schema'
+"""
+
 TABLE_COMPANION_SQL = """
     SELECT
         current_database() AS TABLE_CAT,
@@ -73,7 +82,7 @@ TABLE_COMPANION_SQL = """
         WHERE schema_name NOT LIKE 'pg_%%' AND schema_name != 'information_schema'
     ) 
     AND C.relkind != 'i' 
-    AND C.relkind != 'I'
+    AND C.relkind != 'I';
 """
 
 
@@ -128,7 +137,7 @@ ON
     AND C.relname = columns.table_name 
 WHERE 
     columns.table_schema NOT LIKE 'pg_%%' 
-    AND columns.table_schema != 'information_schema'
+    AND columns.table_schema != 'information_schema';
 """
 
 EXTRA_COMPANION_SQL = """{
