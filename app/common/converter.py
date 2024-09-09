@@ -1,4 +1,4 @@
-from app.models.schema import DatabaseEntity, SchemaEntity, TableEntity, ColumnEntity, ColumnConstraint
+from app.models.schema import DatabaseEntity, SchemaEntity, TableEntity, ViewEntity, ColumnEntity, ColumnConstraint
 
 def transform_metadata(typename: str, data: dict):
     if typename.upper() == "DATABASE":
@@ -31,14 +31,20 @@ def transform_metadata(typename: str, data: dict):
             assert data['table_name'] is not None, "Table name cannot be None"
             assert data['table_cat'] is not None, "Table catalog cannot be None"
             assert data['table_schem'] is not None, "Table schema cannot be None"
-            assert data['is_partition'] is not None, "Is partition flag cannot be None"
 
-            return TableEntity(
-                typeName="TABLE",
-                name=data['table_name'],
-                URI=f"/postgres/sql/{data['table_cat']}/{data['table_schem']}/{data['table_name']}",
-                isPartition=data.get('is_partition') or False
-            )
+            if data['table_type'] == "VIEW":
+                return ViewEntity(
+                    typeName="VIEW",
+                    name=data['table_name'],
+                    URI=f"/postgres/sql/{data['table_cat']}/{data['table_schem']}/{data['table_name']}"
+                )
+            else:
+                return TableEntity(
+                    typeName="TABLE",
+                    name=data['table_name'],
+                    URI=f"/postgres/sql/{data['table_cat']}/{data['table_schem']}/{data['table_name']}",
+                    isPartition=data.get('is_partition') or False
+                )
         except AssertionError as e:
             print(f"Error creating TableEntity: {str(e)}")
             return None
@@ -51,7 +57,6 @@ def transform_metadata(typename: str, data: dict):
             assert data['table_name'] is not None, "Table name cannot be None"
             assert data['ordinal_position'] is not None, "Ordinal position cannot be None"
             assert data['data_type'] is not None, "Data type cannot be None"
-            assert data['is_nullable'] is not None, "Is nullable flag cannot be None"
 
             return ColumnEntity(
                 typeName="COLUMN",
@@ -60,7 +65,7 @@ def transform_metadata(typename: str, data: dict):
                 order=data['ordinal_position'],
                 dataType=data['data_type'],
                 constraints=ColumnConstraint(
-                    notNull=data['is_nullable'] == 'NO',
+                    notNull=not data.get('is_nullable') == 'NO',
                     autoIncrement=data.get('IS_AUTOINCREMENT') == 'YES'
                 )
             )

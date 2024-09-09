@@ -14,14 +14,16 @@ from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from sdk.database import engine
 
 
-app = FastAPI()
+app = FastAPI(title="Postgres App")
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+
 
 @app.on_event("startup")
 def start_worker_process():
     models.Base.metadata.create_all(bind=engine)
 
+    # starts a temporal worker process
     worker_process = multiprocessing.Process(target=start_worker)
     worker_process.start()
 
@@ -38,15 +40,6 @@ app.mount("/", StaticFiles(directory="frontend/.output/public", html=True), name
 @app.get("/")
 async def ui():
     return FileResponse("frontend/.output/public/index.html")
-
-
-@app.get("/healthz")
-async def healthz():
-    return {"status": "ok"}
-
-@app.get("/readyz")
-async def readyz():
-    return {"status": "ok"}
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 # Postgres Extraction Application
 
-This application is designed to extract data from a Postgres database and save it to a CSV file. The application is written in Python and uses the `psycopg2` library to connect to the database.
+This application is designed to extract data from a Postgres database and save it to an object store. The application is written in Python and uses the `psycopg2` library to connect to the database.
 
 
 ### Clone the repository

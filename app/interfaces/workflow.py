@@ -18,7 +18,7 @@ class Workflow:
     @staticmethod
     async def run(payload: WorkflowRequestPayload) -> Dict[str, Any]:
         client = await Client.connect("localhost:7233")
-        workflow_id = "23889ca8-6bf5-47f6-baa0-3f701d215018"
+        workflow_id = str(uuid.uuid4())
         credential_config = payload.credentials.get_credential_config()
         credential_guid = Platform.store_credentials(credential_config)
 

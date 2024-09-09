@@ -30,6 +30,7 @@ class ExtractionWorkflow:
             "column": config.columnCompanionSQL
         }
 
+        # TODO: run all of the following activities in parallel
         # Extract and store metadata for each type
         for typename, query in metadata_types.items():
             await workflow.execute_activity(

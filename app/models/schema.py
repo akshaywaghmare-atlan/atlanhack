@@ -61,6 +61,14 @@ class TableEntity(BaseObjectEntity):
     namespace: Namespace = Field(default_factory=Namespace)
     package: Package = Field(default_factory=Package)
 
+
+## View
+
+class ViewEntity(BaseObjectEntity):
+    isSearchable: bool = True
+    namespace: Namespace = Field(default_factory=Namespace)
+    package: Package = Field(default_factory=Package)
+
 ## Column
 
 class ColumnConstraint(BaseSchemaModel):
