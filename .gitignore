@@ -36,7 +36,5 @@ archive.zip
 **/frontend/dist/**
 **/frontend/.output/**
 **/frontend/.nuxt/**
-**/src/main/resources/dist/
-**/src/main/resources/public/
 dist/
 public/
