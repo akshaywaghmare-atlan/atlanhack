@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from pydantic import BaseModel
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 
 class EventBase(BaseModel):
@@ -79,8 +79,19 @@ class TraceBase(BaseModel):
     resource_attributes: Dict[str, Any]
 
 
-class TraceCreate(TraceBase):
-    pass
+class TraceCreate(BaseModel):
+    name: str
+    context: Dict[str, Any]
+    kind: str
+    parent_id: str
+    start_time: datetime
+    end_time: datetime
+    status: Dict[str, Any]
+    attributes: Dict[str, Any]
+    events: List[str]
+    links: List[str]
+    resource: Dict[str, Any]
+
 
 class Trace(TraceBase):
     id: int

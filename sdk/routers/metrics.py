@@ -1,4 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from typing import List
+
+from fastapi import APIRouter, Depends, Request
+from opentelemetry.proto.metrics.v1.metrics_pb2 import MetricsData
 from sqlalchemy.orm import Session
 
 from sdk.database import SessionLocal
@@ -21,11 +24,14 @@ def get_db():
         db.close()
 
 
-@router.get("/", response_model=list[Metric])
+@router.get("", response_model=list[Metric])
 async def read_metrics(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return Metrics.get_metrics(db, skip, limit)
 
 
-@router.post("/", response_model=Metric)
-async def create_metric(metric: MetricCreate, db: Session = Depends(get_db)):
-    return Metrics.create_metric(db, metric)
+@router.post("")
+async def create_metrics(request: Request, db: Session = Depends(get_db)):
+    body = await request.body()
+    metric_message = MetricsData()
+    metric_message.ParseFromString(body)
+    Metrics.create_metrics(db, metric_message)

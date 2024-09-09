@@ -1,9 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
+from typing import List
+
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 
 from sdk.database import SessionLocal
 from sdk.schemas import Log, LogCreate
 from sdk.interfaces.logs import Logs
+from opentelemetry.proto.logs.v1.logs_pb2 import LogsData
 
 
 router = APIRouter(
@@ -21,11 +24,15 @@ def get_db():
         db.close()
 
 
-@router.get("/", response_model=list[Log])
+@router.get("", response_model=list[Log])
 async def read_logs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return Logs.get_logs(db, skip, limit)
 
 
-@router.post("/", response_model=Log)
-async def create_item(log: LogCreate, db: Session = Depends(get_db)):
-    return Logs.create_log(db, log)
+@router.post("", response_model=List[Log])
+async def create_logs(request: Request, db: Session = Depends(get_db)):
+    # Convert the request body to a protobuf message
+    body = await request.body()
+    log_message = LogsData()
+    log_message.ParseFromString(body)
+    return Logs.create_logs(db, log_message)

@@ -16,3 +16,9 @@ This application is designed to extract data from a Postgres database and save i
 4. Set the parameters to `dev main.py`
 5. The application support auto-reload, so you can make changes to the code and the server will automatically restart
 
+### Add OTel agent during IntelliJ run
+1. Create a new run configuration for the project
+2. Set the script path to `.venv/bin/opentelemetry-instrument`
+3. Set parameters to `--traces_exporter console,otlp --metrics_exporter console,otlp --logs_exporter console,otlp --service_name your-service-name python main.py`
+4. Add environment variable `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:8000/telemetry;OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf`
+5. Run the configuration

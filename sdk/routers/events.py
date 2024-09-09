@@ -7,7 +7,7 @@ from sdk.interfaces.events import Events
 
 
 router = APIRouter(
-    prefix="/telemetry/events",
+    prefix="/telemetry/v1/events",
     tags=["events"],
     responses={404: {"description": "Not found"}},
 )
@@ -21,7 +21,7 @@ def get_db():
         db.close()
 
 
-@router.get("/", response_model=list[Event])
+@router.get("", response_model=list[Event])
 async def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return Events.get_events(db)
 
@@ -34,6 +34,6 @@ async def read_item(event_id: int, db: Session = Depends(get_db)):
     return db_event
 
 
-@router.post("/", response_model=Event)
+@router.post("", response_model=Event)
 async def create_item(event: EventCreate, db: Session = Depends(get_db)):
     return Events.create_event(db, event)

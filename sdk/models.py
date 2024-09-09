@@ -49,7 +49,7 @@ class Metric(Base):
     timestamp = Column(DateTime, nullable=False, default=datetime.now)
     resource_attributes = Column(JSON(), nullable=True)
     unit = Column(String, nullable=True)
-    data_points = Column(JSON(), nullable=False)
+    data_points = Column(List, nullable=False)
 
 
 class Trace(Base):
@@ -65,4 +65,7 @@ class Trace(Base):
     start_time = Column(DateTime, nullable=False, default=datetime.now)
     end_time = Column(DateTime, nullable=False, default=datetime.now)
     resource_attributes = Column(JSON(), nullable=True)
+    attributes = Column(JSON(), nullable=True)
+    events = Column(JSON(), nullable=True)
+
     timestamp = Column(DateTime, nullable=False, default=datetime.now)
