@@ -8,6 +8,14 @@ OBJECT_CREATE_OPERATION = "create"
 
 
 # Queries
+TABLES_CHECK_SQL = """
+    SELECT count(*) 
+    FROM INFORMATION_SCHEMA.TABLES 
+    WHERE TABLE_NAME !~ '{exclude_table}' 
+        AND concat(TABLE_CATALOG, concat('.', TABLE_SCHEMA)) !~ '{normalized_exclude_regex}' 
+        AND concat(TABLE_CATALOG, concat('.', TABLE_SCHEMA)) ~ '{normalized_include_regex}' 
+        AND TABLE_SCHEMA NOT IN ('performance_schema', 'information_schema', 'pg_catalog', 'pg_internal')
+"""
 
 TEST_AUTHENTICATION_SQL = "SELECT 1;"
 

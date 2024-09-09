@@ -3,7 +3,6 @@ from pydantic import BaseModel, Field
 from app.models.credentials import CredentialPayload
 
 
-
 class WorkflowConfig(BaseModel):
     workflowId: str
     credentialsGUID: str

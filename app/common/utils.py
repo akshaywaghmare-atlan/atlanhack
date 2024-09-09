@@ -1,5 +1,3 @@
-
-
 import psycopg2
 from app.models.credentials import CredentialConfig
 
