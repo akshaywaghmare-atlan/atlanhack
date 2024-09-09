@@ -7,7 +7,7 @@ from sdk.interfaces.events import Events
 
 
 router = APIRouter(
-    prefix="/events",
+    prefix="/telemetry/events",
     tags=["events"],
     responses={404: {"description": "Not found"}},
 )

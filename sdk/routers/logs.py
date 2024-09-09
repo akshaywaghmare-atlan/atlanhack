@@ -7,8 +7,8 @@ from sdk.interfaces.logs import Logs
 
 
 router = APIRouter(
-    prefix="/v1/logs",
-    tags=["events"],
+    prefix="/telemetry/v1/logs",
+    tags=["logs"],
     responses={404: {"description": "Not found"}},
 )
 
