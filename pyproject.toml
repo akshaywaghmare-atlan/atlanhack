@@ -16,6 +16,10 @@ optional = false
 [tool.poetry.group.sdk.dependencies]
 fastapi-sqlalchemy = "^0.2.1"
 alembic = "^1.13.2"
+opentelemetry-distro = "^0.48b0"
+opentelemetry-exporter-otlp = "^1.27.0"
+opentelemetry-proto = "^1.27.0"
+opentelemetry-instrumentation-fastapi = "^0.48b0"
 
 
 
