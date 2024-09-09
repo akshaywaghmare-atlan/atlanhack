@@ -3,11 +3,9 @@ import json
 from temporalio import activity
 from app.common.converter import transform_metadata
 from app.common.utils import connect_to_db
-from app.models.credentials import CredentialConfig
+from app.interfaces.platform import Platform
 from app.models.schema import PydanticJSONEncoder
 from app.models.workflow import ExtractionConfig
-from app.platform import get_platform
-import psycopg2
 import os
 
 logger = logging.getLogger(__name__)
@@ -20,6 +18,7 @@ class ExtractionActivities:
         os.makedirs(os.path.join(output_prefix, "raw"), exist_ok=True)
         os.makedirs(os.path.join(output_prefix, "transformed"), exist_ok=True)
 
+
     @activity.defn
     async def extract_and_store_metadata(extConfig: ExtractionConfig) -> None:
         config = extConfig.workflowConfig
@@ -27,8 +26,7 @@ class ExtractionActivities:
         query = extConfig.query
 
         logger.info(f"Extracting metadata for {typename}")
-        platform = get_platform()
-        credentials = platform.extract_credentials(config.credentialsGUID)
+        credentials = Platform.extract_credentials(config.credentialsGUID)
         conn = connect_to_db(credentials)
 
         try:
@@ -64,8 +62,8 @@ class ExtractionActivities:
         finally:
             conn.close()
 
+
     @activity.defn
     async def push_results_to_object_store(output_config: dict) -> None:
         logger.info("Pushing results to object store")
-        platform = get_platform()
-        platform.push_to_object_store(output_config)
+        Platform.push_to_object_store(output_config)

@@ -5,25 +5,21 @@ from app.models.credentials import CredentialConfig
 from app.const import STATE_STORE_NAME, OBJECT_STORE_NAME, OBJECT_CREATE_OPERATION
 import os
 import logging
-from app.platform.interface import PlatformInterface
 
 logger = logging.getLogger(__name__)
 
-# FIXME: Make dapr platform available to workflow activities by dependency injection
-class DaprPlatform(PlatformInterface):
-    def __init__(self):
-        self.client = DaprClient()
-
-    def store_credentials(self, config: CredentialConfig) -> str:
+class Platform:
+    @staticmethod
+    def store_credentials(config: CredentialConfig) -> str:
         """
         Store credentials in the state store using the credentialConfig format.
         
-        :param guid: The unique identifier for the credentials.
         :param config: The CredentialConfig object containing the credentials.
         """
         try:
+            client = DaprClient()
             credential_guid = f"credential_{str(uuid.uuid4())}"
-            self.client.save_state(
+            client.save_state(
                 store_name=STATE_STORE_NAME,
                 key=credential_guid,
                 value=config.model_dump_json()
@@ -32,7 +28,8 @@ class DaprPlatform(PlatformInterface):
         except Exception as e:
             raise Exception(f"Failed to store credentials: {str(e)}")
 
-    def extract_credentials(self, credential_guid: str) -> Optional[CredentialConfig]:
+    @staticmethod
+    def extract_credentials(credential_guid: str) -> Optional[CredentialConfig]:
         """
         Extract credentials from the state store using the credential GUID.
         
@@ -40,7 +37,8 @@ class DaprPlatform(PlatformInterface):
         :return: CredentialConfig object if found, None otherwise.
         """
         try:
-            state = self.client.get_state(
+            client = DaprClient()
+            state = client.get_state(
                 store_name=STATE_STORE_NAME,
                 key=credential_guid
             )
@@ -50,12 +48,14 @@ class DaprPlatform(PlatformInterface):
         except Exception as e:
             raise Exception(f"Failed to extract credentials: {str(e)}")
 
-    def push_to_object_store(self, output_config: dict) -> None:
+    @staticmethod
+    def push_to_object_store(output_config: dict) -> None:
         """
         Push files from a directory to the object store.
 
         :param output_config: The path to the directory containing files to push.
         """
+        client = DaprClient()
         output_prefix = output_config["output_prefix"]
         output_path = output_config["output_path"]
         for root, _, files in os.walk(output_path):
@@ -70,7 +70,7 @@ class DaprPlatform(PlatformInterface):
                     'fileName': relative_path
                 }
                 
-                self.client.invoke_binding(
+                client.invoke_binding(
                     binding_name=OBJECT_STORE_NAME,
                     operation=OBJECT_CREATE_OPERATION,
                     data=file_content,
