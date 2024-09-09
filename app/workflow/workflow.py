@@ -1,11 +1,8 @@
-import logging
 from datetime import timedelta
 from temporalio import workflow
 from temporalio.common import RetryPolicy
 from app.workflow.activities import ExtractionActivities
 from app.models.workflow import ExtractionConfig, WorkflowConfig
-
-logger = logging.getLogger(__name__)
 
 @workflow.defn
 class ExtractionWorkflow:

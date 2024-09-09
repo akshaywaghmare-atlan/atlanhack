@@ -1,4 +1,3 @@
-import logging
 import json
 from temporalio import activity
 from app.common.converter import transform_metadata
@@ -8,8 +7,6 @@ from app.models.schema import PydanticJSONEncoder
 from app.models.workflow import ExtractionConfig
 import os
 
-logger = logging.getLogger(__name__)
-
 
 class ExtractionActivities:
     @activity.defn
@@ -18,6 +15,8 @@ class ExtractionActivities:
         os.makedirs(os.path.join(output_prefix, "raw"), exist_ok=True)
         os.makedirs(os.path.join(output_prefix, "transformed"), exist_ok=True)
 
+        activity.logger.info(f"Created output directory: {output_prefix}")
+
 
     @activity.defn
     async def extract_and_store_metadata(extConfig: ExtractionConfig) -> None:
@@ -25,7 +24,7 @@ class ExtractionActivities:
         typename = extConfig.typename
         query = extConfig.query
 
-        logger.info(f"Extracting metadata for {typename}")
+        activity.logger.info(f"Extracting metadata for {typename}")
         credentials = Platform.extract_credentials(config.credentialsGUID)
         conn = connect_to_db(credentials)
 
@@ -55,15 +54,18 @@ class ExtractionActivities:
                             json.dump(transformed_data.model_dump(), trans_f, cls=PydanticJSONEncoder)
                             trans_f.write('\n')
                         else:
-                            logger.warning(f"Skipped invalid {typename} data: {row}")
+                            activity.logger.warning(f"Skipped invalid {typename} data: {row}")
 
         except Exception as e:
-            logger.error(f"Error extracting metadata for {typename}: {e}")
+            activity.logger.error(f"Error extracting metadata for {typename}: {e}")
         finally:
             conn.close()
 
 
     @activity.defn
     async def push_results_to_object_store(output_config: dict) -> None:
-        logger.info("Pushing results to object store")
-        Platform.push_to_object_store(output_config)
+        activity.logger.info("Pushing results to object store")
+        try:
+            Platform.push_to_object_store(output_config)
+        except Exception as e:
+            activity.logger.error(f"Error pushing results to object store: {e}")
