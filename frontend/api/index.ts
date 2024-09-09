@@ -1,11 +1,11 @@
 import axiosClient from './axios';
 
 const urls = {
-    preflight: '/preflight',
-    testAuthentication: '/test-authentication',
+    preflight: '/preflight/check',
+    testAuthentication: '/preflight/test-authentication',
     login: '/login',
     logout: '/logout',
-    runWorkflow: '/run-workflow',
+    runWorkflow: '/workflow/start',
 }
 
 const api = {
