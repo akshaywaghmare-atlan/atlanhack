@@ -66,3 +66,10 @@ git clone --recurse-submodules https://github.com/atlanhq/phoenix-postgres-app.g
 3. Set parameters to `--traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-app python main.py`
 4. Add environment variable `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:8000/telemetry;OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf;PYTHONUNBUFFERED=1;OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true`
 5. Run the configuration
+
+
+## Advanced Configuration
+
+### Changing storage of telemetry data
+The SDK uses SQLite as the default storage for telemetry data using SQLAlchemy and the SQLite file is stored in `/tmp/app.db`.
+You can change the storage to any database with SQLAlchemy compatibility by setting the `SQLALCHEMY_DATABASE_URI` and `SQLALCHEMY_CONNECT_ARGS` environment variables and installing the sQLAlchemy compatible database driver.
