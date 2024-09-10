@@ -5,7 +5,7 @@ from opentelemetry.proto.metrics.v1.metrics_pb2 import MetricsData
 from sqlalchemy.orm import Session
 
 from sdk.database import SessionLocal
-from sdk.schemas import Metric, MetricCreate
+from sdk.schemas import Metric
 from sdk.interfaces.metrics import Metrics
 
 

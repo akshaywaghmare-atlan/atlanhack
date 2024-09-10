@@ -37,9 +37,6 @@ class LogBase(BaseModel):
     span_id: str
 
 
-class LogCreate(LogBase):
-    pass
-
 class Log(LogBase):
     id: int
 
@@ -57,9 +54,6 @@ class MetricBase(BaseModel):
     unit: str
     data_points: Dict[str, Any]
 
-class MetricCreate(MetricBase):
-    pass
-
 class Metric(MetricBase):
     id: int
 
@@ -76,20 +70,6 @@ class TraceBase(BaseModel):
     name: str
     kind: str
     resource_attributes: Dict[str, Any]
-
-
-class TraceCreate(BaseModel):
-    name: str
-    context: Dict[str, Any]
-    kind: str
-    parent_id: str
-    start_time: datetime
-    end_time: datetime
-    status: Dict[str, Any]
-    attributes: Dict[str, Any]
-    events: List[str]
-    links: List[str]
-    resource: Dict[str, Any]
 
 
 class Trace(TraceBase):
