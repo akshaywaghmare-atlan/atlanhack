@@ -6,7 +6,6 @@ import logging
 from app.interfaces.platform import Platform
 from app.workflow.workflow import ExtractionWorkflow
 from app.models.workflow import WorkflowConfig, WorkflowRequestPayload
-from app.const import TABLE_COMPANION_SQL, COLUMN_COMPANION_SQL, EXTRA_COMPANION_SQL
 
 from app.const import METADATA_EXTRACTION_TASK_QUEUE
 
@@ -26,13 +25,11 @@ class Workflow:
             credentialsGUID=credential_guid,
             includeFilterStr=payload.metadata.include_filter,
             excludeFilterStr=payload.metadata.exclude_filter,
+            tempTableRegexStr=payload.metadata.temp_table_regex,
             outputType="json",
             outputPrefix="/tmp/output",
             verbose=True,
             useSourceSchemaFiltering=True,
-            tableCompanionSQL=TABLE_COMPANION_SQL,
-            columnCompanionSQL=COLUMN_COMPANION_SQL,
-            extraCompanionSQLs=EXTRA_COMPANION_SQL,
         )
 
         try:

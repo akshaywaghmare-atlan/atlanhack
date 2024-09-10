@@ -27,14 +27,9 @@ class WorkflowConfig(BaseModel):
     useSourceSchemaFiltering: bool = False
     aws_sts_session_duration_seconds: int = 3600
     aws_sts_session_name: str = "atlan_jdbc_metadata_extractor"
-    databaseCompanionSQL: str = "{}"
     databaseFilterSQL: str = "{}"
-    schemaCompanionSQL: str = "{}"
     schemaFilterSQL: str = "{}"
-    tableCompanionSQL: str = "{}"
     tableFilterSQL: str = ""
-    columnCompanionSQL: str = "{}"
-    extraCompanionSQLs: str = "{}"
     unfilteredExtraCompanionSQLs: str = "{}"
     dynamicQueryJSON: str = "{}"
     excludeTableTypes: str = "[]"

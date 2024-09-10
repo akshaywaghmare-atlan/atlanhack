@@ -101,6 +101,7 @@ class Preflight:
             if connection:
                 connection.close()
 
+    @staticmethod
     def extract_allowed_schemas(
         schemas_results: List[Dict[str, Any]],
     ) -> Tuple[Set[str], Set[str]]:
@@ -113,6 +114,7 @@ class Preflight:
             )
         return allowed_databases, allowed_schemas
 
+    @staticmethod
     def validate_filters(
         include_filter: Dict[str, List[str]],
         allowed_databases: Set[str],
@@ -134,7 +136,11 @@ class Preflight:
         connection = None
         try:
             normalized_include_regex, normalized_exclude_regex, exclude_table = (
-                Preflight.prepare_filters(payload.form_data)
+                Preflight.prepare_filters(
+                    payload.form_data.include_filter,
+                    payload.form_data.exclude_filter,
+                    payload.form_data.temp_table_regex,
+                )
             )
             connection = connect_to_db(payload.credentials.get_credential_config())
             cursor = connection.cursor()
@@ -163,9 +169,12 @@ class Preflight:
             if connection:
                 connection.close()
 
-    def prepare_filters(form_data) -> Tuple[str, str, str]:
-        include_filter = json.loads(form_data.include_filter)
-        exclude_filter = json.loads(form_data.exclude_filter)
+    @staticmethod
+    def prepare_filters(
+        include_filter_str: str, exclude_filter_str: str, temp_table_regex_str: str
+    ) -> Tuple[str, str, str]:
+        include_filter = json.loads(include_filter_str)
+        exclude_filter = json.loads(exclude_filter_str)
 
         normalized_include_filter_list = Preflight.normalize_filters(
             include_filter, True
@@ -185,12 +194,11 @@ class Preflight:
             else "$^"
         )
 
-        exclude_table = (
-            form_data.temp_table_regex if form_data.temp_table_regex else "$^"
-        )
+        exclude_table = temp_table_regex_str if temp_table_regex_str else "$^"
 
         return normalized_include_regex, normalized_exclude_regex, exclude_table
 
+    @staticmethod
     def normalize_filters(
         filter_dict: Dict[str, List[str]], is_include: bool
     ) -> List[str]:

@@ -1,5 +1,13 @@
 import asyncio
 from datetime import timedelta
+from app.const import (
+    DATABASE_EXTRACTION_SQL,
+    SCHEMA_EXTRACTION_SQL,
+    TABLE_EXTRACTION_SQL,
+    COLUMN_EXTRACTION_SQL,
+    PROCEDURE_EXTRACTION_SQL,
+)
+from app.interfaces.preflight import Preflight
 from temporalio import workflow
 from temporalio.common import RetryPolicy
 from app.workflow.activities import ExtractionActivities
@@ -27,14 +35,35 @@ class ExtractionWorkflow:
         )
 
         # Define metadata types and their corresponding queries
+        normalized_include_regex, normalized_exclude_regex, exclude_table = (
+            Preflight.prepare_filters(
+                config.includeFilterStr,
+                config.excludeFilterStr,
+                config.tempTableRegexStr,
+            )
+        )
         metadata_types = {
-            "database": "SELECT * FROM pg_database WHERE datistemplate = false;",
-            "schema": "SELECT * FROM information_schema.schemata  WHERE schema_name NOT LIKE 'pg_%' AND schema_name != 'information_schema'",
-            "table": config.tableCompanionSQL,
-            "column": config.columnCompanionSQL,
+            "database": DATABASE_EXTRACTION_SQL,
+            "schema": SCHEMA_EXTRACTION_SQL.format(
+                normalized_include_regex=normalized_include_regex,
+                normalized_exclude_regex=normalized_exclude_regex,
+            ),
+            "table": TABLE_EXTRACTION_SQL.format(
+                normalized_include_regex=normalized_include_regex,
+                normalized_exclude_regex=normalized_exclude_regex,
+                exclude_table=exclude_table,
+            ),
+            "column": COLUMN_EXTRACTION_SQL.format(
+                normalized_include_regex=normalized_include_regex,
+                normalized_exclude_regex=normalized_exclude_regex,
+                exclude_table=exclude_table,
+            ),
+            "procedure": PROCEDURE_EXTRACTION_SQL.format(
+                normalized_include_regex=normalized_include_regex,
+                normalized_exclude_regex=normalized_exclude_regex,
+            ),
         }
 
-        # TODO: run all of the following activities in parallel
         # Extract and store metadata for each type
         activities = []
         for typename, query in metadata_types.items():

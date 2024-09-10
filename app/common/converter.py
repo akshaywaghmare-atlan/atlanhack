@@ -1,4 +1,5 @@
 from app.models.schema import (
+    BaseObjectEntity,
     DatabaseEntity,
     SchemaEntity,
     TableEntity,
@@ -85,4 +86,9 @@ def transform_metadata(typename: str, data: dict):
 
     else:
         print(f"Unknown typename: {typename}")
-        return None
+        name = data[f"{typename.lower()}_name"]
+        return BaseObjectEntity(
+            typeName=typename.upper(),
+            name=name,
+            URI=f"/postgres/sql/{name}",
+        )

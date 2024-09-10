@@ -1,6 +1,5 @@
 import uuid
 from dapr.clients import DaprClient
-from typing import Optional
 from app.models.credentials import CredentialConfig
 from app.const import STATE_STORE_NAME, OBJECT_STORE_NAME, OBJECT_CREATE_OPERATION
 import os
@@ -30,7 +29,7 @@ class Platform:
             raise Exception(f"Failed to store credentials: {str(e)}")
 
     @staticmethod
-    def extract_credentials(credential_guid: str) -> Optional[CredentialConfig]:
+    def extract_credentials(credential_guid: str) -> CredentialConfig:
         """
         Extract credentials from the state store using the credential GUID.
 
@@ -42,7 +41,8 @@ class Platform:
             state = client.get_state(store_name=STATE_STORE_NAME, key=credential_guid)
             if state.data:
                 return CredentialConfig.model_validate_json(state.data)
-            return None
+            else:
+                raise Exception(f"Credentials not found for GUID: {credential_guid}")
         except Exception as e:
             raise Exception(f"Failed to extract credentials: {str(e)}")
 

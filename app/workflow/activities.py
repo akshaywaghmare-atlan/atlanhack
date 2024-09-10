@@ -9,6 +9,7 @@ import os
 
 
 class ExtractionActivities:
+    @staticmethod
     @activity.defn
     async def create_output_directory(output_prefix: str) -> None:
         os.makedirs(output_prefix, exist_ok=True)
@@ -17,6 +18,7 @@ class ExtractionActivities:
 
         activity.logger.info(f"Created output directory: {output_prefix}")
 
+    @staticmethod
     @activity.defn
     async def extract_and_store_metadata(extConfig: ExtractionConfig) -> None:
         config = extConfig.workflowConfig
@@ -68,6 +70,7 @@ class ExtractionActivities:
         finally:
             conn.close()
 
+    @staticmethod
     @activity.defn
     async def push_results_to_object_store(output_config: dict) -> None:
         activity.logger.info("Pushing results to object store")
