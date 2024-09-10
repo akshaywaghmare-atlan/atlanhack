@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Type
+from typing import Type, Sequence
 
 from sqlalchemy.orm import Session
 
@@ -13,8 +13,16 @@ class Logs:
         return session.query(Log).filter(Log.id == event_id).first()
 
     @staticmethod
-    def get_logs(session: Session, skip: int = 0, limit: int = 100, keyword: str = "") -> list[Type[Log]]:
-        return session.query(Log).filter(Log.body.contains(keyword)).offset(skip).limit(limit).all()
+    def get_logs(
+        session: Session, skip: int = 0, limit: int = 100, keyword: str = ""
+    ) -> Sequence[Type[Log]]:
+        return (
+            session.query(Log)
+            .filter(Log.body.contains(keyword))
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
 
     @staticmethod
     def create_logs(session: Session, logs_data: LogsData) -> list[Log]:
@@ -22,7 +30,9 @@ class Logs:
         for resource_log in logs_data.resource_logs:
             resource_attributes = {}
             for resource_attribute in resource_log.resource.attributes:
-                resource_attributes[resource_attribute.key] = resource_attribute.value.string_value
+                resource_attributes[resource_attribute.key] = (
+                    resource_attribute.value.string_value
+                )
 
             for scope_log in resource_log.scope_logs:
                 for log in scope_log.log_records:
@@ -35,12 +45,16 @@ class Logs:
                         scope_name=scope_log.scope.name,
                         severity=log.severity_text,
                         severity_number=log.severity_number.real,
-                        observed_timestamp=datetime.utcfromtimestamp(log.observed_time_unix_nano // 1000000000),
-                        timestamp=datetime.utcfromtimestamp(log.time_unix_nano // 1000000000),
+                        observed_timestamp=datetime.utcfromtimestamp(
+                            log.observed_time_unix_nano // 1000000000
+                        ),
+                        timestamp=datetime.utcfromtimestamp(
+                            log.time_unix_nano // 1000000000
+                        ),
                         body=log.body.string_value,
                         trace_id=log.trace_id.hex(),
                         span_id=log.span_id.hex(),
-                        attributes=log_attributes
+                        attributes=log_attributes,
                     )
                     session.add(db_log)
                     logs.append(db_log)

@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from pydantic import BaseModel
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, Optional
 
 
 class EventBase(BaseModel):
@@ -53,6 +53,7 @@ class MetricBase(BaseModel):
     resource_attributes: Dict[str, Any]
     unit: str
     data_points: Dict[str, Any]
+
 
 class Metric(MetricBase):
     id: int

@@ -16,7 +16,9 @@ router = APIRouter(
 
 
 @router.get("", response_model=list[Metric])
-async def read_metrics(skip: int = 0, limit: int = 100, session: Session = Depends(get_session)):
+async def read_metrics(
+    skip: int = 0, limit: int = 100, session: Session = Depends(get_session)
+):
     return Metrics.get_metrics(session, skip, limit)
 
 

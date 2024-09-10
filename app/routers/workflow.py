@@ -1,12 +1,10 @@
 import logging
-from fastapi import APIRouter, status
+from fastapi import status, APIRouter
 from fastapi.responses import JSONResponse
 
 from app.interfaces.workflow import Workflow
 from app.models.response import BaseResponse
 from app.models.workflow import WorkflowRequestPayload
-
-from fastapi import APIRouter
 
 logger = logging.getLogger(__name__)
 
@@ -17,14 +15,13 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+
 @router.post("/start", response_model=BaseResponse)
 async def start_workflow(payload: WorkflowRequestPayload):
     try:
         workflow_details = await Workflow.run(payload)
         return BaseResponse(
-            success=True,
-            message="Workflow started",
-            data=workflow_details
+            success=True, message="Workflow started", data=workflow_details
         )
     except Exception as e:
         return JSONResponse(
@@ -32,6 +29,6 @@ async def start_workflow(payload: WorkflowRequestPayload):
             content={
                 "success": False,
                 "message": "Failed to start workflow",
-                "error": str(e)
-            }
+                "error": str(e),
+            },
         )

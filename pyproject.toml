@@ -23,7 +23,6 @@ opentelemetry-instrumentation-fastapi = "^0.48b0"
 psutil = "^6.0.0"
 
 
-
 [tool.poetry.group.app.dependencies]
 temporalio = "^1.7.0"
 dapr = "^1.14.0"
@@ -36,3 +35,7 @@ pre-commit = "^3.8.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"

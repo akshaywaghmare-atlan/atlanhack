@@ -2,20 +2,21 @@ import json
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Any
 
+
 class BaseSchemaModel(BaseModel):
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
         json_encoders={
             # Add any custom type encoders here if needed
-        }
+        },
     )
 
     def model_dump(self, *args, **kwargs) -> dict[str, Any]:
-        kwargs.setdefault('by_alias', True)
+        kwargs.setdefault("by_alias", True)
         return super().model_dump(*args, **kwargs)
 
     def json(self, *args, **kwargs) -> str:
-        kwargs.setdefault('by_alias', True)
+        kwargs.setdefault("by_alias", True)
         return super().model_dump_json(*args, **kwargs)
 
 
@@ -41,6 +42,7 @@ class BaseObjectEntity(BaseSchemaModel):
 
 ## Database
 
+
 class DatabaseEntity(BaseObjectEntity):
     namespace: Namespace = Field(default_factory=Namespace)
     package: Package = Field(default_factory=Package)
@@ -48,12 +50,14 @@ class DatabaseEntity(BaseObjectEntity):
 
 ## Schema
 
+
 class SchemaEntity(BaseObjectEntity):
     namespace: Namespace = Field(default_factory=Namespace)
     package: Package = Field(default_factory=Package)
 
 
 ## Table
+
 
 class TableEntity(BaseObjectEntity):
     isPartition: bool
@@ -64,12 +68,15 @@ class TableEntity(BaseObjectEntity):
 
 ## View
 
+
 class ViewEntity(BaseObjectEntity):
     isSearchable: bool = True
     namespace: Namespace = Field(default_factory=Namespace)
     package: Package = Field(default_factory=Package)
 
+
 ## Column
+
 
 class ColumnConstraint(BaseSchemaModel):
     notNull: bool = False

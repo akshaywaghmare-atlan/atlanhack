@@ -1,10 +1,11 @@
-from typing import Type, List
+from typing import Type, List, Sequence
 
-from google.protobuf.json_format import MessageToJson, MessageToDict
+from google.protobuf.json_format import MessageToDict
 from sqlalchemy.orm import Session
 
 from sdk.models import Metric
 from opentelemetry.proto.metrics.v1.metrics_pb2 import MetricsData
+
 
 class Metrics:
     @staticmethod
@@ -12,7 +13,9 @@ class Metrics:
         return session.query(Metric).filter(Metric.id == metric_id).first()
 
     @staticmethod
-    def get_metrics(session: Session, skip: int = 0, limit: int = 100) -> list[Type[Metric]]:
+    def get_metrics(
+        session: Session, skip: int = 0, limit: int = 100
+    ) -> Sequence[Type[Metric]]:
         return session.query(Metric).offset(skip).limit(limit).all()
 
     @staticmethod
@@ -21,19 +24,21 @@ class Metrics:
         for resource_metric in metrics_data.resource_metrics:
             resource_attributes = {}
             for resource_attribute in resource_metric.resource.attributes:
-                resource_attributes[resource_attribute.key] = resource_attribute.value.string_value
+                resource_attributes[resource_attribute.key] = (
+                    resource_attribute.value.string_value
+                )
 
             for scope_metric in resource_metric.scope_metrics:
                 for metric in scope_metric.metrics:
                     data_points = {}
                     for data_point in metric.gauge.data_points:
-                        data_points['gauge'] = MessageToDict(data_point)
+                        data_points["gauge"] = MessageToDict(data_point)
 
                     for data_point in metric.sum.data_points:
-                        data_points['sum'] = MessageToDict(data_point)
+                        data_points["sum"] = MessageToDict(data_point)
 
                     for data_point in metric.histogram.data_points:
-                        data_points['histogram'] = MessageToDict(data_point)
+                        data_points["histogram"] = MessageToDict(data_point)
 
                     db_metric = Metric(
                         resource_attributes=resource_attributes,
@@ -41,7 +46,7 @@ class Metrics:
                         name=metric.name,
                         description=metric.description,
                         unit=metric.unit,
-                        data_points=data_points
+                        data_points=data_points,
                     )
                     session.add(db_metric)
                     metrics.append(db_metric)

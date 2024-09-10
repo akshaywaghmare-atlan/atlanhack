@@ -8,12 +8,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class Platform:
     @staticmethod
     def store_credentials(config: CredentialConfig) -> str:
         """
         Store credentials in the state store using the credentialConfig format.
-        
+
         :param config: The CredentialConfig object containing the credentials.
         """
         try:
@@ -22,7 +23,7 @@ class Platform:
             client.save_state(
                 store_name=STATE_STORE_NAME,
                 key=credential_guid,
-                value=config.model_dump_json()
+                value=config.model_dump_json(),
             )
             return credential_guid
         except Exception as e:
@@ -32,16 +33,13 @@ class Platform:
     def extract_credentials(credential_guid: str) -> Optional[CredentialConfig]:
         """
         Extract credentials from the state store using the credential GUID.
-        
+
         :param credential_guid: The unique identifier for the credentials.
         :return: CredentialConfig object if found, None otherwise.
         """
         try:
             client = DaprClient()
-            state = client.get_state(
-                store_name=STATE_STORE_NAME,
-                key=credential_guid
-            )
+            state = client.get_state(store_name=STATE_STORE_NAME, key=credential_guid)
             if state.data:
                 return CredentialConfig.model_validate_json(state.data)
             return None
@@ -61,20 +59,17 @@ class Platform:
         for root, _, files in os.walk(output_path):
             for file in files:
                 file_path = os.path.join(root, file)
-                with open(file_path, 'rb') as f:
+                with open(file_path, "rb") as f:
                     file_content = f.read()
-                
+
                 relative_path = os.path.relpath(file_path, output_prefix)
-                metadata = {
-                    'key': relative_path,
-                    'fileName': relative_path
-                }
-                
+                metadata = {"key": relative_path, "fileName": relative_path}
+
                 client.invoke_binding(
                     binding_name=OBJECT_STORE_NAME,
                     operation=OBJECT_CREATE_OPERATION,
                     data=file_content,
-                    binding_metadata=metadata
+                    binding_metadata=metadata,
                 )
-                
+
         logger.info(f"Pushed data from {output_path} to object store")

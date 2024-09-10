@@ -16,7 +16,12 @@ router = APIRouter(
 
 
 @router.get("", response_model=list[Log])
-async def read_logs(skip: int = 0, limit: int = 100, keyword: str = "", session: Session = Depends(get_session)):
+async def read_logs(
+    skip: int = 0,
+    limit: int = 100,
+    keyword: str = "",
+    session: Session = Depends(get_session),
+):
     return Logs.get_logs(session, skip, limit, keyword)
 
 

@@ -16,7 +16,9 @@ router = APIRouter(
 
 
 @router.get("", response_model=list[Trace])
-async def read_traces(skip: int = 0, limit: int = 100, session: Session = Depends(get_session)):
+async def read_traces(
+    skip: int = 0, limit: int = 100, session: Session = Depends(get_session)
+):
     return Traces.get_traces(session, skip, limit)
 
 

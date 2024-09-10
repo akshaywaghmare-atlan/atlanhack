@@ -17,8 +17,7 @@ class AtlanApplicationBuilder(ABC):
     def add_event_routes(self):
         pass
 
-    @staticmethod
-    def on_api_service_start() -> None:
+    def on_api_service_start(self) -> None:
         models.Base.metadata.create_all(bind=get_engine())
 
     @staticmethod
@@ -42,4 +41,3 @@ class FastAPIApplicationBuilder(AtlanApplicationBuilder):
     def on_api_service_start(self) -> None:
         super().on_api_service_start()
         FastAPIInstrumentor.instrument_app(self.app)
-

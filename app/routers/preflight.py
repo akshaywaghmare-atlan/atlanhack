@@ -1,6 +1,5 @@
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
-from app.common.utils import connect_to_db
 from app.interfaces.preflight import Preflight
 from app.models.credentials import CredentialPayload
 
@@ -13,14 +12,13 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+
 @router.post("/test-authentication", response_model=BaseResponse)
 async def test_authentication(payload: CredentialPayload):
     try:
         result = Preflight.test_authentication(payload.get_credential_config())
         return BaseResponse(
-            success=True,
-            message="Authentication test successful",
-            data=result
+            success=True, message="Authentication test successful", data=result
         )
     except Exception as e:
         return JSONResponse(
@@ -28,18 +26,17 @@ async def test_authentication(payload: CredentialPayload):
             content={
                 "success": False,
                 "message": "Failed to test authentication",
-                "error": str(e)
-            }
+                "error": str(e),
+            },
         )
+
 
 @router.post("/fetch-metadata", response_model=BaseResponse)
 async def fetch_metatdata(payload: CredentialPayload):
     try:
         result = Preflight.fetch_metadata(payload.get_credential_config())
         return BaseResponse(
-            success=True,
-            message="Metadata fetched successfully",
-            data=result
+            success=True, message="Metadata fetched successfully", data=result
         )
     except Exception as e:
         return JSONResponse(
@@ -47,8 +44,8 @@ async def fetch_metatdata(payload: CredentialPayload):
             content={
                 "success": False,
                 "message": "Failed to fetch metadata",
-                "error": str(e)
-            }
+                "error": str(e),
+            },
         )
 
 
@@ -57,9 +54,7 @@ async def check(payload: PreflightPayload):
     try:
         result = Preflight.check(payload)
         return BaseResponse(
-            success=True,
-            message="Preflight check successful",
-            data=result
+            success=True, message="Preflight check successful", data=result
         )
     except Exception as e:
         return JSONResponse(
@@ -67,6 +62,6 @@ async def check(payload: PreflightPayload):
             content={
                 "success": False,
                 "message": "Preflight check failed",
-                "error": str(e)
-            }
+                "error": str(e),
+            },
         )
