@@ -1,12 +1,51 @@
 # Postgres Extraction Application
 
-This application is designed to extract data from a Postgres database and save it to a CSV file. The application is written in Python and uses the `psycopg2` library to connect to the database.
+This application is designed to extract data from a Postgres database and save it to an object store. The application is written in Python and uses the `psycopg2` library to connect to the database.
 
-## Building and running the application locally
+
+### Clone the repository
+
+To clone this repository including the submodule, use the following command:
+
+```bash
+git clone --recurse-submodules https://github.com/atlanhq/postgres-extraction-app.git
+```
+
+### Prerequisites
+1. Python 3.11 or higher
+2. [Temporal CLI](https://docs.temporal.io/docs/cli/)
+3. [DAPR CLI](https://docs.dapr.io/getting-started/install-dapr-cli/)
+
+
+### Building and running the application locally
 1. Install poetry by running `pip install poetry`
 2. Run `poetry install` to install the dependencies
+> [!NOTE]
+> It is suggested to use run `poetry config virtualenvs.in-project true` to configure poetry to create the virtual environment in the project directory. This will create a `.venv` directory in the project root.
 3. Run `source .venv/bin/activate` to activate the virtual environment
-4. Run `fastapi dev main.py` to start the application
+4. Start the platform by running `make start-all`
+5. Run `fastapi dev main.py` to start the application
+
+### Development with VSCode
+1. Follow the above steps (1-5) to install the dependencies and start the platform.
+2. Add the following settings to the `.vscode/launch.json` file
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: FastAPI",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "main:app",
+                "--reload"
+            ]
+        }
+    ]
+}
+```
 
 
 ### Using Intellij IDEA

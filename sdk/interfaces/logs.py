@@ -1,5 +1,4 @@
 from typing import Type
-from wsgiref.simple_server import server_version
 
 from sqlalchemy.orm import Session
 
