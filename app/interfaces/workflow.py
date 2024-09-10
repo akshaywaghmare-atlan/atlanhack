@@ -14,7 +14,6 @@ from app.const import METADATA_EXTRACTION_TASK_QUEUE
 logger = logging.getLogger(__name__)
 
 class Workflow:
-
     @staticmethod
     async def run(payload: WorkflowRequestPayload) -> Dict[str, Any]:
         client = await Client.connect("localhost:7233")

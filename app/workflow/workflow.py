@@ -1,3 +1,4 @@
+import asyncio
 from datetime import timedelta
 from temporalio import workflow
 from temporalio.common import RetryPolicy
@@ -32,17 +33,23 @@ class ExtractionWorkflow:
 
         # TODO: run all of the following activities in parallel
         # Extract and store metadata for each type
+        activities = []
         for typename, query in metadata_types.items():
-            await workflow.execute_activity(
-                ExtractionActivities.extract_and_store_metadata,
-                ExtractionConfig(
-                    workflowConfig=config,
-                    typename=typename,
-                    query=query
-                ),
-                retry_policy=retry_policy,
-                start_to_close_timeout=timedelta(minutes=30)
+            activities.append(
+                workflow.execute_activity(
+                    ExtractionActivities.extract_and_store_metadata,
+                    ExtractionConfig(
+                        workflowConfig=config,
+                        typename=typename,
+                        query=query
+                    ),
+                    retry_policy=retry_policy,
+                    start_to_close_timeout=timedelta(minutes=30)
+                )
             )
+
+        # Wait for all activities to complete
+        await asyncio.gather(*activities)
 
         # Push results to object store
         await workflow.execute_activity(
