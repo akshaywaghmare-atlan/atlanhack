@@ -25,8 +25,8 @@ def get_db():
 
 
 @router.get("", response_model=list[Log])
-async def read_logs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return Logs.get_logs(db, skip, limit)
+async def read_logs(skip: int = 0, limit: int = 100, keyword: str = "", db: Session = Depends(get_db)):
+    return Logs.get_logs(db, skip, limit, keyword)
 
 
 @router.post("", response_model=List[Log])

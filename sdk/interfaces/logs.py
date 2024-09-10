@@ -13,8 +13,8 @@ class Logs:
         return db.query(Log).filter(Log.id == event_id).first()
 
     @staticmethod
-    def get_logs(db: Session, skip: int = 0, limit: int = 100) -> list[Type[Log]]:
-        return db.query(Log).offset(skip).limit(limit).all()
+    def get_logs(db: Session, skip: int = 0, limit: int = 100, keyword: str = "") -> list[Type[Log]]:
+        return db.query(Log).filter(Log.body.contains(keyword)).offset(skip).limit(limit).all()
 
     @staticmethod
     def create_logs(db: Session, logs_data: LogsData) -> list[Log]:
