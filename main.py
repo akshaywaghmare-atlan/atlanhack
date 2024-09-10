@@ -39,5 +39,6 @@ async def health():
 if __name__ == "__main__":
     atlan_app_builder = FastAPIApplicationBuilder(app)
     atlan_app_builder.add_telemetry_routes()
+    atlan_app_builder.add_event_routes()
 
     uvicorn.run(app, host="0.0.0.0", port=8000)

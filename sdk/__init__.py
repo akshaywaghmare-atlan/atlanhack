@@ -13,6 +13,10 @@ class AtlanApplicationBuilder(ABC):
     def add_telemetry_routes(self):
         pass
 
+    @abstractmethod
+    def add_event_routes(self):
+        pass
+
     @staticmethod
     def on_api_service_start() -> None:
         models.Base.metadata.create_all(bind=get_engine())
@@ -27,10 +31,12 @@ class FastAPIApplicationBuilder(AtlanApplicationBuilder):
         self.app = app
 
     def add_telemetry_routes(self) -> None:
-        self.app.include_router(events.router)
         self.app.include_router(logs.router)
         self.app.include_router(metrics.router)
         self.app.include_router(traces.router)
+
+    def add_event_routes(self) -> None:
+        self.app.include_router(events.router)
 
     def on_api_service_start(self) -> None:
         super().on_api_service_start()
