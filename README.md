@@ -2,6 +2,8 @@
 
 This application is designed to extract data from a Postgres database and save it to an object store. The application is written in Python and uses the `psycopg2` library to connect to the database.
 
+[![Checked with pyright](https://microsoft.github.io/pyright/img/pyright_badge.svg)](https://microsoft.github.io/pyright/)
+
 
 ### Clone the repository
 
@@ -24,12 +26,13 @@ git clone --recurse-submodules https://github.com/atlanhq/phoenix-postgres-app.g
 > [!NOTE]
 > It is suggested to use run `poetry config virtualenvs.in-project true` to configure poetry to create the virtual environment in the project directory. This will create a `.venv` directory in the project root.
 3. Run `source .venv/bin/activate` to activate the virtual environment
-4. Build the frontend.
+4. Run `pre-commit install` to install the pre-commit hooks
+5Build the frontend.
     - Run `cd frontend`
     - Run `npm install` to install the dependencies
     - Run `npm run generate` to build the frontend
-4. Start the platform by running `make start-all`
-5. Run `fastapi dev main.py` to start the application
+6. Start the platform by running `make start-all`
+7. Run `fastapi dev main.py` to start the application
 
 ### Development with VSCode
 1. Follow the above steps (1-5) to install the dependencies and start the platform.
