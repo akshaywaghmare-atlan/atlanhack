@@ -2,6 +2,10 @@
 
 This application is designed to extract data from a Postgres database and save it to an object store. The application is written in Python and uses the `psycopg2` library to connect to the database.
 
+[![Checked with pyright](https://microsoft.github.io/pyright/img/pyright_badge.svg)](https://microsoft.github.io/pyright/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+
 
 ### Clone the repository
 
@@ -24,12 +28,13 @@ git clone --recurse-submodules https://github.com/atlanhq/phoenix-postgres-app.g
 > [!NOTE]
 > It is suggested to use run `poetry config virtualenvs.in-project true` to configure poetry to create the virtual environment in the project directory. This will create a `.venv` directory in the project root.
 3. Run `source .venv/bin/activate` to activate the virtual environment
-4. Build the frontend.
+4. Run `pre-commit install` to install the pre-commit hooks
+5Build the frontend.
     - Run `cd frontend`
     - Run `npm install` to install the dependencies
     - Run `npm run generate` to build the frontend
-4. Start the platform by running `make start-all`
-5. Run `fastapi dev main.py` to start the application
+6. Start the platform by running `make start-all`
+7. Run `fastapi dev main.py` to start the application
 
 ### Development with VSCode
 1. Follow the above steps (1-5) to install the dependencies and start the platform.
@@ -66,3 +71,10 @@ git clone --recurse-submodules https://github.com/atlanhq/phoenix-postgres-app.g
 3. Set parameters to `--traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-app python main.py`
 4. Add environment variable `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:8000/telemetry;OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf;PYTHONUNBUFFERED=1;OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true`
 5. Run the configuration
+
+
+## Advanced Configuration
+
+### Changing storage of telemetry data
+The SDK uses SQLite as the default storage for telemetry data using SQLAlchemy and the SQLite file is stored in `/tmp/app.db`.
+You can change the storage to any database with SQLAlchemy compatibility by setting the `SQLALCHEMY_DATABASE_URI` and `SQLALCHEMY_CONNECT_ARGS` environment variables and installing the sQLAlchemy compatible database driver.

@@ -46,25 +46,34 @@ class MetadataConfig(BaseModel):
     exclude_filter: str = Field(default="", alias="exclude-filter")
     include_filter: str = Field(default="", alias="include-filter")
     temp_table_regex: str = Field(default="", alias="temp-table-regex")
-    advanced_config_strategy: str = Field(default="default", alias="advanced-config-strategy")
-    use_source_schema_filtering: str = Field(default="false", alias="use-source-schema-filtering")
-    use_jdbc_internal_methods: str = Field(default="true", alias="use-jdbc-internal-methods")
+    advanced_config_strategy: str = Field(
+        default="default", alias="advanced-config-strategy"
+    )
+    use_source_schema_filtering: str = Field(
+        default="false", alias="use-source-schema-filtering"
+    )
+    use_jdbc_internal_methods: str = Field(
+        default="true", alias="use-jdbc-internal-methods"
+    )
     authentication: str
     extraction_method: str = Field(alias="extraction-method")
 
     class Config:
         populate_by_name = True
 
+
 class ConnectionConfig(BaseModel):
     connection: str
+
 
 class WorkflowRequestPayload(BaseModel):
     credentials: CredentialPayload = Field(alias="credentials")
     connection: ConnectionConfig
     metadata: MetadataConfig
-    
+
     class Config:
         populate_by_name = True
+
 
 class ExtractionConfig(BaseModel):
     workflowConfig: WorkflowConfig

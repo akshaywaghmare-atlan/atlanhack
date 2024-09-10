@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class WorkflowConfig:
     workflowId: str
@@ -28,4 +29,3 @@ class WorkflowConfig:
     databaseCompanionSQL: str
     extraCompanionSQLs: str
     unfilteredExtraCompanionSQLs: str
-

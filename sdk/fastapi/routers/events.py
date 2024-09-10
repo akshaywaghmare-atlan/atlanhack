@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from sdk.database import SessionLocal
+from sdk.database import get_session
 from sdk.schemas import Event, EventCreate
 from sdk.interfaces.events import Events
-
 
 router = APIRouter(
     prefix="/telemetry/v1/events",
@@ -13,27 +12,21 @@ router = APIRouter(
 )
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
 @router.get("", response_model=list[Event])
-async def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return Events.get_events(db)
+async def read_items(
+    skip: int = 0, limit: int = 100, session: Session = Depends(get_session)
+):
+    return Events.get_events(session, skip, limit)
 
 
 @router.get("/{event_id}", response_model=Event)
-async def read_item(event_id: int, db: Session = Depends(get_db)):
-    db_event = Events.get_event(db, event_id)
+async def read_item(event_id: int, session: Session = Depends(get_session)):
+    db_event = Events.get_event(session, event_id)
     if db_event is None:
         raise HTTPException(status_code=404, detail="Event not found")
     return db_event
 
 
 @router.post("", response_model=Event)
-async def create_item(event: EventCreate, db: Session = Depends(get_db)):
-    return Events.create_event(db, event)
+async def create_item(event: EventCreate, session: Session = Depends(get_session)):
+    return Events.create_event(session, event)
