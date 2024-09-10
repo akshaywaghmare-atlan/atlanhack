@@ -25,6 +25,7 @@ async def run_worker():
     logger.info("Starting worker")
     await worker.run()
 
+
 def start_worker():
     import asyncio
     asyncio.run(run_worker())

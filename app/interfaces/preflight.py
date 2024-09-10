@@ -59,7 +59,6 @@ class Preflight:
         conn.close()
         return result
 
-
     @staticmethod
     def check_schemas_and_databases(payload: PreflightPayload) -> Dict[str, Any]:
         logger.info("Starting schema and database check")
@@ -88,8 +87,6 @@ class Preflight:
             if connection:
                 connection.close()
 
-
-    @staticmethod
     def extract_allowed_schemas(schemas_results: List[Dict[str, Any]]) -> Tuple[Set[str], Set[str]]:
         allowed_databases = set()
         allowed_schemas = set()
@@ -98,8 +95,6 @@ class Preflight:
             allowed_schemas.add(f"{schema[Preflight.DATABASE_KEY]}.{schema[Preflight.SCHEMA_KEY]}")
         return allowed_databases, allowed_schemas
 
-
-    @staticmethod
     def validate_filters(include_filter: Dict[str, List[str]], allowed_databases: Set[str], allowed_schemas: Set[str]) -> Tuple[bool, str]:
         for filtered_db, filtered_schemas in include_filter.items():
             db = filtered_db.strip('^$')
@@ -144,7 +139,6 @@ class Preflight:
             if connection:
                 connection.close()
 
-    @staticmethod
     def prepare_filters(form_data) -> Tuple[str, str, str]:
         include_filter = json.loads(form_data.include_filter)
         exclude_filter = json.loads(form_data.exclude_filter)
@@ -159,7 +153,6 @@ class Preflight:
 
         return normalized_include_regex, normalized_exclude_regex, exclude_table
 
-    @staticmethod
     def normalize_filters(filter_dict: Dict[str, List[str]], is_include: bool) -> List[str]:
         normalized_filter_list = []
         for filtered_db, filtered_schemas in filter_dict.items():
