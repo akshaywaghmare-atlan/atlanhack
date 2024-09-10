@@ -28,7 +28,7 @@ git clone --recurse-submodules https://github.com/atlanhq/phoenix-postgres-app.g
 > It is suggested to use run `poetry config virtualenvs.in-project true` to configure poetry to create the virtual environment in the project directory. This will create a `.venv` directory in the project root.
 3. Run `source .venv/bin/activate` to activate the virtual environment
 4. Run `pre-commit install` to install the pre-commit hooks
-5Build the frontend.
+5. Build the frontend.
     - Run `cd frontend`
     - Run `npm install` to install the dependencies
     - Run `npm run generate` to build the frontend
@@ -76,4 +76,4 @@ git clone --recurse-submodules https://github.com/atlanhq/phoenix-postgres-app.g
 
 ### Changing storage of telemetry data
 The SDK uses SQLite as the default storage for telemetry data using SQLAlchemy and the SQLite file is stored in `/tmp/app.db`.
-You can change the storage to any database with SQLAlchemy compatibility by setting the `SQLALCHEMY_DATABASE_URI` and `SQLALCHEMY_CONNECT_ARGS` environment variables and installing the sQLAlchemy compatible database driver.
+You can change the storage to any database with SQLAlchemy compatibility by setting the `SQLALCHEMY_DATABASE_URI` and `SQLALCHEMY_CONNECT_ARGS` environment variables and installing the SQLAlchemy compatible database driver.
