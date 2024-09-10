@@ -25,8 +25,8 @@ opentelemetry-instrumentation-fastapi = "^0.48b0"
 
 [tool.poetry.group.app.dependencies]
 temporalio = "^1.7.0"
-psycopg2 = "^2.9.9"
 dapr = "^1.14.0"
+psycopg2-binary = "^2.9.9"
 
 [build-system]
 requires = ["poetry-core"]

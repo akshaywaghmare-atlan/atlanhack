@@ -1,10 +1,10 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 
 from sdk.database import SessionLocal
-from sdk.schemas import Log, LogCreate
+from sdk.schemas import Log
 from sdk.interfaces.logs import Logs
 from opentelemetry.proto.logs.v1.logs_pb2 import LogsData
 

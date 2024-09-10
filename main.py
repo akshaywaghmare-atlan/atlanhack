@@ -1,7 +1,6 @@
 import logging
 import uvicorn
 
-from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 import multiprocessing
@@ -40,6 +39,11 @@ app.mount("/", StaticFiles(directory="frontend/.output/public", html=True), name
 @app.get("/")
 async def ui():
     return FileResponse("frontend/.output/public/index.html")
+
+@app.get("/health")
+async def health():
+    logger.info("Health check")
+    return {"status": "ok"}
 
 
 if __name__ == "__main__":

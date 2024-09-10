@@ -16,7 +16,7 @@ class Logs:
         return db.query(Log).offset(skip).limit(limit).all()
 
     @staticmethod
-    def create_logs(db: Session, logs_data: LogsData) -> list[Type[Log]]:
+    def create_logs(db: Session, logs_data: LogsData) -> list[Log]:
         logs = []
         for resource_log in logs_data.resource_logs:
             resource_attributes = {}
