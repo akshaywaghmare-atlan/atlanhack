@@ -8,15 +8,15 @@ from opentelemetry.proto.metrics.v1.metrics_pb2 import MetricsData
 
 class Metrics:
     @staticmethod
-    def get_metric(db: Session, metric_id: int) -> Type[Metric]:
-        return db.query(Metric).filter(Metric.id == metric_id).first()
+    def get_metric(session: Session, metric_id: int) -> Type[Metric]:
+        return session.query(Metric).filter(Metric.id == metric_id).first()
 
     @staticmethod
-    def get_metrics(db: Session, skip: int = 0, limit: int = 100) -> list[Type[Metric]]:
-        return db.query(Metric).offset(skip).limit(limit).all()
+    def get_metrics(session: Session, skip: int = 0, limit: int = 100) -> list[Type[Metric]]:
+        return session.query(Metric).offset(skip).limit(limit).all()
 
     @staticmethod
-    def create_metrics(db: Session, metrics_data: MetricsData) -> List[Metric]:
+    def create_metrics(session: Session, metrics_data: MetricsData) -> List[Metric]:
         metrics = []
         for resource_metric in metrics_data.resource_metrics:
             resource_attributes = {}
@@ -43,10 +43,10 @@ class Metrics:
                         unit=metric.unit,
                         data_points=data_points
                     )
-                    db.add(db_metric)
+                    session.add(db_metric)
                     metrics.append(db_metric)
 
-        db.commit()
+        session.commit()
         for metric in metrics:
-            db.refresh(metric)
+            session.refresh(metric)
         return metrics

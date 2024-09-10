@@ -8,15 +8,15 @@ from opentelemetry.proto.trace.v1.trace_pb2 import TracesData
 
 class Traces:
     @staticmethod
-    def get_trace(db: Session, trace_id: int) -> Type[Trace]:
-        return db.query(Trace).filter(Trace.id == trace_id).first()
+    def get_trace(session: Session, trace_id: int) -> Type[Trace]:
+        return session.query(Trace).filter(Trace.id == trace_id).first()
 
     @staticmethod
-    def get_traces(db: Session, skip: int = 0, limit: int = 100) -> list[Type[Trace]]:
-        return db.query(Trace).offset(skip).limit(limit).all()
+    def get_traces(session: Session, skip: int = 0, limit: int = 100) -> list[Type[Trace]]:
+        return session.query(Trace).offset(skip).limit(limit).all()
 
     @staticmethod
-    def create_traces(db: Session, traces_data: TracesData) -> list[Type[Trace]]:
+    def create_traces(session: Session, traces_data: TracesData) -> list[Trace]:
         traces = []
         for resource_span in traces_data.resource_spans:
             resource_attributes = {}
@@ -53,10 +53,10 @@ class Traces:
                         attributes=attributes,
                         events=events
                     )
-                    db.add(db_trace)
+                    session.add(db_trace)
                     traces.append(db_trace)
-        db.commit()
+        session.commit()
 
         for trace in traces:
-            db.refresh(trace)
+            session.refresh(trace)
         return traces

@@ -9,15 +9,15 @@ from opentelemetry.proto.logs.v1.logs_pb2 import LogsData
 
 class Logs:
     @staticmethod
-    def get_log(db: Session, event_id: int) -> Type[Log]:
-        return db.query(Log).filter(Log.id == event_id).first()
+    def get_log(session: Session, event_id: int) -> Type[Log]:
+        return session.query(Log).filter(Log.id == event_id).first()
 
     @staticmethod
-    def get_logs(db: Session, skip: int = 0, limit: int = 100, keyword: str = "") -> list[Type[Log]]:
-        return db.query(Log).filter(Log.body.contains(keyword)).offset(skip).limit(limit).all()
+    def get_logs(session: Session, skip: int = 0, limit: int = 100, keyword: str = "") -> list[Type[Log]]:
+        return session.query(Log).filter(Log.body.contains(keyword)).offset(skip).limit(limit).all()
 
     @staticmethod
-    def create_logs(db: Session, logs_data: LogsData) -> list[Log]:
+    def create_logs(session: Session, logs_data: LogsData) -> list[Log]:
         logs = []
         for resource_log in logs_data.resource_logs:
             resource_attributes = {}
@@ -42,10 +42,10 @@ class Logs:
                         span_id=log.span_id.hex(),
                         attributes=log_attributes
                     )
-                    db.add(db_log)
+                    session.add(db_log)
                     logs.append(db_log)
-        db.commit()
+        session.commit()
 
         for log in logs:
-            db.refresh(log)
+            session.refresh(log)
         return logs
