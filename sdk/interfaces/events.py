@@ -1,4 +1,4 @@
-from typing import Type, Sequence
+from typing import Sequence
 
 from sqlalchemy.orm import Session
 
@@ -8,13 +8,13 @@ from sdk.schemas import EventCreate
 
 class Events:
     @staticmethod
-    def get_event(session: Session, event_id: int) -> Type[Event]:
+    def get_event(session: Session, event_id: int) -> Event:
         return session.query(Event).filter(Event.id == event_id).first()
 
     @staticmethod
     def get_events(
         session: Session, skip: int = 0, limit: int = 100
-    ) -> Sequence[Type[Event]]:
+    ) -> Sequence[Event]:
         return session.query(Event).offset(skip).limit(limit).all()
 
     @staticmethod

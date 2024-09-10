@@ -1,6 +1,6 @@
 # Dapr Application Components
 
-This repository contains Dapr components for various services. 
+This repository contains Dapr components for various services.
 
 ## Requirements
 - Install [Dapr CLI](https://docs.dapr.io/getting-started/install-dapr-cli/)

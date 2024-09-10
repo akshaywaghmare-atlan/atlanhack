@@ -1,13 +1,10 @@
 import logging
-import uvicorn
-
 import multiprocessing
+import uvicorn
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-from app.worker import start_worker
 from sdk import FastAPIApplicationBuilder
 from app.routers import workflow, preflight
+from app.worker import start_worker
 
 
 app = FastAPI(title="Postgres App")
@@ -26,20 +23,15 @@ app.include_router(workflow.router)
 app.include_router(preflight.router)
 
 
-app.mount(
-    "/", StaticFiles(directory="frontend/.output/public", html=True), name="static"
-)
-
-
-@app.get("/")
-async def ui():
-    return FileResponse("frontend/.output/public/index.html")
-
-
 if __name__ == "__main__":
     atlan_app_builder = FastAPIApplicationBuilder(app)
     atlan_app_builder.on_api_service_start()
     atlan_app_builder.add_telemetry_routes()
     atlan_app_builder.add_event_routes()
+    atlan_app_builder.add_ui_routes()
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=8000,
+    )

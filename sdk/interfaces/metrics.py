@@ -1,4 +1,4 @@
-from typing import Type, List, Sequence
+from typing import List, Sequence
 
 from google.protobuf.json_format import MessageToDict
 from sqlalchemy.orm import Session
@@ -9,13 +9,13 @@ from opentelemetry.proto.metrics.v1.metrics_pb2 import MetricsData
 
 class Metrics:
     @staticmethod
-    def get_metric(session: Session, metric_id: int) -> Type[Metric]:
+    def get_metric(session: Session, metric_id: int) -> Metric:
         return session.query(Metric).filter(Metric.id == metric_id).first()
 
     @staticmethod
     def get_metrics(
         session: Session, skip: int = 0, limit: int = 100
-    ) -> Sequence[Type[Metric]]:
+    ) -> Sequence[Metric]:
         return session.query(Metric).offset(skip).limit(limit).all()
 
     @staticmethod

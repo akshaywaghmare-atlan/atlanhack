@@ -95,7 +95,7 @@ class ColumnEntity(BaseObjectEntity):
 
 
 class PydanticJSONEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, BaseModel):
-            return obj.model_dump()
-        return super().default(obj)
+    def default(self, o):
+        if isinstance(o, BaseModel):
+            return o.model_dump()
+        return super().default(o)

@@ -31,3 +31,7 @@ def start_worker():
     import asyncio
 
     asyncio.run(run_worker())
+
+
+def stop_worker():
+    pass

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Type, Sequence
+from typing import Sequence
 
 from sqlalchemy.orm import Session
 
@@ -9,13 +9,13 @@ from opentelemetry.proto.logs.v1.logs_pb2 import LogsData
 
 class Logs:
     @staticmethod
-    def get_log(session: Session, event_id: int) -> Type[Log]:
+    def get_log(session: Session, event_id: int) -> Log:
         return session.query(Log).filter(Log.id == event_id).first()
 
     @staticmethod
     def get_logs(
         session: Session, skip: int = 0, limit: int = 100, keyword: str = ""
-    ) -> Sequence[Type[Log]]:
+    ) -> Sequence[Log]:
         return (
             session.query(Log)
             .filter(Log.body.contains(keyword))

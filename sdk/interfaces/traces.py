@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Type, Sequence
+from typing import Sequence
 
 from sqlalchemy.orm import Session
 
@@ -9,13 +9,13 @@ from opentelemetry.proto.trace.v1.trace_pb2 import TracesData
 
 class Traces:
     @staticmethod
-    def get_trace(session: Session, trace_id: int) -> Type[Trace]:
+    def get_trace(session: Session, trace_id: int) -> Trace:
         return session.query(Trace).filter(Trace.id == trace_id).first()
 
     @staticmethod
     def get_traces(
         session: Session, skip: int = 0, limit: int = 100
-    ) -> Sequence[Type[Trace]]:
+    ) -> Sequence[Trace]:
         return session.query(Trace).offset(skip).limit(limit).all()
 
     @staticmethod
