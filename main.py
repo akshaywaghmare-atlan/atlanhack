@@ -30,11 +30,6 @@ app.include_router(preflight.router)
 # async def ui():
 #     return FileResponse("frontend/.output/public/index.html")
 
-@app.get("/health")
-async def health():
-    logger.info("Health check")
-    return {"status": "ok"}
-
 
 if __name__ == "__main__":
     atlan_app_builder = FastAPIApplicationBuilder(app)

@@ -5,7 +5,7 @@ from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
 from sdk import models
 from sdk.database import get_engine
-from sdk.fastapi.routers import events, logs, metrics, traces
+from sdk.fastapi.routers import events, logs, metrics, traces, health
 
 
 class AtlanApplicationBuilder(ABC):
@@ -29,6 +29,7 @@ class AtlanApplicationBuilder(ABC):
 class FastAPIApplicationBuilder(AtlanApplicationBuilder):
     def __init__(self, app: FastAPI):
         self.app = app
+        self.app.include_router(health.router)
 
     def add_telemetry_routes(self) -> None:
         self.app.include_router(logs.router)
