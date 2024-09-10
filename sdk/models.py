@@ -30,11 +30,11 @@ class Log(Base):
     severity_number = Column(Integer, nullable=False)
     observed_timestamp = Column(DateTime, nullable=False, default=datetime.now)
     timestamp = Column(DateTime, nullable=False, default=datetime.now)
-    body = Column(String, nullable=False)
+    body = Column(String, nullable=True)
 
     trace_id = Column(String, nullable=True)
     span_id = Column(String, nullable=True)
-    message = Column(String, nullable=False)
+    attributes = Column(JSON(), nullable=True)
 
 
 class Metric(Base):

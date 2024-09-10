@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Type
 
 from sqlalchemy.orm import Session
@@ -21,19 +22,25 @@ class Logs:
         for resource_log in logs_data.resource_logs:
             resource_attributes = {}
             for resource_attribute in resource_log.resource.attributes:
-                resource_attributes[resource_attribute.key] = resource_attribute.value
+                resource_attributes[resource_attribute.key] = resource_attribute.value.string_value
 
             for scope_log in resource_log.scope_logs:
                 for log in scope_log.log_records:
+                    log_attributes = {}
+                    for attribute in log.attributes:
+                        log_attributes[attribute.key] = attribute.value.string_value
+
                     db_log = Log(
-                        resource_attributes=log.resource.attributes,
-                        scope_name=scope_log.name,
-                        serverity=log.severity_text,
-                        serverity_number=log.severity_number.real,
-                        observed_timestamp=log.time_unix_nano,
-                        body=log.body,
-                        trace_id=log.trace_id,
-                        span_id=log.span_id
+                        resource_attributes=resource_attributes,
+                        scope_name=scope_log.scope.name,
+                        severity=log.severity_text,
+                        severity_number=log.severity_number.real,
+                        observed_timestamp=datetime.utcfromtimestamp(log.observed_time_unix_nano // 1000000000),
+                        timestamp=datetime.utcfromtimestamp(log.time_unix_nano // 1000000000),
+                        body=log.body.string_value,
+                        trace_id=log.trace_id.hex(),
+                        span_id=log.span_id.hex(),
+                        attributes=log_attributes
                     )
                     db.add(db_log)
                     logs.append(db_log)

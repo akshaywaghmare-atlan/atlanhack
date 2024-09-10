@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from pydantic import BaseModel
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 
 class EventBase(BaseModel):
@@ -32,10 +32,9 @@ class LogBase(BaseModel):
     severity_number: int
     observed_timestamp: datetime
     timestamp: datetime
-    body: str
+    body: Optional[str]
     trace_id: str
     span_id: str
-    message: str
 
 
 class LogCreate(LogBase):

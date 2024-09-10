@@ -63,6 +63,6 @@ git clone --recurse-submodules https://github.com/atlanhq/phoenix-postgres-app.g
 ### Add OTel agent during IntelliJ run
 1. Create a new run configuration for the project
 2. Set the script path to `.venv/bin/opentelemetry-instrument`
-3. Set parameters to `--traces_exporter console,otlp --metrics_exporter console,otlp --logs_exporter console,otlp --service_name your-service-name python main.py`
-4. Add environment variable `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:8000/telemetry;OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf`
+3. Set parameters to `--traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-app python main.py`
+4. Add environment variable `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:8000/telemetry;OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf;PYTHONUNBUFFERED=1;OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true`
 5. Run the configuration

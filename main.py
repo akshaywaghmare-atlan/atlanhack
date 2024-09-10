@@ -35,10 +35,10 @@ app.include_router(workflow.router)
 app.include_router(preflight.router)
 
 
-app.mount("/", StaticFiles(directory="frontend/.output/public", html=True), name="static")
-@app.get("/")
-async def ui():
-    return FileResponse("frontend/.output/public/index.html")
+# app.mount("/", StaticFiles(directory="frontend/.output/public", html=True), name="static")
+# @app.get("/")
+# async def ui():
+#     return FileResponse("frontend/.output/public/index.html")
 
 @app.get("/health")
 async def health():
@@ -47,5 +47,5 @@ async def health():
 
 
 if __name__ == "__main__":
-    FastAPIInstrumentor.instrument_app(app)
     uvicorn.run(app, host="0.0.0.0", port=8000)
+    FastAPIInstrumentor.instrument_app(app)
