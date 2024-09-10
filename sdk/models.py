@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, DateTime, ARRAY
+from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.types import JSON
 
 from sdk.database import Base
@@ -49,7 +49,7 @@ class Metric(Base):
     timestamp = Column(DateTime, nullable=False, default=datetime.now)
     resource_attributes = Column(JSON(), nullable=True)
     unit = Column(String, nullable=True)
-    data_points = Column(ARRAY(JSON()), nullable=False)
+    data_points = Column(JSON(), nullable=False)
 
 
 class Trace(Base):

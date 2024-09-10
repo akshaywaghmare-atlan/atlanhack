@@ -29,9 +29,9 @@ async def read_metrics(skip: int = 0, limit: int = 100, db: Session = Depends(ge
     return Metrics.get_metrics(db, skip, limit)
 
 
-@router.post("")
+@router.post("", response_model=List[Metric])
 async def create_metrics(request: Request, db: Session = Depends(get_db)):
     body = await request.body()
     metric_message = MetricsData()
     metric_message.ParseFromString(body)
-    Metrics.create_metrics(db, metric_message)
+    return Metrics.create_metrics(db, metric_message)

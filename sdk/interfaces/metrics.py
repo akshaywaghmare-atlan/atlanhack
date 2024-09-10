@@ -1,6 +1,6 @@
 from typing import Type, List
 
-from google.protobuf.json_format import MessageToJson
+from google.protobuf.json_format import MessageToJson, MessageToDict
 from sqlalchemy.orm import Session
 
 from sdk.models import Metric
@@ -26,15 +26,15 @@ class Metrics:
 
             for scope_metric in resource_metric.scope_metrics:
                 for metric in scope_metric.metrics:
-                    data_points = []
+                    data_points = {}
                     for data_point in metric.gauge.data_points:
-                        data_points.append(MessageToJson(data_point))
+                        data_points['gauge'] = MessageToDict(data_point)
 
                     for data_point in metric.sum.data_points:
-                        data_points.append(MessageToJson(data_point))
+                        data_points['sum'] = MessageToDict(data_point)
 
                     for data_point in metric.histogram.data_points:
-                        data_points.append(MessageToJson(data_point))
+                        data_points['histogram'] = MessageToDict(data_point)
 
                     db_metric = Metric(
                         resource_attributes=resource_attributes,
