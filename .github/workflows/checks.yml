@@ -1,0 +1,16 @@
+name: Checks
+on:
+  pull_request:
+    types: [ opened, synchronize, labeled, reopened ]
+  push:
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pre-commit/action@v2
+        with:
+          args: install
+      - uses: pre-commit/action@v2
+        with:
+          args: run --all-files
