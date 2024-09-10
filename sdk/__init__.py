@@ -5,8 +5,7 @@ from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
 from sdk import models
 from sdk.database import get_engine
-from sdk.fastapi.routers import events, logs, metrics, traces, health, ui
-# from sdk.worker import start_worker
+from sdk.fastapi.routers import events, logs, metrics, traces, health
 
 
 class AtlanApplicationBuilder(ABC):
@@ -38,9 +37,6 @@ class FastAPIApplicationBuilder(AtlanApplicationBuilder):
 
     def add_event_routes(self) -> None:
         self.app.include_router(events.router)
-
-    def add_ui_routes(self) -> None:
-        self.app.include_router(ui.router)
 
     def on_api_service_start(self) -> None:
         super().on_api_service_start()

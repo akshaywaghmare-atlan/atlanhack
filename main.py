@@ -1,5 +1,6 @@
 import logging
 import multiprocessing
+from fastapi.staticfiles import StaticFiles
 import uvicorn
 from fastapi import FastAPI
 from sdk import FastAPIApplicationBuilder
@@ -28,7 +29,11 @@ if __name__ == "__main__":
     atlan_app_builder.on_api_service_start()
     atlan_app_builder.add_telemetry_routes()
     atlan_app_builder.add_event_routes()
-    atlan_app_builder.add_ui_routes()
+
+    # always mount the frontend at the end
+    app.mount(
+        "/", StaticFiles(directory="frontend/.output/public", html=True), name="static"
+    )
 
     uvicorn.run(
         app,
