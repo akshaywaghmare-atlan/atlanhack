@@ -8,13 +8,14 @@ This application is designed to extract data from a Postgres database and save i
 To clone this repository including the submodule, use the following command:
 
 ```bash
-git clone --recurse-submodules https://github.com/atlanhq/postgres-extraction-app.git
+git clone --recurse-submodules https://github.com/atlanhq/phoenix-postgres-app.git
 ```
 
 ### Prerequisites
 1. Python 3.11 or higher
-2. [Temporal CLI](https://docs.temporal.io/docs/cli/)
-3. [DAPR CLI](https://docs.dapr.io/getting-started/install-dapr-cli/)
+2. [Poetry](https://python-poetry.org/)
+3. [Temporal CLI installed](https://docs.temporal.io/docs/cli/)
+4. [DAPR CLI installed](https://docs.dapr.io/getting-started/install-dapr-cli/)
 
 
 ### Building and running the application locally
@@ -23,6 +24,10 @@ git clone --recurse-submodules https://github.com/atlanhq/postgres-extraction-ap
 > [!NOTE]
 > It is suggested to use run `poetry config virtualenvs.in-project true` to configure poetry to create the virtual environment in the project directory. This will create a `.venv` directory in the project root.
 3. Run `source .venv/bin/activate` to activate the virtual environment
+4. Build the frontend.
+    - Run `cd frontend`
+    - Run `npm install` to install the dependencies
+    - Run `npm run generate` to build the frontend
 4. Start the platform by running `make start-all`
 5. Run `fastapi dev main.py` to start the application
 
