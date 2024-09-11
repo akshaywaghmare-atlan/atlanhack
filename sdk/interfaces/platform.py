@@ -1,7 +1,7 @@
 import uuid
 from dapr.clients import DaprClient
-from app.models.credentials import CredentialConfig
-from app.const import STATE_STORE_NAME, OBJECT_STORE_NAME, OBJECT_CREATE_OPERATION
+from sdk.dto.credentials import BasicCredential
+from sdk.const import STATE_STORE_NAME, OBJECT_STORE_NAME, OBJECT_CREATE_OPERATION
 import os
 import logging
 
@@ -10,11 +10,11 @@ logger = logging.getLogger(__name__)
 
 class Platform:
     @staticmethod
-    def store_credentials(config: CredentialConfig) -> str:
+    def store_credentials(config: BasicCredential) -> str:
         """
-        Store credentials in the state store using the credentialConfig format.
+        Store credentials in the state store using the BasicCredential format.
 
-        :param config: The CredentialConfig object containing the credentials.
+        :param config: The BasicCredential object containing the credentials.
         """
         try:
             client = DaprClient()
@@ -29,33 +29,31 @@ class Platform:
             raise Exception(f"Failed to store credentials: {str(e)}")
 
     @staticmethod
-    def extract_credentials(credential_guid: str) -> CredentialConfig:
+    def extract_credentials(credential_guid: str) -> BasicCredential:
         """
         Extract credentials from the state store using the credential GUID.
 
         :param credential_guid: The unique identifier for the credentials.
-        :return: CredentialConfig object if found, None otherwise.
+        :return: BasicCredential object if found, None otherwise.
         """
         try:
             client = DaprClient()
             state = client.get_state(store_name=STATE_STORE_NAME, key=credential_guid)
             if state.data:
-                return CredentialConfig.model_validate_json(state.data)
+                return BasicCredential.model_validate_json(state.data)
             else:
                 raise Exception(f"Credentials not found for GUID: {credential_guid}")
         except Exception as e:
             raise Exception(f"Failed to extract credentials: {str(e)}")
 
     @staticmethod
-    def push_to_object_store(output_config: dict) -> None:
+    def push_to_object_store(output_prefix: str, output_path: str) -> None:
         """
         Push files from a directory to the object store.
 
         :param output_config: The path to the directory containing files to push.
         """
         client = DaprClient()
-        output_prefix = output_config["output_prefix"]
-        output_path = output_config["output_path"]
         for root, _, files in os.walk(output_path):
             for file in files:
                 file_path = os.path.join(root, file)

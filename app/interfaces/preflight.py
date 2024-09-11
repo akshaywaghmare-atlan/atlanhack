@@ -3,8 +3,8 @@ import logging
 import json
 from app.common.utils import connect_to_db
 from app.const import FILTER_METADATA_SQL, TEST_AUTHENTICATION_SQL, TABLES_CHECK_SQL
-from app.models.credentials import CredentialConfig
-from app.models.preflight import PreflightPayload
+from sdk.dto.credentials import BasicCredential
+from app.dto.preflight import PreflightPayload
 
 
 logger = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ class Preflight:
         return results
 
     @staticmethod
-    def test_authentication(credentials: CredentialConfig):
+    def test_authentication(credentials: BasicCredential):
         try:
             conn = connect_to_db(credentials)
             cursor = conn.cursor()
@@ -42,7 +42,7 @@ class Preflight:
             raise e
 
     @staticmethod
-    def fetch_metadata(credentials: CredentialConfig) -> List[Dict[str, str]]:
+    def fetch_metadata(credentials: BasicCredential) -> List[Dict[str, str]]:
         conn = connect_to_db(credentials)
         cursor = conn.cursor()
         cursor.execute(FILTER_METADATA_SQL)

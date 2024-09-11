@@ -3,9 +3,9 @@ import uuid
 from temporalio.client import Client, WorkflowFailureError
 import logging
 
-from app.interfaces.platform import Platform
+from sdk.interfaces.platform import Platform
 from app.workflow.workflow import ExtractionWorkflow
-from app.models.workflow import WorkflowConfig, WorkflowRequestPayload
+from app.dto.workflow import WorkflowConfig, WorkflowRequestPayload
 
 from app.const import METADATA_EXTRACTION_TASK_QUEUE
 

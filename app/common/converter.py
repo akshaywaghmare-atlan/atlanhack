@@ -1,4 +1,5 @@
-from app.models.schema import (
+import logging
+from app.common.schema import (
     BaseObjectEntity,
     DatabaseEntity,
     SchemaEntity,
@@ -7,6 +8,9 @@ from app.models.schema import (
     ColumnEntity,
     ColumnConstraint,
 )
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def transform_metadata(typename: str, data: dict):
@@ -19,7 +23,7 @@ def transform_metadata(typename: str, data: dict):
                 URI=f"/postgres/sql/{data['datname']}",
             )
         except AssertionError as e:
-            print(f"Error creating DatabaseEntity: {str(e)}")
+            logger.error(f"Error creating DatabaseEntity: {str(e)}")
             return None
 
     elif typename.upper() == "SCHEMA":
@@ -32,7 +36,7 @@ def transform_metadata(typename: str, data: dict):
                 URI=f"/postgres/sql/{data['catalog_name']}/{data['schema_name']}",
             )
         except AssertionError as e:
-            print(f"Error creating SchemaEntity: {str(e)}")
+            logger.error(f"Error creating SchemaEntity: {str(e)}")
             return None
 
     elif typename.upper() == "TABLE":
@@ -55,7 +59,7 @@ def transform_metadata(typename: str, data: dict):
                     isPartition=data.get("is_partition") or False,
                 )
         except AssertionError as e:
-            print(f"Error creating TableEntity: {str(e)}")
+            logger.error(f"Error creating TableEntity: {str(e)}")
             return None
 
     elif typename.upper() == "COLUMN":
@@ -81,11 +85,11 @@ def transform_metadata(typename: str, data: dict):
                 ),
             )
         except AssertionError as e:
-            print(f"Error creating ColumnEntity: {str(e)}")
+            logger.error(f"Error creating ColumnEntity: {str(e)}")
             return None
 
     else:
-        print(f"Unknown typename: {typename}")
+        logger.error(f"Unknown typename: {typename}")
         name = data[f"{typename.lower()}_name"]
         return BaseObjectEntity(
             typeName=typename.upper(),

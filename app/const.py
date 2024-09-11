@@ -1,11 +1,6 @@
 # Constants shared across the application
 
 METADATA_EXTRACTION_TASK_QUEUE = "METADATA_EXTRACTION_TASK_QUEUE"
-SECRET_STORE_NAME = "secretstore"
-STATE_STORE_NAME = "statestore"
-OBJECT_STORE_NAME = "objectstore"
-OBJECT_CREATE_OPERATION = "create"
-
 
 # Queries
 TABLES_CHECK_SQL = """

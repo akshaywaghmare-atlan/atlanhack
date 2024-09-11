@@ -11,7 +11,7 @@ from app.interfaces.preflight import Preflight
 from temporalio import workflow
 from temporalio.common import RetryPolicy
 from app.workflow.activities import ExtractionActivities
-from app.models.workflow import ExtractionConfig, WorkflowConfig
+from app.dto.workflow import ExtractionConfig, WorkflowConfig
 
 
 @workflow.defn

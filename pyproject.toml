@@ -21,11 +21,11 @@ opentelemetry-exporter-otlp = "^1.27.0"
 opentelemetry-proto = "^1.27.0"
 opentelemetry-instrumentation-fastapi = "^0.48b0"
 psutil = "^6.0.0"
+dapr = "^1.14.0"
 
 
 [tool.poetry.group.app.dependencies]
 temporalio = "^1.7.0"
-dapr = "^1.14.0"
 psycopg2-binary = "^2.9.9"
 
 

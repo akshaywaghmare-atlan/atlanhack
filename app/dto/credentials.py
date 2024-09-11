@@ -1,12 +1,5 @@
 from pydantic import BaseModel, Field
-
-
-class CredentialConfig(BaseModel):
-    host: str
-    port: int
-    user: str
-    password: str
-    database: str
+from sdk.dto.credentials import BasicCredential
 
 
 class CredentialPayload(BaseModel):
@@ -19,8 +12,8 @@ class CredentialPayload(BaseModel):
     class Config:
         populate_by_name = True
 
-    def get_credential_config(self) -> CredentialConfig:
-        return CredentialConfig(
+    def get_credential_config(self) -> BasicCredential:
+        return BasicCredential(
             host=self.url,
             port=self.port,
             database=self.database,

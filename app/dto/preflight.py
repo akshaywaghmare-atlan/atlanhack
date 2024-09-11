@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from app.models.credentials import CredentialPayload  # Assuming this exists
+from app.dto.credentials import CredentialPayload  # Assuming this exists
 
 
 class FormData(BaseModel):

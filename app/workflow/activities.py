@@ -2,9 +2,9 @@ import json
 from temporalio import activity
 from app.common.converter import transform_metadata
 from app.common.utils import connect_to_db
-from app.interfaces.platform import Platform
-from app.models.schema import PydanticJSONEncoder
-from app.models.workflow import ExtractionConfig
+from sdk.interfaces.platform import Platform
+from app.common.schema import PydanticJSONEncoder
+from app.dto.workflow import ExtractionConfig
 import os
 
 
@@ -75,6 +75,10 @@ class ExtractionActivities:
     async def push_results_to_object_store(output_config: dict) -> None:
         activity.logger.info("Pushing results to object store")
         try:
-            Platform.push_to_object_store(output_config)
+            output_prefix, output_path = (
+                output_config["output_prefix"],
+                output_config["output_path"],
+            )
+            Platform.push_to_object_store(output_prefix, output_path)
         except Exception as e:
             activity.logger.error(f"Error pushing results to object store: {e}")

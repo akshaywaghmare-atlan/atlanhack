@@ -1,10 +1,10 @@
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 from app.interfaces.preflight import Preflight
-from app.models.credentials import CredentialPayload
+from app.dto.credentials import CredentialPayload
 
-from app.models.preflight import PreflightPayload
-from app.models.response import BaseResponse
+from app.dto.preflight import PreflightPayload
+from app.dto.response import BaseResponse
 
 router = APIRouter(
     prefix="/preflight",

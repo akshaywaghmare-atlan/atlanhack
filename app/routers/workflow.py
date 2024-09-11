@@ -3,8 +3,8 @@ from fastapi import status, APIRouter
 from fastapi.responses import JSONResponse
 
 from app.interfaces.workflow import Workflow
-from app.models.response import BaseResponse
-from app.models.workflow import WorkflowRequestPayload
+from app.dto.response import BaseResponse
+from app.dto.workflow import WorkflowRequestPayload
 
 logger = logging.getLogger(__name__)
 
