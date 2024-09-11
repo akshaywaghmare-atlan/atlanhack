@@ -1,4 +1,5 @@
 import logging
+from typing import Dict, Any, Optional
 from app.common.schema import (
     BaseObjectEntity,
     DatabaseEntity,
@@ -13,7 +14,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def transform_metadata(typename: str, data: dict):
+def transform_metadata(
+    typename: str, data: Dict[str, Any]
+) -> Optional[BaseObjectEntity]:
     if typename.upper() == "DATABASE":
         try:
             assert data["datname"] is not None, "Database name cannot be None"

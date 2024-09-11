@@ -1,6 +1,6 @@
 from typing import Dict, Any
 import uuid
-from temporalio.client import Client, WorkflowFailureError
+from temporalio.client import Client, WorkflowFailureError, WorkflowHandle
 import logging
 
 from sdk.interfaces.platform import Platform
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class Workflow:
     @staticmethod
     async def run(payload: WorkflowRequestPayload) -> Dict[str, Any]:
-        client = await Client.connect("localhost:7233")
+        client: Client = await Client.connect("localhost:7233")
         workflow_id = str(uuid.uuid4())
         credential_config = payload.credentials.get_credential_config()
         credential_guid = Platform.store_credentials(credential_config)
@@ -33,8 +33,8 @@ class Workflow:
         )
 
         try:
-            handle = await client.start_workflow(
-                ExtractionWorkflow.extract_metadata,
+            handle: WorkflowHandle[Any, Any] = await client.start_workflow(
+                ExtractionWorkflow.run,
                 config,
                 id=workflow_id,
                 task_queue=METADATA_EXTRACTION_TASK_QUEUE,

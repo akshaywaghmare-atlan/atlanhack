@@ -1,6 +1,6 @@
 import json
 from pydantic import BaseModel, Field, ConfigDict
-from typing import Any
+from typing import Any, Dict
 
 
 class BaseSchemaModel(BaseModel):
@@ -11,11 +11,11 @@ class BaseSchemaModel(BaseModel):
         },
     )
 
-    def model_dump(self, *args, **kwargs) -> dict[str, Any]:
+    def model_dump(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
         kwargs.setdefault("by_alias", True)
         return super().model_dump(*args, **kwargs)
 
-    def json(self, *args, **kwargs) -> str:
+    def json(self, *args: Any, **kwargs: Any) -> str:
         kwargs.setdefault("by_alias", True)
         return super().model_dump_json(*args, **kwargs)
 
@@ -95,7 +95,7 @@ class ColumnEntity(BaseObjectEntity):
 
 
 class PydanticJSONEncoder(json.JSONEncoder):
-    def default(self, o):
+    def default(self, o: Any) -> Any:
         if isinstance(o, BaseModel):
             return o.model_dump()
         return super().default(o)

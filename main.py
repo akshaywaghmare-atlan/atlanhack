@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 import logging
 import multiprocessing
 from fastapi.staticfiles import StaticFiles
@@ -7,17 +8,23 @@ from sdk import FastAPIApplicationBuilder
 from app.routers import workflow, preflight
 from app.worker import start_worker
 
-
-app = FastAPI(title="Postgres App")
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+# @app.on_event("startup")
+# def start_worker_process():
 
-@app.on_event("startup")
-def start_worker_process():
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     # starts a temporal worker process
     worker_process = multiprocessing.Process(target=start_worker)
     worker_process.start()
+    yield
+    worker_process.terminate()
+
+
+app = FastAPI(title="Postgres App", lifespan=lifespan)
 
 
 app.include_router(workflow.router)
