@@ -9,7 +9,15 @@ on:
       - main
 
 permissions:
+  id-token: write
+  issues: write
+  discussions: write
   pull-requests: write
+  actions: write
+  contents: write
+  checks: write
+  deployments: write
+  packages: write
 
 jobs:
   unit-tests:
@@ -31,10 +39,12 @@ jobs:
       - name: Run Tests with Coverage
         run: |
           poetry install
-          poetry run coverage run -m pytest app
+          poetry run coverage run -m pytest tests/unit
           poetry run coverage xml
+          poetry run coverage report
 
       - name: Comment Coverage Report on PR
-        uses: orgoro/coverage@v2.1
+        uses: orgoro/coverage@v3.2
         with:
           coverageFile: coverage.xml
+          token: ${{ secrets.MY_PAT }}
