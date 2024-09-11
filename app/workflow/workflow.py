@@ -65,6 +65,7 @@ class ExtractionWorkflow:
         }
 
         # Extract and store metadata for each type
+        extraction_results = {}
         activities = []
         for typename, query in metadata_types.items():
             activities.append(
@@ -79,7 +80,9 @@ class ExtractionWorkflow:
             )
 
         # Wait for all activities to complete
-        await asyncio.gather(*activities)
+        results = await asyncio.gather(*activities)
+        for result in results:
+            extraction_results.update(result)
 
         # Push results to object store
         await workflow.execute_activity(
@@ -92,3 +95,4 @@ class ExtractionWorkflow:
         # TODO: cleanup output directory
 
         workflow.logger.info(f"Extraction workflow completed for {config.workflowId}")
+        workflow.logger.info(f"Extraction results summary: {extraction_results}")

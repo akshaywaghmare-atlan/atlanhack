@@ -45,7 +45,7 @@ def transform_metadata(typename: str, data: dict):
             assert data["table_cat"] is not None, "Table catalog cannot be None"
             assert data["table_schem"] is not None, "Table schema cannot be None"
 
-            if data["table_type"] == "VIEW":
+            if data.get("table_type") == "VIEW":
                 return ViewEntity(
                     typeName="VIEW",
                     name=data["table_name"],
