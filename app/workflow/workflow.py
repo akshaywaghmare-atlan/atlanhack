@@ -28,7 +28,7 @@ class ExtractionWorkflow:
         )
 
         # Create output directory
-        await workflow.execute_activity(
+        await workflow.execute_activity(  # pyright: ignore[reportUnknownMemberType]
             ExtractionActivities.create_output_directory,
             config.outputPath,
             retry_policy=retry_policy,
@@ -69,7 +69,7 @@ class ExtractionWorkflow:
         activities: List[Coroutine[Any, Any, None]] = []
         for typename, query in metadata_types.items():
             activities.append(
-                workflow.execute_activity(
+                workflow.execute_activity(  # pyright: ignore[reportUnknownMemberType]
                     ExtractionActivities.extract_and_store_metadata,
                     ExtractionConfig(
                         workflowConfig=config, typename=typename, query=query
@@ -83,7 +83,7 @@ class ExtractionWorkflow:
         await asyncio.gather(*activities)
 
         # Push results to object store
-        await workflow.execute_activity(
+        await workflow.execute_activity(  # pyright: ignore[reportUnknownMemberType]
             ExtractionActivities.push_results_to_object_store,
             {"output_prefix": config.outputPrefix, "output_path": config.outputPath},
             retry_policy=retry_policy,

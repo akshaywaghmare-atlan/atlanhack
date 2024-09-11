@@ -11,9 +11,6 @@ from app.worker import start_worker
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-# @app.on_event("startup")
-# def start_worker_process():
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

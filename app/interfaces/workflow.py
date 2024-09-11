@@ -33,7 +33,7 @@ class Workflow:
         )
 
         try:
-            handle: WorkflowHandle[Any, Any] = await client.start_workflow(
+            handle: WorkflowHandle[Any, Any] = await client.start_workflow(  # pyright: ignore[reportUnknownMemberType]
                 ExtractionWorkflow.run,
                 config,
                 id=workflow_id,
