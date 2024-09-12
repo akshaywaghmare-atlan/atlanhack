@@ -1,6 +1,9 @@
 name: Unit Tests with Coverage for PR
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     types:
       - opened
