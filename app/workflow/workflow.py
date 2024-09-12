@@ -12,12 +12,13 @@ from temporalio import workflow
 from temporalio.common import RetryPolicy
 from app.workflow.activities import ExtractionActivities
 from app.dto.workflow import ExtractionConfig, WorkflowConfig
+from typing import Coroutine, Dict, List, Any
 
 
 @workflow.defn
 class ExtractionWorkflow:
     @workflow.run
-    async def extract_metadata(self, config: WorkflowConfig) -> None:
+    async def run(self, config: WorkflowConfig) -> None:
         workflow.logger.info(f"Starting extraction workflow for {config.workflowId}")
         retry_policy = RetryPolicy(maximum_attempts=3)
 
@@ -27,7 +28,7 @@ class ExtractionWorkflow:
         )
 
         # Create output directory
-        await workflow.execute_activity(
+        await workflow.execute_activity(  # pyright: ignore[reportUnknownMemberType]
             ExtractionActivities.create_output_directory,
             config.outputPath,
             retry_policy=retry_policy,
@@ -65,11 +66,10 @@ class ExtractionWorkflow:
         }
 
         # Extract and store metadata for each type
-        extraction_results = {}
-        activities = []
+        activities: List[Coroutine[Any, Any, Any]] = []
         for typename, query in metadata_types.items():
             activities.append(
-                workflow.execute_activity(
+                workflow.execute_activity(  # pyright: ignore[reportUnknownMemberType]
                     ExtractionActivities.extract_metadata,
                     ExtractionConfig(
                         workflowConfig=config, typename=typename, query=query
@@ -81,11 +81,12 @@ class ExtractionWorkflow:
 
         # Wait for all activities to complete
         results = await asyncio.gather(*activities)
+        extraction_results: Dict[str, Any] = {}
         for result in results:
             extraction_results.update(result)
 
         # Push results to object store
-        await workflow.execute_activity(
+        await workflow.execute_activity(  # pyright: ignore[reportUnknownMemberType]
             ExtractionActivities.push_results_to_object_store,
             {"output_prefix": config.outputPrefix, "output_path": config.outputPath},
             retry_policy=retry_policy,

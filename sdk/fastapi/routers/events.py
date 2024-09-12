@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -21,7 +22,7 @@ async def read_items(
 
 @router.get("/{event_id}", response_model=Event)
 async def read_item(event_id: int, session: Session = Depends(get_session)):
-    db_event = Events.get_event(session, event_id)
+    db_event: Optional[Event] = Events.get_event(session, event_id)
     if db_event is None:
         raise HTTPException(status_code=404, detail="Event not found")
     return db_event

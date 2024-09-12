@@ -101,7 +101,7 @@ class ExtractionActivities:
 
     @staticmethod
     @activity.defn
-    async def push_results_to_object_store(output_config: dict) -> None:
+    async def push_results_to_object_store(output_config: Dict[str, str]) -> None:
         activity.logger.info("Pushing results to object store")
         try:
             output_prefix, output_path = (
