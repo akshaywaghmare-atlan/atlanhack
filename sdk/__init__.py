@@ -1,7 +1,7 @@
 from fastapi import FastAPI, APIRouter, HTTPException
 from abc import ABC, abstractmethod
 
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor  # pyright: ignore[reportMissingTypeStubs]
 
 from sdk import models
 from sdk.database import get_engine
@@ -10,7 +10,6 @@ from sdk.workflows import WorkflowBuilderInterface
 
 
 class AtlanApplicationBuilder(ABC):
-
     def __init__(self, workflow_builder_interface: WorkflowBuilderInterface = None):
         self.workflow_builder_interface = workflow_builder_interface
 
@@ -41,7 +40,9 @@ class FastAPIApplicationBuilder(AtlanApplicationBuilder):
         responses={404: {"description": "Not found"}},
     )
 
-    def __init__(self, app: FastAPI, workflow_builder_interface: WorkflowBuilderInterface=None):
+    def __init__(
+        self, app: FastAPI, workflow_builder_interface: WorkflowBuilderInterface = None
+    ):
         self.app = app
         self.app.include_router(health.router)
         super().__init__(workflow_builder_interface)
@@ -56,31 +57,50 @@ class FastAPIApplicationBuilder(AtlanApplicationBuilder):
 
     def on_api_service_start(self) -> None:
         super().on_api_service_start()
-        FastAPIInstrumentor.instrument_app(self.app)
+        FastAPIInstrumentor.instrument_app(self.app)  # pyright: ignore[reportUnknownMemberType]
 
     async def test_auth(self, credential: dict):
-        if not self.workflow_builder_interface or not self.workflow_builder_interface.auth_interface:
-            raise HTTPException(status_code=500, detail="Auth interface not implemented")
+        if (
+            not self.workflow_builder_interface
+            or not self.workflow_builder_interface.auth_interface
+        ):
+            raise HTTPException(
+                status_code=500, detail="Auth interface not implemented"
+            )
         try:
             return self.workflow_builder_interface.auth_interface.test_auth(credential)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
     async def fetch_metadata(self, credential: dict):
-        if not self.workflow_builder_interface or not self.workflow_builder_interface.metadata_interface:
-            raise HTTPException(status_code=500, detail="Metadata interface not implemented")
+        if (
+            not self.workflow_builder_interface
+            or not self.workflow_builder_interface.metadata_interface
+        ):
+            raise HTTPException(
+                status_code=500, detail="Metadata interface not implemented"
+            )
         try:
             return {
-                'rows': self.workflow_builder_interface.metadata_interface.fetch_metadata(credential)
+                "rows": self.workflow_builder_interface.metadata_interface.fetch_metadata(
+                    credential
+                )
             }
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
     async def preflight_check(self, form_data: dict):
-        if not self.workflow_builder_interface or not self.workflow_builder_interface.preflight_check_interface:
-            raise HTTPException(status_code=500, detail="Preflight check interface not implemented")
+        if (
+            not self.workflow_builder_interface
+            or not self.workflow_builder_interface.preflight_check_interface
+        ):
+            raise HTTPException(
+                status_code=500, detail="Preflight check interface not implemented"
+            )
         try:
-            return self.workflow_builder_interface.preflight_check_interface.preflight_check(form_data)
+            return self.workflow_builder_interface.preflight_check_interface.preflight_check(
+                form_data
+            )
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 

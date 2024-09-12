@@ -37,7 +37,7 @@ class WorkflowConfig(BaseModel):
     chunkSize: int = -1
 
 
-class MetadataConfig(BaseModel):
+class MetadataPayload(BaseModel):
     exclude_filter: str = Field(default="", alias="exclude-filter")
     include_filter: str = Field(default="", alias="include-filter")
     temp_table_regex: str = Field(default="", alias="temp-table-regex")
@@ -57,14 +57,14 @@ class MetadataConfig(BaseModel):
         populate_by_name = True
 
 
-class ConnectionConfig(BaseModel):
+class ConnectionPayload(BaseModel):
     connection: str
 
 
 class WorkflowRequestPayload(BaseModel):
     credentials: CredentialPayload = Field(alias="credentials")
-    connection: ConnectionConfig
-    metadata: MetadataConfig
+    connection: ConnectionPayload
+    metadata: MetadataPayload
 
     class Config:
         populate_by_name = True

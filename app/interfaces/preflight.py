@@ -17,7 +17,7 @@ class Preflight:
     @staticmethod
     def check(payload: PreflightPayload) -> Dict[str, Any]:
         logger.info("Starting preflight check")
-        results = {}
+        results: Dict[str, Any] = {}
         try:
             results["databaseSchemaCheck"] = Preflight.check_schemas_and_databases(
                 payload
@@ -47,7 +47,7 @@ class Preflight:
         cursor = conn.cursor()
         cursor.execute(FILTER_METADATA_SQL)
 
-        result = []
+        result: List[Dict[str, str]] = []
         while True:
             rows = cursor.fetchmany(1000)  # Fetch 1000 rows at a time
             if not rows:
@@ -68,7 +68,7 @@ class Preflight:
         logger.info("Starting schema and database check")
         connection = None
         try:
-            schemas_results = Preflight.fetch_metadata(
+            schemas_results: List[Dict[str, str]] = Preflight.fetch_metadata(
                 payload.credentials.get_credential_config()
             )
 
@@ -103,10 +103,10 @@ class Preflight:
 
     @staticmethod
     def extract_allowed_schemas(
-        schemas_results: List[Dict[str, Any]],
+        schemas_results: List[Dict[str, str]],
     ) -> Tuple[Set[str], Set[str]]:
-        allowed_databases = set()
-        allowed_schemas = set()
+        allowed_databases: Set[str] = set()
+        allowed_schemas: Set[str] = set()
         for schema in schemas_results:
             allowed_databases.add(schema[Preflight.DATABASE_KEY])
             allowed_schemas.add(
@@ -202,7 +202,7 @@ class Preflight:
     def normalize_filters(
         filter_dict: Dict[str, List[str]], is_include: bool
     ) -> List[str]:
-        normalized_filter_list = []
+        normalized_filter_list: List[str] = []
         for filtered_db, filtered_schemas in filter_dict.items():
             db = filtered_db.strip("^$")
             if not filtered_schemas:
