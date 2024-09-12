@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 import logging
-import multiprocessing
+import threading
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 from app.postgres_workflow_builder import PostgresWorkflowBuilder
@@ -8,8 +8,6 @@ from app.postgres_workflow_builder import PostgresWorkflowBuilder
 from fastapi import FastAPI
 from sdk import FastAPIApplicationBuilder
 from app.routers import workflow, preflight
-from app.worker import start_worker
-
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -17,11 +15,15 @@ logger.setLevel(logging.DEBUG)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # starts a temporal worker process
-    worker_process = multiprocessing.Process(target=start_worker)
-    worker_process.start()
+    if (
+        atlan_app_builder.workflow_builder_interface
+        and atlan_app_builder.workflow_builder_interface.worker_interface
+    ):
+        worker_thread = threading.Thread(
+            target=atlan_app_builder.start_worker, daemon=True
+        )
+        worker_thread.start()
     yield
-    worker_process.terminate()
 
 
 app = FastAPI(title="Postgres App", lifespan=lifespan)
@@ -40,9 +42,9 @@ if __name__ == "__main__":
     atlan_app_builder.add_workflows_router()
 
     # always mount the frontend at the end
-    # app.mount(
-    #     "/", StaticFiles(directory="frontend/.output/public", html=True), name="static"
-    # )
+    app.mount(
+        "/", StaticFiles(directory="frontend/.output/public", html=True), name="static"
+    )
 
     uvicorn.run(
         app,

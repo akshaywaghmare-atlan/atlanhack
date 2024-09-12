@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class SQLWorkflowPreflightCheckInterface(WorkflowPreflightCheckInterface):
+    METADATA_SQL = ""
 
     def preflight_check(self, form_data: Dict[str, Any]) -> Dict[str, Any]:
         credential = form_data.get("credential")

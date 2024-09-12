@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, text, CursorResult
+from sqlalchemy import create_engine, text
 
 from sdk.workflows import WorkflowMetadataInterface
 from typing import Dict, Any, List
@@ -9,8 +9,9 @@ from sdk.workflows.sql.utils import rows_as_dicts
 logger = logging.getLogger(__name__)
 
 
-
 class SQLWorkflowMetadataInterface(WorkflowMetadataInterface):
+    METADATA_SQL = ""
+
     def fetch_metadata(self, credential: Dict[str, Any]) -> List[Dict[str, Any]]:
         try:
             engine = create_engine(

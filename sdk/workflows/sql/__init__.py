@@ -1,12 +1,19 @@
 import logging
 
-from sdk.workflows import WorkflowBuilderInterface, WorkflowMetadataInterface, \
-    WorkflowPreflightCheckInterface, WorkflowAuthInterface
+from sdk.workflows import (
+    WorkflowBuilderInterface,
+    WorkflowMetadataInterface,
+    WorkflowPreflightCheckInterface,
+    WorkflowAuthInterface,
+    WorkflowWorkerInterface,
+)
 from abc import ABC, abstractmethod
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 from sdk.workflows.sql.auth import SQLWorkflowAuthInterface
 from sdk.workflows.sql.metadata import SQLWorkflowMetadataInterface
+from sdk.workflows.sql.preflight_check import SQLWorkflowPreflightCheckInterface
+from sdk.workflows.sql.worker import SQLWorkflowWorkerInterface
 
 logger = logging.getLogger(__name__)
 
@@ -18,15 +25,17 @@ class SQLWorkflowBuilderInterface(WorkflowBuilderInterface, ABC):
 
     @abstractmethod
     def get_sqlalchemy_connect_args(
-            self, credentials: Dict[str, Any]
+        self, credentials: Dict[str, Any]
     ) -> Dict[str, Any]:
         pass
 
-    def __init__(self,
-                 auth_interface: WorkflowAuthInterface = None,
-                 metadata_interface: WorkflowMetadataInterface = None,
-                 preflight_check_interface: WorkflowPreflightCheckInterface = None
-                 ):
+    def __init__(
+        self,
+        auth_interface: Optional[WorkflowAuthInterface] = None,
+        metadata_interface: Optional[WorkflowMetadataInterface] = None,
+        preflight_check_interface: Optional[WorkflowPreflightCheckInterface] = None,
+        worker_interface: Optional[WorkflowWorkerInterface] = None,
+    ):
         if not auth_interface:
             auth_interface = SQLWorkflowAuthInterface(
                 self.get_sqlalchemy_connection_string,
@@ -40,9 +49,20 @@ class SQLWorkflowBuilderInterface(WorkflowBuilderInterface, ABC):
             )
 
         if not preflight_check_interface:
-            preflight_check_interface = SQLWorkflowMetadataInterface(
+            preflight_check_interface = SQLWorkflowPreflightCheckInterface(
                 self.get_sqlalchemy_connection_string,
                 self.get_sqlalchemy_connect_args,
             )
 
-        super().__init__(auth_interface, metadata_interface, preflight_check_interface)
+        if not worker_interface:
+            worker_interface = SQLWorkflowWorkerInterface(
+                self.get_sqlalchemy_connection_string,
+                self.get_sqlalchemy_connect_args,
+            )
+
+        super().__init__(
+            auth_interface,
+            metadata_interface,
+            preflight_check_interface,
+            worker_interface,
+        )

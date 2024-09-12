@@ -1,3 +1,5 @@
+import asyncio
+from typing import Optional
 from fastapi import FastAPI, APIRouter, HTTPException
 from abc import ABC, abstractmethod
 
@@ -10,38 +12,46 @@ from sdk.workflows import WorkflowBuilderInterface
 
 
 class AtlanApplicationBuilder(ABC):
-    def __init__(self, workflow_builder_interface: WorkflowBuilderInterface = None):
+    def __init__(
+        self, workflow_builder_interface: Optional[WorkflowBuilderInterface] = None
+    ):
         self.workflow_builder_interface = workflow_builder_interface
 
     @abstractmethod
-    def add_telemetry_routes(self):
+    def add_telemetry_routes(self) -> None:
         raise NotImplementedError
 
     @abstractmethod
-    def add_event_routes(self):
+    def add_event_routes(self) -> None:
         raise NotImplementedError
 
-    def on_api_service_start(self) -> None:
+    def on_api_service_start(self):
         models.Base.metadata.create_all(bind=get_engine())
 
     @staticmethod
-    def on_api_service_stop() -> None:
+    def on_api_service_stop():
         models.Base.metadata.drop_all(bind=get_engine())
 
     @abstractmethod
-    def add_workflows_router(self):
+    def add_workflows_router(self) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def start_worker(self) -> None:
         raise NotImplementedError
 
 
 class FastAPIApplicationBuilder(AtlanApplicationBuilder):
-    workflows_router = APIRouter(
+    workflows_router: APIRouter = APIRouter(
         prefix="/workflows",
         tags=["workflows"],
         responses={404: {"description": "Not found"}},
     )
 
     def __init__(
-        self, app: FastAPI, workflow_builder_interface: WorkflowBuilderInterface = None
+        self,
+        app: FastAPI,
+        workflow_builder_interface: Optional[WorkflowBuilderInterface] = None,
     ):
         self.app = app
         self.app.include_router(health.router)
@@ -55,9 +65,16 @@ class FastAPIApplicationBuilder(AtlanApplicationBuilder):
     def add_event_routes(self) -> None:
         self.app.include_router(events.router)
 
-    def on_api_service_start(self) -> None:
+    def on_api_service_start(self):
         super().on_api_service_start()
         FastAPIInstrumentor.instrument_app(self.app)  # pyright: ignore[reportUnknownMemberType]
+
+    def start_worker(self):
+        if (
+            self.workflow_builder_interface
+            and self.workflow_builder_interface.worker_interface
+        ):
+            asyncio.run(self.workflow_builder_interface.worker_interface.run_worker())
 
     async def test_auth(self, credential: dict):
         if (
@@ -104,6 +121,19 @@ class FastAPIApplicationBuilder(AtlanApplicationBuilder):
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
+    async def start_workflow(self, workflow_args: dict) -> dict:
+        if (
+            not self.workflow_builder_interface
+            or not self.workflow_builder_interface.worker_interface
+        ):
+            raise HTTPException(
+                status_code=500, detail="Worker interface not implemented"
+            )
+        try:
+            return self.workflow_builder_interface.worker_interface.run(workflow_args)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
     def add_workflows_router(self):
         self.workflows_router.add_api_route(
             path="/test-auth",
@@ -122,6 +152,13 @@ class FastAPIApplicationBuilder(AtlanApplicationBuilder):
         self.workflows_router.add_api_route(
             path="/preflight-check",
             endpoint=self.preflight_check,
+            methods=["POST"],
+            response_model=dict,
+        )
+
+        self.workflows_router.add_api_route(
+            path="/start-workflow",
+            endpoint=self.start_workflow,
             methods=["POST"],
             response_model=dict,
         )
