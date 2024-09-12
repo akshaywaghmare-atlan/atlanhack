@@ -15,6 +15,7 @@ logger.setLevel(logging.DEBUG)
 
 @app.on_event("startup")
 def start_worker_process():
+    atlan_app_builder.on_api_service_start()
     # starts a temporal worker process
     worker_process = multiprocessing.Process(target=start_worker)
     worker_process.start()
@@ -26,7 +27,6 @@ app.include_router(preflight.router)
 
 if __name__ == "__main__":
     atlan_app_builder = FastAPIApplicationBuilder(app)
-    atlan_app_builder.on_api_service_start()
     atlan_app_builder.add_telemetry_routes()
     atlan_app_builder.add_event_routes()
 
