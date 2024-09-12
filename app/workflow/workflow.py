@@ -70,7 +70,7 @@ class ExtractionWorkflow:
         for typename, query in metadata_types.items():
             activities.append(
                 workflow.execute_activity(
-                    ExtractionActivities.extract_and_store_metadata,
+                    ExtractionActivities.extract_metadata,
                     ExtractionConfig(
                         workflowConfig=config, typename=typename, query=query
                     ),

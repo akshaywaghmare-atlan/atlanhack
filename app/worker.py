@@ -22,7 +22,7 @@ async def run_worker():
         workflows=[ExtractionWorkflow],
         activities=[
             ExtractionActivities.create_output_directory,
-            ExtractionActivities.extract_and_store_metadata,
+            ExtractionActivities.extract_metadata,
             ExtractionActivities.push_results_to_object_store,
         ],
         workflow_runner=SandboxedWorkflowRunner(

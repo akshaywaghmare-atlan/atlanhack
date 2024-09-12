@@ -21,7 +21,7 @@ class ExtractionActivities:
 
     @staticmethod
     @activity.defn
-    async def extract_and_store_metadata(
+    async def extract_metadata(
         extConfig: ExtractionConfig,
     ) -> Dict[str, Dict[str, int]]:
         workflow_config = extConfig.workflowConfig

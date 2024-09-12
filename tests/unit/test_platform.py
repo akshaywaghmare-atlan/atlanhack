@@ -65,7 +65,7 @@ def test_extract_credentials(mock_dapr_client):
     mock_state.data = '{"host": "test_host", "port": 1234, "user": "test_user", "password": "test_pass", "database": "test_database"}'
     mock_dapr_client.get_state.return_value = mock_state
 
-    credential = Platform.extract_credentials("test_guid")
+    credential = Platform.extract_credentials("credential_guid")
 
     assert isinstance(credential, BasicCredential)
     assert credential.user == "test_user"
@@ -75,7 +75,7 @@ def test_extract_credentials(mock_dapr_client):
     assert credential.database == "test_database"
 
     mock_dapr_client.get_state.assert_called_once_with(
-        store_name=STATE_STORE_NAME, key="test_guid"
+        store_name=STATE_STORE_NAME, key="credential_guid"
     )
 
 
@@ -90,7 +90,9 @@ def test_push_to_object_store(mock_dapr_client):
     Args:
         mock_dapr_client (MagicMock): A mocked instance of DaprClient.
     """
-    with patch("os.walk") as mock_walk, patch("builtins.open", MagicMock()):
+    with patch("os.path.isdir", return_value=True), patch(
+        "os.walk"
+    ) as mock_walk, patch("builtins.open", MagicMock()):
         mock_walk.return_value = [
             ("/tmp/metadata/workflowId/runId", [], ["file1.txt", "file2.txt"]),
         ]
