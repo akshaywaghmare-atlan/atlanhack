@@ -28,6 +28,8 @@ class WorkflowMetadataInterface(ABC):
 
 
 class WorkflowPreflightCheckInterface(ABC):
+    METADATA_SQL = ""
+
     def __init__(self, get_sql_alchemy_string_fn: Callable[[Dict[str, Any]], str],
                     get_sql_alchemy_connect_args_fn: Callable[[Dict[str, Any]], Dict[str, Any]]):
         self.get_sql_alchemy_string_fn = get_sql_alchemy_string_fn

@@ -39,4 +39,10 @@ class SQLWorkflowBuilderInterface(WorkflowBuilderInterface, ABC):
                 self.get_sqlalchemy_connect_args,
             )
 
+        if not preflight_check_interface:
+            preflight_check_interface = SQLWorkflowMetadataInterface(
+                self.get_sqlalchemy_connection_string,
+                self.get_sqlalchemy_connect_args,
+            )
+
         super().__init__(auth_interface, metadata_interface, preflight_check_interface)

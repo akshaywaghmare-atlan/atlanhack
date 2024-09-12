@@ -76,6 +76,14 @@ class FastAPIApplicationBuilder(AtlanApplicationBuilder):
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
+    async def preflight_check(self, form_data: dict):
+        if not self.workflow_builder_interface or not self.workflow_builder_interface.preflight_check_interface:
+            raise HTTPException(status_code=500, detail="Preflight check interface not implemented")
+        try:
+            return self.workflow_builder_interface.preflight_check_interface.preflight_check(form_data)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
     def add_workflows_router(self):
         self.workflows_router.add_api_route(
             path="/test-auth",
@@ -87,6 +95,13 @@ class FastAPIApplicationBuilder(AtlanApplicationBuilder):
         self.workflows_router.add_api_route(
             path="/fetch-metadata",
             endpoint=self.fetch_metadata,
+            methods=["POST"],
+            response_model=dict,
+        )
+
+        self.workflows_router.add_api_route(
+            path="/preflight-check",
+            endpoint=self.preflight_check,
             methods=["POST"],
             response_model=dict,
         )
