@@ -40,6 +40,12 @@ class WorkflowPreflightCheckInterface(ABC):
         raise NotImplementedError
 
 
+class WorkflowWorkerInterface(ABC):
+    @abstractmethod
+    def run(self):
+        raise NotImplementedError
+
+
 class WorkflowBuilderInterface(ABC):
     def __init__(self,
                  auth_interface: WorkflowAuthInterface=None,
