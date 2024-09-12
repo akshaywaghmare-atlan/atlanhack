@@ -1,11 +1,12 @@
 import logging
 
-from sdk.workflows import WorkflowBuilderInterface, WorkflowFetchMetadataInterface, \
+from sdk.workflows import WorkflowBuilderInterface, WorkflowMetadataInterface, \
     WorkflowPreflightCheckInterface, WorkflowAuthInterface
 from abc import ABC, abstractmethod
 from typing import Dict, Any
 
 from sdk.workflows.sql.auth import SQLWorkflowAuthInterface
+from sdk.workflows.sql.metadata import SQLWorkflowMetadataInterface
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +24,7 @@ class SQLWorkflowBuilderInterface(WorkflowBuilderInterface, ABC):
 
     def __init__(self,
                  auth_interface: WorkflowAuthInterface = None,
-                 fetch_metadata_interface: WorkflowFetchMetadataInterface = None,
+                 metadata_interface: WorkflowMetadataInterface = None,
                  preflight_check_interface: WorkflowPreflightCheckInterface = None
                  ):
         if not auth_interface:
@@ -32,4 +33,10 @@ class SQLWorkflowBuilderInterface(WorkflowBuilderInterface, ABC):
                 self.get_sqlalchemy_connect_args,
             )
 
-        super().__init__(auth_interface, fetch_metadata_interface, preflight_check_interface)
+        if not metadata_interface:
+            metadata_interface = SQLWorkflowMetadataInterface(
+                self.get_sqlalchemy_connection_string,
+                self.get_sqlalchemy_connect_args,
+            )
+
+        super().__init__(auth_interface, metadata_interface, preflight_check_interface)

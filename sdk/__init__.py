@@ -66,6 +66,16 @@ class FastAPIApplicationBuilder(AtlanApplicationBuilder):
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
+    async def fetch_metadata(self, credential: dict):
+        if not self.workflow_builder_interface or not self.workflow_builder_interface.metadata_interface:
+            raise HTTPException(status_code=500, detail="Metadata interface not implemented")
+        try:
+            return {
+                'rows': self.workflow_builder_interface.metadata_interface.fetch_metadata(credential)
+            }
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
     def add_workflows_router(self):
         self.workflows_router.add_api_route(
             path="/test-auth",
@@ -73,4 +83,12 @@ class FastAPIApplicationBuilder(AtlanApplicationBuilder):
             methods=["POST"],
             response_model=bool,
         )
+
+        self.workflows_router.add_api_route(
+            path="/fetch-metadata",
+            endpoint=self.fetch_metadata,
+            methods=["POST"],
+            response_model=dict,
+        )
+
         self.app.include_router(self.workflows_router)
