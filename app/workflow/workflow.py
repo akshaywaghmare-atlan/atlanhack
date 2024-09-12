@@ -12,12 +12,13 @@ from temporalio import workflow
 from temporalio.common import RetryPolicy
 from app.workflow.activities import ExtractionActivities
 from app.dto.workflow import ExtractionConfig, WorkflowConfig
+from typing import Coroutine, List, Any
 
 
 @workflow.defn
 class ExtractionWorkflow:
     @workflow.run
-    async def extract_metadata(self, config: WorkflowConfig) -> None:
+    async def run(self, config: WorkflowConfig) -> None:
         workflow.logger.info(f"Starting extraction workflow for {config.workflowId}")
         retry_policy = RetryPolicy(maximum_attempts=3)
 
@@ -27,7 +28,7 @@ class ExtractionWorkflow:
         )
 
         # Create output directory
-        await workflow.execute_activity(
+        await workflow.execute_activity(  # pyright: ignore[reportUnknownMemberType]
             ExtractionActivities.create_output_directory,
             config.outputPath,
             retry_policy=retry_policy,
@@ -65,10 +66,10 @@ class ExtractionWorkflow:
         }
 
         # Extract and store metadata for each type
-        activities = []
+        activities: List[Coroutine[Any, Any, None]] = []
         for typename, query in metadata_types.items():
             activities.append(
-                workflow.execute_activity(
+                workflow.execute_activity(  # pyright: ignore[reportUnknownMemberType]
                     ExtractionActivities.extract_and_store_metadata,
                     ExtractionConfig(
                         workflowConfig=config, typename=typename, query=query
@@ -82,7 +83,7 @@ class ExtractionWorkflow:
         await asyncio.gather(*activities)
 
         # Push results to object store
-        await workflow.execute_activity(
+        await workflow.execute_activity(  # pyright: ignore[reportUnknownMemberType]
             ExtractionActivities.push_results_to_object_store,
             {"output_prefix": config.outputPrefix, "output_path": config.outputPath},
             retry_policy=retry_policy,

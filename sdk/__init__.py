@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from abc import ABC, abstractmethod
 
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor  # pyright: ignore[reportMissingTypeStubs]
 
 from sdk import models
 from sdk.database import get_engine
@@ -40,4 +40,4 @@ class FastAPIApplicationBuilder(AtlanApplicationBuilder):
 
     def on_api_service_start(self) -> None:
         super().on_api_service_start()
-        FastAPIInstrumentor.instrument_app(self.app)
+        FastAPIInstrumentor.instrument_app(self.app)  # pyright: ignore[reportUnknownMemberType]

@@ -1,4 +1,4 @@
-from typing import List, Sequence
+from typing import List, Optional, Sequence
 
 from google.protobuf.json_format import MessageToDict
 from sqlalchemy.orm import Session
@@ -9,7 +9,7 @@ from opentelemetry.proto.metrics.v1.metrics_pb2 import MetricsData
 
 class Metrics:
     @staticmethod
-    def get_metric(session: Session, metric_id: int) -> Metric:
+    def get_metric(session: Session, metric_id: int) -> Optional[Metric]:
         return session.query(Metric).filter(Metric.id == metric_id).first()
 
     @staticmethod
@@ -20,7 +20,7 @@ class Metrics:
 
     @staticmethod
     def create_metrics(session: Session, metrics_data: MetricsData) -> List[Metric]:
-        metrics = []
+        metrics: List[Metric] = []
         for resource_metric in metrics_data.resource_metrics:
             resource_attributes = {}
             for resource_attribute in resource_metric.resource.attributes:
