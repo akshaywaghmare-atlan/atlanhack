@@ -1,5 +1,5 @@
-from datetime import datetime
-from typing import Sequence
+from datetime import UTC, datetime
+from typing import List, Optional, Sequence
 
 from sqlalchemy.orm import Session
 
@@ -9,7 +9,7 @@ from opentelemetry.proto.logs.v1.logs_pb2 import LogsData
 
 class Logs:
     @staticmethod
-    def get_log(session: Session, event_id: int) -> Log:
+    def get_log(session: Session, event_id: int) -> Optional[Log]:
         return session.query(Log).filter(Log.id == event_id).first()
 
     @staticmethod
@@ -25,8 +25,8 @@ class Logs:
         )
 
     @staticmethod
-    def create_logs(session: Session, logs_data: LogsData) -> list[Log]:
-        logs = []
+    def create_logs(session: Session, logs_data: LogsData) -> List[Log]:
+        logs: List[Log] = []
         for resource_log in logs_data.resource_logs:
             resource_attributes = {}
             for resource_attribute in resource_log.resource.attributes:
@@ -45,11 +45,11 @@ class Logs:
                         scope_name=scope_log.scope.name,
                         severity=log.severity_text,
                         severity_number=log.severity_number.real,
-                        observed_timestamp=datetime.utcfromtimestamp(
-                            log.observed_time_unix_nano // 1000000000
+                        observed_timestamp=datetime.fromtimestamp(
+                            log.observed_time_unix_nano // 1000000000, tz=UTC
                         ),
-                        timestamp=datetime.utcfromtimestamp(
-                            log.time_unix_nano // 1000000000
+                        timestamp=datetime.fromtimestamp(
+                            log.observed_time_unix_nano // 1000000000, tz=UTC
                         ),
                         body=log.body.string_value,
                         trace_id=log.trace_id.hex(),

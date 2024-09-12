@@ -1,5 +1,5 @@
-from datetime import datetime
-from typing import Sequence
+from datetime import UTC, datetime
+from typing import Any, Dict, List, Sequence
 
 from sqlalchemy.orm import Session
 
@@ -20,7 +20,7 @@ class Traces:
 
     @staticmethod
     def create_traces(session: Session, traces_data: TracesData) -> list[Trace]:
-        traces = []
+        traces: list[Trace] = []
         for resource_span in traces_data.resource_spans:
             resource_attributes = {}
             for resource_attribute in resource_span.resource.attributes:
@@ -34,13 +34,13 @@ class Traces:
                     for attribute in span.attributes:
                         attributes[attribute.key] = attribute.value.string_value
 
-                    events = []
+                    events: List[Dict[str, Any]] = []
                     for event in span.events:
-                        event_data = {
+                        event_data: Dict[str, Any] = {
                             "name": event.name,
                             "timestamp_unix_nano": event.time_unix_nano,
                         }
-                        event_attributes = {}
+                        event_attributes: Dict[str, Any] = {}
                         for attribute in event.attributes:
                             event_attributes[attribute.key] = (
                                 attribute.value.string_value
@@ -51,11 +51,11 @@ class Traces:
                     db_trace = Trace(
                         resource_attributes=resource_attributes,
                         name=span.name,
-                        start_time=datetime.utcfromtimestamp(
-                            span.start_time_unix_nano // 1000000000
+                        start_time=datetime.fromtimestamp(
+                            span.start_time_unix_nano // 1000000000, tz=UTC
                         ),
-                        end_time=datetime.utcfromtimestamp(
-                            span.end_time_unix_nano // 1000000000
+                        end_time=datetime.fromtimestamp(
+                            span.end_time_unix_nano // 1000000000, tz=UTC
                         ),
                         trace_id=span.trace_id.hex(),
                         span_id=span.span_id.hex(),
