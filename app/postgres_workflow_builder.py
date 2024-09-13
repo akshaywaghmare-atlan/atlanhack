@@ -2,13 +2,16 @@ from typing import Dict, Any, List
 from app.const import METADATA_EXTRACTION_TASK_QUEUE
 from app.dto.credentials import CredentialPayload
 from app.dto.preflight import PreflightPayload
+from app.dto.workflow import WorkflowRequestPayload
 from app.interfaces.preflight import Preflight
+from app.interfaces.workflow import Workflow
 from app.workflow.activities import ExtractionActivities
 from app.workflow.workflow import ExtractionWorkflow
 from sdk.workflows.sql import SQLWorkflowBuilderInterface, SQLWorkflowMetadataInterface
 
 from sdk.workflows.sql.preflight_check import SQLWorkflowPreflightCheckInterface
 from sdk.workflows.sql.worker import SQLWorkflowWorkerInterface
+from urllib.parse import quote_plus
 
 
 class PostgresWorkflowMetadata(SQLWorkflowMetadataInterface):
@@ -33,7 +36,6 @@ class PostgresWorkflowPreflight(SQLWorkflowPreflightCheckInterface):
     """
 
     def preflight_check(self, form_data: Dict[str, Any]) -> Dict[str, Any]:
-        # credential, form_data = form_data.get("credential"), form_data.get("formData")
         return Preflight.check(PreflightPayload(**form_data))
 
 
@@ -47,10 +49,16 @@ class PostgresWorkflowWorker(SQLWorkflowWorkerInterface):
     ]
     PASSTHROUGH_MODULES = ["sdk"]
 
+    async def run_workflow(self, workflow_args: Dict[str, Any]) -> Dict[str, Any]:
+        workflow_payload = WorkflowRequestPayload(**workflow_args)
+        workflow_run_details = await Workflow.run(workflow_payload)
+        return workflow_run_details
+
 
 class PostgresWorkflowBuilder(SQLWorkflowBuilderInterface):
     def get_sqlalchemy_connection_string(self, credentials: Dict[str, Any]) -> str:
-        return f"postgresql+psycopg2://{credentials['username']}:{credentials['password']}@{credentials['host']}:{credentials['port']}/{credentials['database']}"
+        encoded_password = quote_plus(credentials["password"])
+        return f"postgresql+psycopg2://{credentials['userName']}:{encoded_password}@{credentials['host']}:{credentials['port']}/{credentials['database']}"
 
     def get_sqlalchemy_connect_args(
         self, credentials: Dict[str, Any]

@@ -74,7 +74,7 @@ class WorkflowWorkerInterface(ABC):
         self.get_sql_alchemy_connect_args_fn = get_sql_alchemy_connect_args_fn
 
     @abstractmethod
-    def run(self, workflow_args: Dict[str, Any]) -> Dict[str, Any]:
+    async def run_workflow(self, workflow_args: Dict[str, Any]) -> Dict[str, Any]:
         raise NotImplementedError
 
     async def run_worker(

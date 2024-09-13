@@ -3,7 +3,7 @@ from sdk.dto.credentials import BasicCredential
 
 
 class CredentialPayload(BaseModel):
-    url: str
+    host: str
     port: int
     user_name: str = Field(..., alias="userName")
     password: str
@@ -14,7 +14,7 @@ class CredentialPayload(BaseModel):
 
     def get_credential_config(self) -> BasicCredential:
         return BasicCredential(
-            host=self.url,
+            host=self.host,
             port=self.port,
             database=self.database,
             user=self.user_name,

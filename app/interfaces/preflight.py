@@ -2,7 +2,7 @@ from typing import Dict, Any, List, Set, Tuple
 import logging
 import json
 from app.common.utils import connect_to_db
-from app.const import FILTER_METADATA_SQL, TEST_AUTHENTICATION_SQL, TABLES_CHECK_SQL
+from app.const import FILTER_METADATA_SQL, TABLES_CHECK_SQL
 from sdk.dto.credentials import BasicCredential
 from app.dto.preflight import PreflightPayload
 
@@ -28,18 +28,6 @@ class Preflight:
             logger.error("Error during preflight check", exc_info=True)
             results["error"] = f"Preflight check failed: {str(e)}"
         return results
-
-    @staticmethod
-    def test_authentication(credentials: BasicCredential):
-        try:
-            conn = connect_to_db(credentials)
-            cursor = conn.cursor()
-            cursor.execute(TEST_AUTHENTICATION_SQL)
-            row = cursor.fetchone()
-            return row[0] if row else None
-        except Exception as e:
-            logger.error("Error during authentication test", exc_info=True)
-            raise e
 
     @staticmethod
     def fetch_metadata(credentials: BasicCredential) -> List[Dict[str, str]]:

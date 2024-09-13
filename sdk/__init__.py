@@ -1,8 +1,9 @@
 import asyncio
 from typing import Optional
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException, status
 from abc import ABC, abstractmethod
 
+from fastapi.responses import JSONResponse
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor  # pyright: ignore[reportMissingTypeStubs]
 
 from sdk import models
@@ -85,9 +86,23 @@ class FastAPIApplicationBuilder(AtlanApplicationBuilder):
                 status_code=500, detail="Auth interface not implemented"
             )
         try:
-            return self.workflow_builder_interface.auth_interface.test_auth(credential)
+            self.workflow_builder_interface.auth_interface.test_auth(credential)
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content={
+                    "success": True,
+                    "message": "Authentication successful",
+                },
+            )
         except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+            return JSONResponse(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                content={
+                    "success": False,
+                    "message": "Failed to test authentication",
+                    "error": str(e),
+                },
+            )
 
     async def fetch_metadata(self, credential: dict):
         if (
@@ -98,13 +113,24 @@ class FastAPIApplicationBuilder(AtlanApplicationBuilder):
                 status_code=500, detail="Metadata interface not implemented"
             )
         try:
-            return {
-                "rows": self.workflow_builder_interface.metadata_interface.fetch_metadata(
-                    credential
-                )
-            }
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content={
+                    "success": True,
+                    "data": self.workflow_builder_interface.metadata_interface.fetch_metadata(
+                        credential
+                    ),
+                },
+            )
         except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+            return JSONResponse(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                content={
+                    "success": False,
+                    "message": "Failed to fetch metadata",
+                    "error": str(e),
+                },
+            )
 
     async def preflight_check(self, form_data: dict):
         if (
@@ -115,13 +141,26 @@ class FastAPIApplicationBuilder(AtlanApplicationBuilder):
                 status_code=500, detail="Preflight check interface not implemented"
             )
         try:
-            return self.workflow_builder_interface.preflight_check_interface.preflight_check(
-                form_data
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content={
+                    "success": True,
+                    "data": self.workflow_builder_interface.preflight_check_interface.preflight_check(
+                        form_data
+                    ),
+                },
             )
         except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+            return JSONResponse(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                content={
+                    "success": False,
+                    "message": "Preflight check failed",
+                    "error": str(e),
+                },
+            )
 
-    async def start_workflow(self, workflow_args: dict) -> dict:
+    async def start_workflow(self, workflow_args: dict):
         if (
             not self.workflow_builder_interface
             or not self.workflow_builder_interface.worker_interface
@@ -130,13 +169,22 @@ class FastAPIApplicationBuilder(AtlanApplicationBuilder):
                 status_code=500, detail="Worker interface not implemented"
             )
         try:
-            return self.workflow_builder_interface.worker_interface.run(workflow_args)
+            await self.workflow_builder_interface.worker_interface.run_workflow(
+                workflow_args
+            )
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content={
+                    "success": True,
+                    "message": "Workflow started successfully",
+                },
+            )
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
     def add_workflows_router(self):
         self.workflows_router.add_api_route(
-            path="/test-auth",
+            path="/test-authentication",
             endpoint=self.test_auth,
             methods=["POST"],
             response_model=bool,

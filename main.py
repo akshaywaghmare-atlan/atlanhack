@@ -7,7 +7,6 @@ from app.postgres_workflow_builder import PostgresWorkflowBuilder
 
 from fastapi import FastAPI
 from sdk import FastAPIApplicationBuilder
-from app.routers import workflow
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -27,9 +26,6 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Postgres App", lifespan=lifespan)
-
-
-app.include_router(workflow.router)
 
 
 if __name__ == "__main__":
