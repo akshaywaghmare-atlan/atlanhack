@@ -15,7 +15,7 @@ router = APIRouter(
 )
 
 
-@router.get("", response_model=list[Metric])
+@router.get("", response_model=dict)
 async def read_metrics(
     from_timestamp: int = 0,
     to_timestamp: Optional[int] = None,

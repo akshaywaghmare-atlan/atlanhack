@@ -17,10 +17,10 @@ class Metrics:
     @staticmethod
     def get_metrics(
         session: Session, from_timestamp: int = 0, to_timestamp: Optional[int] = None
-    ) -> list[Type[Metric]]:
+    ) -> dict:
         if to_timestamp is None:
             to_timestamp = int(time.time())
-        return (
+        metrics = (
             session.query(Metric)
             .filter(
                 Metric.observed_timestamp >= datetime.fromtimestamp(from_timestamp),
@@ -28,6 +28,19 @@ class Metrics:
             )
             .all()
         )
+        metrics_response = {}
+        for metric in metrics:
+            metric_name = metric.name
+            if metric_name not in metrics_response:
+                metrics_response[metric_name] = {
+                    "resource_attributes": metric.resource_attributes,
+                    "scope_name": metric.scope_name,
+                    "description": metric.description,
+                    "unit": metric.unit,
+                    "data_points": [],
+                }
+            metrics_response[metric_name]["data_points"].append(metric.data_points)
+        return metrics_response
 
     @staticmethod
     def create_metrics(session: Session, metrics_data: MetricsData) -> List[Metric]:
