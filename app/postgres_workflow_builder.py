@@ -1,5 +1,8 @@
-from typing import Dict, Any
+from typing import Dict, Any, List
 from app.const import METADATA_EXTRACTION_TASK_QUEUE
+from app.dto.credentials import CredentialPayload
+from app.dto.preflight import PreflightPayload
+from app.interfaces.preflight import Preflight
 from app.workflow.activities import ExtractionActivities
 from app.workflow.workflow import ExtractionWorkflow
 from sdk.workflows.sql import SQLWorkflowBuilderInterface, SQLWorkflowMetadataInterface
@@ -16,6 +19,10 @@ class PostgresWorkflowMetadata(SQLWorkflowMetadataInterface):
         FROM INFORMATION_SCHEMA.SCHEMATA
     """
 
+    def fetch_metadata(self, credential: Dict[str, Any]) -> List[Dict[str, Any]]:
+        basic_credentials = CredentialPayload(**credential).get_credential_config()
+        return Preflight.fetch_metadata(basic_credentials)
+
 
 class PostgresWorkflowPreflight(SQLWorkflowPreflightCheckInterface):
     METADATA_SQL = """
@@ -24,6 +31,10 @@ class PostgresWorkflowPreflight(SQLWorkflowPreflightCheckInterface):
             SCHEMA_NAME as SCHEMA_NAME
         FROM INFORMATION_SCHEMA.SCHEMATA
     """
+
+    def preflight_check(self, form_data: Dict[str, Any]) -> Dict[str, Any]:
+        # credential, form_data = form_data.get("credential"), form_data.get("formData")
+        return Preflight.check(PreflightPayload(**form_data))
 
 
 class PostgresWorkflowWorker(SQLWorkflowWorkerInterface):
