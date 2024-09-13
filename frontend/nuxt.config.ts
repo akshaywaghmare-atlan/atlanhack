@@ -38,4 +38,9 @@ export default defineNuxtConfig({
     build: {
         transpile: ['treeselectjs', 'frontend/application-ui-sdk', 'echarts']
     },
+    app: {
+        head: {
+            link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+        },
+    }
 })
