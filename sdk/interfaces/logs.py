@@ -31,6 +31,7 @@ class Logs:
                 Log.timestamp >= datetime.fromtimestamp(from_timestamp),
                 Log.timestamp <= datetime.fromtimestamp(to_timestamp),
             )
+            .order_by(Log.timestamp.desc())
             .offset(skip)
             .limit(limit)
             .all()

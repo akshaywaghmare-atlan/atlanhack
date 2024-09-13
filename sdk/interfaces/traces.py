@@ -1,5 +1,5 @@
 import time
-from datetime import datetime
+from datetime import datetime, UTC
 from typing import Any, Dict, List, Sequence, Optional
 
 from sqlalchemy.orm import Session
@@ -29,6 +29,7 @@ class Traces:
                 Trace.start_time >= datetime.fromtimestamp(from_timestamp),
                 Trace.end_time <= datetime.fromtimestamp(to_timestamp),
             )
+            .order_by(Trace.start_time.desc())
             .offset(skip)
             .limit(limit)
             .all()
