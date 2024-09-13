@@ -4,7 +4,7 @@ from fastapi import FastAPI, APIRouter, HTTPException, status
 from abc import ABC, abstractmethod
 
 from fastapi.responses import JSONResponse
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor  # pyright: ignore[reportMissingTypeStubs]
+
 
 from sdk import models
 from sdk.database import get_engine
@@ -68,7 +68,7 @@ class FastAPIApplicationBuilder(AtlanApplicationBuilder):
 
     def on_api_service_start(self):
         super().on_api_service_start()
-        FastAPIInstrumentor.instrument_app(self.app)  # pyright: ignore[reportUnknownMemberType]
+        # FastAPIInstrumentor.instrument_app(self.app)  # pyright: ignore[reportUnknownMemberType]
 
     def start_worker(self):
         if (

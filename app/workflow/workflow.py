@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from datetime import timedelta
 from app.const import (
     DATABASE_EXTRACTION_SQL,
@@ -94,6 +95,5 @@ class ExtractionWorkflow:
         )
 
         # TODO: cleanup output directory
-
         workflow.logger.info(f"Extraction workflow completed for {config.workflowId}")
         workflow.logger.info(f"Extraction results summary: {extraction_results}")

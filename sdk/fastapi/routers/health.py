@@ -4,6 +4,9 @@ import socket
 import re
 import uuid
 import psutil
+from sdk.logging import get_logger
+
+logger = get_logger(__name__)
 
 router = APIRouter(
     prefix="/system",
@@ -25,6 +28,7 @@ async def health():
         "processor": platform.processor(),
         "ram": str(round(psutil.virtual_memory().total / (1024.0**3))) + " GB",
     }
+    logger.info("Health")
     return info
 
 

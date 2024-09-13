@@ -1,15 +1,17 @@
 from typing import Dict, Any
 import uuid
+
+from temporalio import activity, workflow
 from temporalio.client import Client, WorkflowFailureError, WorkflowHandle
 import logging
-
 from sdk.interfaces.platform import Platform
 from app.workflow.workflow import ExtractionWorkflow
 from app.dto.workflow import WorkflowConfig, WorkflowRequestPayload
 
 from app.const import METADATA_EXTRACTION_TASK_QUEUE
+from sdk.logging import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class Workflow:
@@ -19,6 +21,9 @@ class Workflow:
         workflow_id = str(uuid.uuid4())
         credential_config = payload.credentials.get_credential_config()
         credential_guid = Platform.store_credentials(credential_config)
+
+        workflow.logger.setLevel(logging.DEBUG)
+        activity.logger.setLevel(logging.DEBUG)
 
         config = WorkflowConfig(
             workflowId=workflow_id,
