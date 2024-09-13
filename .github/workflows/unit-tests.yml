@@ -1,4 +1,4 @@
-name: Unit Tests with Coverage for PR
+name: Unit Tests
 
 on:
   push:
