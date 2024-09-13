@@ -28,8 +28,8 @@ class Logs:
             session.query(Log)
             .filter(Log.body.contains(keyword))
             .filter(
-                Log.timestamp >= datetime.fromtimestamp(from_timestamp, tz=UTC),
-                Log.timestamp <= datetime.fromtimestamp(to_timestamp, tz=UTC),
+                Log.timestamp >= datetime.fromtimestamp(from_timestamp),
+                Log.timestamp <= datetime.fromtimestamp(to_timestamp),
             )
             .offset(skip)
             .limit(limit)
