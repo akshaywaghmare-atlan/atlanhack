@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
@@ -20,9 +20,11 @@ async def read_logs(
     skip: int = 0,
     limit: int = 100,
     keyword: str = "",
+    from_timestamp: int = 0,
+    to_timestamp: Optional[int] = None,
     session: Session = Depends(get_session),
 ):
-    return Logs.get_logs(session, skip, limit, keyword)
+    return Logs.get_logs(session, skip, limit, keyword, from_timestamp, to_timestamp)
 
 
 @router.post("", response_model=List[Log])

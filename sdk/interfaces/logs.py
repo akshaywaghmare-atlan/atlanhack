@@ -1,3 +1,4 @@
+import time
 from datetime import UTC, datetime
 from typing import List, Optional, Sequence
 
@@ -14,11 +15,22 @@ class Logs:
 
     @staticmethod
     def get_logs(
-        session: Session, skip: int = 0, limit: int = 100, keyword: str = ""
+        session: Session,
+        skip: int = 0,
+        limit: int = 100,
+        keyword: str = "",
+        from_timestamp: int = 0,
+        to_timestamp: Optional[int] = None,
     ) -> Sequence[Log]:
+        if to_timestamp is None:
+            to_timestamp = int(time.time())
         return (
             session.query(Log)
             .filter(Log.body.contains(keyword))
+            .filter(
+                Log.timestamp >= datetime.fromtimestamp(from_timestamp, tz=UTC),
+                Log.timestamp <= datetime.fromtimestamp(to_timestamp, tz=UTC),
+            )
             .offset(skip)
             .limit(limit)
             .all()

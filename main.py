@@ -14,6 +14,7 @@ logger.setLevel(logging.DEBUG)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    atlan_app_builder.on_api_service_start()
     if (
         atlan_app_builder.workflow_builder_interface
         and atlan_app_builder.workflow_builder_interface.worker_interface
@@ -32,7 +33,6 @@ if __name__ == "__main__":
     postgres_workflow = PostgresWorkflowBuilder()
 
     atlan_app_builder = FastAPIApplicationBuilder(app, postgres_workflow)
-    atlan_app_builder.on_api_service_start()
     atlan_app_builder.add_telemetry_routes()
     atlan_app_builder.add_event_routes()
     atlan_app_builder.add_workflows_router()

@@ -1,5 +1,5 @@
 from datetime import UTC, datetime
-from typing import Any, Dict, List, Sequence
+from typing import Any, Dict, List, Sequence, Optional
 
 from sqlalchemy.orm import Session
 
@@ -14,9 +14,22 @@ class Traces:
 
     @staticmethod
     def get_traces(
-        session: Session, skip: int = 0, limit: int = 100
+        session: Session,
+        skip: int = 0,
+        limit: int = 100,
+        from_timestamp: int = 0,
+        to_timestamp: Optional[int] = None,
     ) -> Sequence[Trace]:
-        return session.query(Trace).offset(skip).limit(limit).all()
+        return (
+            session.query(Trace)
+            .filter(
+                Trace.start_time >= datetime.fromtimestamp(from_timestamp, tz=UTC),
+                Trace.end_time <= datetime.fromtimestamp(to_timestamp, tz=UTC),
+            )
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
 
     @staticmethod
     def create_traces(session: Session, traces_data: TracesData) -> list[Trace]:

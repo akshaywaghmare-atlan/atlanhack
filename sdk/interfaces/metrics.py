@@ -1,4 +1,6 @@
-from typing import List, Optional, Sequence
+import time
+from datetime import datetime
+from typing import List, Optional, Sequence, Type
 
 from google.protobuf.json_format import MessageToDict
 from sqlalchemy.orm import Session
@@ -14,9 +16,18 @@ class Metrics:
 
     @staticmethod
     def get_metrics(
-        session: Session, skip: int = 0, limit: int = 100
-    ) -> Sequence[Metric]:
-        return session.query(Metric).offset(skip).limit(limit).all()
+        session: Session, from_timestamp: int = 0, to_timestamp: Optional[int] = None
+    ) -> list[Type[Metric]]:
+        if to_timestamp is None:
+            to_timestamp = int(time.time())
+        return (
+            session.query(Metric)
+            .filter(
+                Metric.observed_timestamp >= datetime.fromtimestamp(from_timestamp),
+                Metric.observed_timestamp <= datetime.fromtimestamp(to_timestamp),
+            )
+            .all()
+        )
 
     @staticmethod
     def create_metrics(session: Session, metrics_data: MetricsData) -> List[Metric]:
