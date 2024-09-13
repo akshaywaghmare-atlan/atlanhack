@@ -37,6 +37,7 @@ if __name__ == "__main__":
     postgres_workflow = PostgresWorkflowBuilder()
 
     atlan_app_builder = FastAPIApplicationBuilder(app, postgres_workflow)
+    atlan_app_builder.on_api_service_start()
     atlan_app_builder.add_telemetry_routes()
     atlan_app_builder.add_event_routes()
     atlan_app_builder.add_workflows_router()

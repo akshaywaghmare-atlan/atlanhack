@@ -8,14 +8,6 @@ class SQLWorkflowWorkerInterface(WorkflowWorkerInterface):
     TABLE_SQL = ""
     COLUMN_SQL = ""
 
-    def __init__(
-        self,
-        get_sql_alchemy_string_fn: Callable,
-        get_sql_alchemy_connect_args_fn: Callable,
-    ):
-        self.get_sql_alchemy_string_fn = get_sql_alchemy_string_fn
-        self.get_sql_alchemy_connect_args_fn = get_sql_alchemy_connect_args_fn
-
     def run(self, workflow_args: Dict[str, Any]) -> Dict[str, Any]:
         raise NotImplementedError
 

@@ -6,34 +6,13 @@ from app.dto.credentials import CredentialPayload
 class WorkflowConfig(BaseModel):
     workflowId: str
     credentialsGUID: str
-    defaultDatabaseName: str = ""
-    defaultSchemaName: str = ""
     includeFilterStr: str = "{}"
     excludeFilterStr: str = "{}"
-    hasDatabaseAbstraction: bool = False
-    augmentTableTypes: bool = False
-    useJDBCInternalMethods: bool = True
-    fetchPrimaryKeys: bool = True
-    fetchImportedKeys: bool = True
-    fetchColumns: bool = True
-    systemDatabaseRegexStr: str = "[]"
-    systemSchemaRegexStr: str = "[]"
     tempTableRegexStr: str = "[]"
-    includeTableRegexStr: str = "[]"
     outputType: str = "JSON"
     outputPrefix: str = "/tmp/metadata"
     outputPath: str = "/tmp/metadata/workflowId/runId"
     verbose: bool = False
-    useSourceSchemaFiltering: bool = False
-    aws_sts_session_duration_seconds: int = 3600
-    aws_sts_session_name: str = "atlan_jdbc_metadata_extractor"
-    databaseFilterSQL: str = "{}"
-    schemaFilterSQL: str = "{}"
-    tableFilterSQL: str = ""
-    unfilteredExtraCompanionSQLs: str = "{}"
-    dynamicQueryJSON: str = "{}"
-    excludeTableTypes: str = "[]"
-    columnFilterSQL: str = ""
     chunkSize: int = -1
 
 

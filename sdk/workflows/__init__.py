@@ -57,13 +57,21 @@ class WorkflowPreflightCheckInterface(ABC):
 
 
 class WorkflowWorkerInterface(ABC):
-    QUEUE_NAME = ""
+    QUEUE_NAME: str = ""
     WORKFLOWS: Sequence[ClassType] = []
     ACTIVITIES: Sequence[CallableType] = []
     PASSTHROUGH_MODULES: Sequence[str] = []
-    HOST = "localhost"
-    PORT = "7233"
-    NAMESPACE = "default"
+    HOST: str = "localhost"
+    PORT: str = "7233"
+    NAMESPACE: str = "default"
+
+    def __init__(
+        self,
+        get_sql_alchemy_string_fn: Callable,
+        get_sql_alchemy_connect_args_fn: Callable,
+    ):
+        self.get_sql_alchemy_string_fn = get_sql_alchemy_string_fn
+        self.get_sql_alchemy_connect_args_fn = get_sql_alchemy_connect_args_fn
 
     @abstractmethod
     def run(self, workflow_args: Dict[str, Any]) -> Dict[str, Any]:

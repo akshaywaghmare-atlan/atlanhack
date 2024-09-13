@@ -26,10 +26,9 @@ class Workflow:
             includeFilterStr=payload.metadata.include_filter,
             excludeFilterStr=payload.metadata.exclude_filter,
             tempTableRegexStr=payload.metadata.temp_table_regex,
-            outputType="json",
+            outputType="JSON",
             outputPrefix="/tmp/output",
             verbose=True,
-            useSourceSchemaFiltering=True,
         )
 
         try:

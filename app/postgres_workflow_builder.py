@@ -17,12 +17,21 @@ class PostgresWorkflowMetadata(SQLWorkflowMetadataInterface):
     """
 
 
+class PostgresWorkflowPreflight(SQLWorkflowPreflightCheckInterface):
+    METADATA_SQL = """
+        SELECT
+            CATALOG_NAME as DATABASE_NAME,
+            SCHEMA_NAME as SCHEMA_NAME
+        FROM INFORMATION_SCHEMA.SCHEMATA
+    """
+
+
 class PostgresWorkflowWorker(SQLWorkflowWorkerInterface):
     QUEUE_NAME = METADATA_EXTRACTION_TASK_QUEUE
     WORKFLOWS = [ExtractionWorkflow]
     ACTIVITIES = [
         ExtractionActivities.create_output_directory,
-        ExtractionActivities.extract_and_store_metadata,
+        ExtractionActivities.extract_metadata,
         ExtractionActivities.push_results_to_object_store,
     ]
     PASSTHROUGH_MODULES = ["sdk"]
@@ -39,11 +48,10 @@ class PostgresWorkflowBuilder(SQLWorkflowBuilderInterface):
 
     def __init__(self):
         # Preflight check
-        preflight_check = SQLWorkflowPreflightCheckInterface(
+        preflight_check = PostgresWorkflowPreflight(
             self.get_sqlalchemy_connection_string,
             self.get_sqlalchemy_connect_args,
         )
-        preflight_check.METADATA_SQL = PostgresWorkflowMetadata.METADATA_SQL
 
         # Metadata interface
         metadata_interface = PostgresWorkflowMetadata(
