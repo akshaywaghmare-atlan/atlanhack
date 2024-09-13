@@ -7,10 +7,10 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
-    "generate:copy": "node scripts/generate-and-copy.js"
+    "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "echarts": "^5.5.1",
     "fs-extra": "^11.2.0",
     "nuxt": "^3.12.4",
     "treeselectjs": "^0.11.0",

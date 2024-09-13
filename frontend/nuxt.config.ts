@@ -26,15 +26,16 @@ export default defineNuxtConfig({
     modulesDir: ['node_modules', 'frontend/sdk/node_modules'],
     vite: {
         resolve: {
-        alias: {
-            'treeselectjs': resolve(__dirname, 'node_modules/treeselectjs')
-        }
+            alias: {
+                'treeselectjs': resolve(__dirname, 'node_modules/treeselectjs'),
+                'echarts': resolve(__dirname, 'node_modules/echarts')
+            }
         },
         optimizeDeps: {
-        include: ['treeselectjs']
+            include: ['treeselectjs', 'echarts']
         }
     },
     build: {
-        transpile: ['treeselectjs', 'frontend/application-ui-sdk']
+        transpile: ['treeselectjs', 'frontend/application-ui-sdk', 'echarts']
     },
 })
