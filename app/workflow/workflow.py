@@ -12,7 +12,7 @@ from temporalio import workflow
 from temporalio.common import RetryPolicy
 from app.workflow.activities import ExtractionActivities
 from app.dto.workflow import ExtractionConfig, WorkflowConfig
-from typing import Coroutine, List, Any
+from typing import Coroutine, Dict, List, Any
 
 
 @workflow.defn
@@ -66,11 +66,11 @@ class ExtractionWorkflow:
         }
 
         # Extract and store metadata for each type
-        activities: List[Coroutine[Any, Any, None]] = []
+        activities: List[Coroutine[Any, Any, Any]] = []
         for typename, query in metadata_types.items():
             activities.append(
                 workflow.execute_activity(  # pyright: ignore[reportUnknownMemberType]
-                    ExtractionActivities.extract_and_store_metadata,
+                    ExtractionActivities.extract_metadata,
                     ExtractionConfig(
                         workflowConfig=config, typename=typename, query=query
                     ),
@@ -80,7 +80,10 @@ class ExtractionWorkflow:
             )
 
         # Wait for all activities to complete
-        await asyncio.gather(*activities)
+        results = await asyncio.gather(*activities)
+        extraction_results: Dict[str, Any] = {}
+        for result in results:
+            extraction_results.update(result)
 
         # Push results to object store
         await workflow.execute_activity(  # pyright: ignore[reportUnknownMemberType]
@@ -93,3 +96,4 @@ class ExtractionWorkflow:
         # TODO: cleanup output directory
 
         workflow.logger.info(f"Extraction workflow completed for {config.workflowId}")
+        workflow.logger.info(f"Extraction results summary: {extraction_results}")

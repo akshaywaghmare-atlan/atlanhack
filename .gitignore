@@ -34,7 +34,5 @@ archive.zip
 # frontend
 **/node_modules/**
 **/frontend/dist/**
-**/frontend/.output/**
 **/frontend/.nuxt/**
 dist/
-public/
