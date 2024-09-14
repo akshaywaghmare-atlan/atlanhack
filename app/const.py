@@ -27,10 +27,30 @@ SELECT * FROM pg_database WHERE datname = current_database();
 """
 
 SCHEMA_EXTRACTION_SQL = """
-SELECT * FROM information_schema.schemata
-WHERE schema_name NOT LIKE 'pg_%' AND schema_name != 'information_schema'
-AND concat(CATALOG_NAME, concat('.', SCHEMA_NAME)) !~ '{normalized_exclude_regex}'
-AND concat(CATALOG_NAME, concat('.', SCHEMA_NAME)) ~ '{normalized_include_regex}';
+SELECT
+    s.*,
+    table_counts.table_count,
+    table_counts.view_count,
+    table_counts.materialized_view_count
+FROM
+    information_schema.schemata s
+LEFT JOIN (
+    SELECT
+        table_schema,
+        SUM(CASE WHEN table_type = 'BASE TABLE' THEN 1 ELSE 0 END) as table_count,
+        SUM(CASE WHEN table_type = 'VIEW' THEN 1 ELSE 0 END) as view_count,
+        SUM(CASE WHEN table_type = 'MATERIALIZED VIEW' THEN 1 ELSE 0 END) as materialized_view_count
+    FROM
+        information_schema.tables
+    GROUP BY
+        table_schema
+) as table_counts
+ON s.schema_name = table_counts.table_schema
+WHERE
+    s.schema_name NOT LIKE 'pg_%'
+    AND s.schema_name != 'information_schema'
+    AND concat(s.CATALOG_NAME, concat('.', s.SCHEMA_NAME)) !~ '{normalized_exclude_regex}'
+    AND concat(s.CATALOG_NAME, concat('.', s.SCHEMA_NAME)) ~ '{normalized_include_regex}';
 """
 
 TABLE_EXTRACTION_SQL = """
@@ -115,6 +135,12 @@ SELECT
         WHEN C.relkind = 'p' THEN true
         ELSE false
     END AS PARTITIONED_TABLE,
+    CASE
+        WHEN C.relkind = 'r' THEN 'TABLE'
+        WHEN C.relkind = 'v' THEN 'VIEW'
+        WHEN C.relkind = 'm' THEN 'MATERIALIZED VIEW'
+        ELSE C.relkind::text
+    END AS TABLE_TYPE,
     columns.*,
     col_constraints.constraint_type,
     col_constraints.constraint_name
