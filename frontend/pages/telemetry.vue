@@ -1,29 +1,29 @@
 <template>
-    <div class="flex flex-col w-full h-full overflow-y-hidden">
+    <div
+        class="flex flex-col w-full p-5 m-4 overflow-y-hidden border-2 border-gray-200 border-solid rounded-lg box-shadow-md">
         <h1 class="px-4 my-4 mb-4 text-4xl font-bold">Telemetry</h1>
-        <div class="px-4 mb-4">
+        <div class="px-4">
             <ul class="flex border-b">
                 <li class="mr-1" v-for="tab in tabs" :key="tab">
-                    <a
-                        :class="[
-                            'inline-block py-2 px-4 text-base font-medium cursor-pointer transition-all duration-300 ease-in-out',
-                            activeTab === tab
-                                ? 'border-b-2 border-blue-500 text-blue-500'
-                                : 'text-gray-500 hover:text-gray-700 border-b-2 border-transparent'
-                        ]"
-                        @click="() => onChangeTab(tab)"
-                    >
+                    <a :class="[
+                        'inline-block py-2 px-4 text-base font-medium cursor-pointer transition-all duration-300 ease-in-out',
+                        activeTab === tab
+                            ? 'border-b-2 border-blue-500 text-blue-500'
+                            : 'text-gray-500 hover:text-gray-700 border-b-2 border-transparent'
+                    ]" @click="() => onChangeTab(tab)">
                         {{ tab }}
                     </a>
                 </li>
             </ul>
         </div>
         <div class="flex-grow">
-            <div v-if="activeTab === 'Logs'" id="logs-table" class="w-full px-12"></div>
-            <div v-else-if="activeTab === 'Traces'" class="w-full px-12" id="traces-table">
+            <div v-if="activeTab === 'Logs'" id="logs-table" class="w-full px-4"></div>
+            <div v-else-if="activeTab === 'Traces'" class="w-full px-4" id="traces-table">
             </div>
-            <div v-else-if="activeTab === 'Metrics'" class="w-full">
-                <Metrics/>
+            <div v-else-if="activeTab === 'Events'" class="w-full px-4" id="events-table">
+            </div>
+            <div v-else-if="activeTab === 'Metrics'" class="w-full px-4">
+                <Metrics />
             </div>
         </div>
     </div>
@@ -42,7 +42,7 @@ const route = useRoute()
 const logsData = ref([])
 const tracesData = ref([])
 
-const tabs = ['Logs', 'Traces', 'Metrics']
+const tabs = ['Logs', 'Traces', 'Metrics', 'Events']
 const activeTab = ref('Logs')
 
 const TracesColumns = [
@@ -64,13 +64,33 @@ const TracesColumns = [
     { key: 'span_id', header: 'Span ID' },
 ];
 
+const EventsColumns = [
+    { key: 'name', header: 'Name' },
+    { key: 'event_type', header: 'Event Type' },
+    { key: 'status', header: 'Status' },
+    { key: 'application_name', header: 'Application Name' },
+    { key: 'attributes', header: 'Attributes' },
+    { key: 'timestamp', header: 'Timestamp' },
+    { key: 'observed_timestamp', header: 'Observed Timestamp' },
+];
+
 const onChangeTab = (tab) => {
     activeTab.value = tab
     if (tab === 'Logs') {
         renderLogsTable();
     } else if (tab === 'Traces') {
         renderTracesTable()
+    } else if (tab === 'Events') {
+        renderEventsTable()
     }
+}
+
+const renderEventsTable = async () => {
+    // await fetchEvents();
+    new Table('events-table', {
+        columns: EventsColumns,
+        data: JSON.parse(JSON.stringify(eventsData.value)),
+    });
 }
 
 const renderLogsTable = async () => {
@@ -233,7 +253,7 @@ const handleTracesChange = async ({ key, value }) => {
 }
 
 onMounted(() => {
-    nextTick(async() => {
+    nextTick(async () => {
         await renderLogsTable();
     });
 });
