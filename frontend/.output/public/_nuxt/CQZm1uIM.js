@@ -1,8 +1,23 @@
-var u=Object.defineProperty;var p=(n,t,e)=>t in n?u(n,t,{enumerable:!0,configurable:!0,writable:!0,value:e}):n[t]=e;var o=(n,t,e)=>p(n,typeof t!="symbol"?t+"":t,e);import{i as g,F as b,f as x,a as f,R as m}from"./CIHsDYR3.js";function v(n,t){let e=null;return function(...a){const i=this;e!==null&&clearTimeout(e),e=setTimeout(()=>{n.apply(i,a),e=null},t)}}class y{constructor(t,e){o(this,"container");o(this,"columns");o(this,"data");o(this,"options");o(this,"searchTerm","");o(this,"dateRange","Last 1 hour");o(this,"startDate",null);o(this,"endDate",null);o(this,"expandedGroups",new Set);o(this,"filterData",async(t,e)=>{const a=await this.options.onChange({key:t,value:e}),i=this.container.querySelector("#tableBody");i.innerHTML=this.renderTableRows(a);const r=this.container.querySelector("#searchInput");r&&(r.value=this.searchTerm)});this.container=document.getElementById(t),this.columns=e.columns,this.data=e.data,this.options=e.options,this.render(),this.attachEventListeners()}render(){this.container.innerHTML=`
+var u=Object.defineProperty;var p=(n,t,e)=>t in n?u(n,t,{enumerable:!0,configurable:!0,writable:!0,value:e}):n[t]=e;var o=(n,t,e)=>p(n,typeof t!="symbol"?t+"":t,e);import{i as g,F as b,f as x,a as f,R as m}from"./Dxxt08fG.js";function v(n,t){let e=null;return function(...a){const i=this;e!==null&&clearTimeout(e),e=setTimeout(()=>{n.apply(i,a),e=null},t)}}class y{constructor(t,e){o(this,"container");o(this,"columns");o(this,"data");o(this,"options");o(this,"searchTerm","");o(this,"dateRange","Last 1 hour");o(this,"startDate",null);o(this,"endDate",null);o(this,"expandedGroups",new Set);o(this,"filterData",async(t,e)=>{const a=await this.options.onChange({key:t,value:e}),i=this.container.querySelector("#tableBody");i.innerHTML=this.renderTableRows(a);const r=this.container.querySelector("#searchInput");r&&(r.value=this.searchTerm)});this.container=document.getElementById(t),this.columns=e.columns,this.data=e.data,this.options=e.options,this.render(),this.attachEventListeners()}getInputStyles(){return`
+            width: 100%;
+            padding: 6px 11px;
+            border: 1px solid rgb(224, 228, 235);
+            background-color: #fff;
+            outline: #3c72df;
+            color: rgb(75, 85, 99);
+            border-radius: 4px;
+            font-size: 1rem;
+            line-height: 1.2;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            :focus {
+                border-color: #3c72df;
+                box-shadow: 0 0 0 3px rgba(60, 114, 223, 0.5);
+            }
+        `}render(){this.container.innerHTML=`
         <div class="bg-white text-slate-900 p-4 flex flex-col h-full">
             ${this.options.searchable?`<div class="flex justify-between items-center mb-4 w-full bg-white py-4">
                     <div class="flex-grow relative mr-2">
-                        <input type="text" placeholder="Search logs..." class="bg-white w-full text-slate-900 px-4 py-2 rounded-md border border-blue-500 border-solid pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500" id="searchInput">
+                        <input type="text" placeholder="Search logs..." style="${this.getInputStyles()}" class="focus:outline-blue-500 focus:border-blue-400 focus:border-solid focus:border-1" id="searchInput">
                         <button id="clearSearch" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 bg-transparent hover:text-gray-600 focus:outline-none">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
