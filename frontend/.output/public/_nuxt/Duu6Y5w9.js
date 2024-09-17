@@ -1,6 +1,6 @@
-var u=Object.defineProperty;var p=(n,t,e)=>t in n?u(n,t,{enumerable:!0,configurable:!0,writable:!0,value:e}):n[t]=e;var o=(n,t,e)=>p(n,typeof t!="symbol"?t+"":t,e);import{i as g,F as b,f as x,a as f,R as m}from"./Dxxt08fG.js";function v(n,t){let e=null;return function(...a){const i=this;e!==null&&clearTimeout(e),e=setTimeout(()=>{n.apply(i,a),e=null},t)}}class y{constructor(t,e){o(this,"container");o(this,"columns");o(this,"data");o(this,"options");o(this,"searchTerm","");o(this,"dateRange","Last 1 hour");o(this,"startDate",null);o(this,"endDate",null);o(this,"expandedGroups",new Set);o(this,"filterData",async(t,e)=>{const a=await this.options.onChange({key:t,value:e}),i=this.container.querySelector("#tableBody");i.innerHTML=this.renderTableRows(a);const r=this.container.querySelector("#searchInput");r&&(r.value=this.searchTerm)});this.container=document.getElementById(t),this.columns=e.columns,this.data=e.data,this.options=e.options,this.render(),this.attachEventListeners()}getInputStyles(){return`
+var u=Object.defineProperty;var p=(n,t,e)=>t in n?u(n,t,{enumerable:!0,configurable:!0,writable:!0,value:e}):n[t]=e;var o=(n,t,e)=>p(n,typeof t!="symbol"?t+"":t,e);import{i as g,F as b,f as x,a as f,R as m}from"./DWyYeOWN.js";function v(n,t){let e=null;return function(...a){const i=this;e!==null&&clearTimeout(e),e=setTimeout(()=>{n.apply(i,a),e=null},t)}}class y{constructor(t,e){o(this,"container");o(this,"columns");o(this,"data");o(this,"options");o(this,"searchTerm","");o(this,"dateRange","Last 1 hour");o(this,"startDate",null);o(this,"endDate",null);o(this,"expandedGroups",new Set);o(this,"filterData",async(t,e)=>{const a=await this.options.onChange({key:t,value:e}),i=this.container.querySelector("#tableBody");i.innerHTML=this.renderTableRows(a);const r=this.container.querySelector("#searchInput");r&&(r.value=this.searchTerm)});this.container=document.getElementById(t),this.columns=e.columns,this.data=e.data,this.options=e.options,this.render(),this.attachEventListeners()}getInputStyles(){return`
             width: 100%;
-            padding: 6px 11px;
+            padding: 6px 12px;
             border: 1px solid rgb(224, 228, 235);
             background-color: #fff;
             outline: #3c72df;
@@ -9,15 +9,11 @@ var u=Object.defineProperty;var p=(n,t,e)=>t in n?u(n,t,{enumerable:!0,configura
             font-size: 1rem;
             line-height: 1.2;
             transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-            :focus {
-                border-color: #3c72df;
-                box-shadow: 0 0 0 3px rgba(60, 114, 223, 0.5);
-            }
         `}render(){this.container.innerHTML=`
         <div class="bg-white text-slate-900 p-4 flex flex-col h-full">
             ${this.options.searchable?`<div class="flex justify-between items-center mb-4 w-full bg-white py-4">
                     <div class="flex-grow relative mr-2">
-                        <input type="text" placeholder="Search logs..." style="${this.getInputStyles()}" class="focus:outline-blue-500 focus:border-blue-400 focus:border-solid focus:border-1" id="searchInput">
+                        <input type="text" placeholder="Search logs..." style="${this.getInputStyles()}" class="focus:outline-blue-500 focus:border-blue-400 focus:border-solid focus:border-1 hover:border hover:border-solid hover:border-blue-400" id="searchInput">
                         <button id="clearSearch" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 bg-transparent hover:text-gray-600 focus:outline-none">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -25,7 +21,7 @@ var u=Object.defineProperty;var p=(n,t,e)=>t in n?u(n,t,{enumerable:!0,configura
                         </button>
                     </div>
                     <div class="flex-shrink-0">
-                        <button type="button" class="inline-flex justify-center w-full rounded-mdshadow-sm px-4 py-2 bg-blue-500 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" id="dateRangeButton">
+                        <button type="button" class="inline-flex justify-center w-full rounded-md shadow-sm px-4 py-2 bg-blue-500 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" id="dateRangeButton">
                             <span id="dateRangeText">Last 1 hour</span>
                             <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
