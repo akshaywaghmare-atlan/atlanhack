@@ -1,7 +1,7 @@
 import json
 import asyncio
+import aiofiles
 from concurrent.futures import ThreadPoolExecutor
-
 from temporalio import activity
 from app.common.converter import transform_metadata
 from app.common.utils import connect_to_db
@@ -24,6 +24,7 @@ class ExtractionActivities:
 
     @staticmethod
     @activity.defn
+    # @auto_heartbeater
     async def extract_metadata(
         extConfig: ExtractionConfig,
     ) -> Dict[str, Dict[str, int]]:
@@ -36,12 +37,8 @@ class ExtractionActivities:
         conn = connect_to_db(credentials)
 
         try:
-            # Execute query and fetch results
-            results = await ExtractionActivities._execute_query(conn, query)
-
-            # Process and write results
-            summary = ExtractionActivities._process_and_write_results(
-                results, typename, workflow_config.outputPath, typename
+            summary = await ExtractionActivities._execute_query_and_process(
+                conn, query, typename, workflow_config.outputPath, typename
             )
 
             activity.logger.info(f"Completed metadata extraction for {typename}:")
@@ -62,69 +59,85 @@ class ExtractionActivities:
         return {typename: summary}
 
     @staticmethod
-    async def _execute_query(conn: Any, query: str) -> List[Dict[str, Any]]:
-        loop = asyncio.get_running_loop()
-        with ThreadPoolExecutor() as pool:
-            return await loop.run_in_executor(
-                pool, ExtractionActivities._execute_query_sync, conn, query
-            )
-
-    @staticmethod
-    def _execute_query_sync(conn: Any, query: str) -> List[Dict[str, Any]]:
-        cursor = conn.cursor()
-        try:
-            cursor.execute(query)
-            column_names = [desc[0] for desc in cursor.description]
-            results: List[Dict[str, Any]] = []
-            while True:
-                rows = cursor.fetchmany(1000)
-                if not rows:
-                    break
-                results.extend([dict(zip(column_names, row)) for row in rows])
-        except Exception as e:
-            activity.logger.error(f"Error executing query: {e}")
-            raise
-
-        return results
-
-    @staticmethod
-    def _process_and_write_results(
-        results: List[Dict[str, Any]], typename: str, output_path: str, file_name: str
+    async def _execute_query_and_process(
+        conn: Any,
+        query: str,
+        typename: str,
+        output_path: str,
+        file_name: str,
+        batch_size: int = 10000,
     ) -> Dict[str, int]:
+        activity.logger.info(f"Executing query for {typename}")
         summary = {"raw": 0, "transformed": 0, "errored": 0}
         raw_file = os.path.join(output_path, "raw", f"{file_name}.json")
         transformed_file = os.path.join(output_path, "transformed", f"{file_name}.json")
 
-        with open(raw_file, "w") as raw_f, open(transformed_file, "w") as trans_f:
-            for row in results:
-                try:
-                    # Store raw data
-                    json.dump(row, raw_f)
-                    raw_f.write("\n")
-                    summary["raw"] += 1
+        loop = asyncio.get_running_loop()
+        with ThreadPoolExecutor() as pool:
+            cursor = await loop.run_in_executor(pool, conn.cursor)
+            try:
+                await loop.run_in_executor(pool, cursor.execute, query)
+                column_names = [desc[0] for desc in cursor.description]
 
-                    # Transform and store data
-                    transformed_data = transform_metadata(typename, row)
-                    if transformed_data is not None:
-                        json.dump(
-                            transformed_data.model_dump(),
-                            trans_f,
-                            cls=PydanticJSONEncoder,
-                        )
-                        trans_f.write("\n")
-                        summary["transformed"] += 1
-                    else:
-                        activity.logger.warning(
-                            f"Skipped invalid {typename} data: {row}"
-                        )
-                        summary["errored"] += 1
-                except Exception as row_error:
-                    activity.logger.error(
-                        f"Error processing row for {typename}: {row_error}"
+                while True:
+                    rows = await loop.run_in_executor(
+                        pool, cursor.fetchmany, batch_size
                     )
-                    summary["errored"] += 1
+                    if not rows:
+                        break
+                    results = [dict(zip(column_names, row)) for row in rows]
+                    await ExtractionActivities._process_batch(
+                        results, typename, raw_file, transformed_file, summary
+                    )
 
+            except Exception as e:
+                activity.logger.error(f"Error executing query for {typename}: {e}")
+                raise e
+            finally:
+                await loop.run_in_executor(pool, cursor.close)
+
+        activity.logger.info(f"Completed processing results for {typename}")
         return summary
+
+    @staticmethod
+    async def _process_batch(
+        results: List[Dict[str, Any]],
+        typename: str,
+        raw_file: str,
+        transformed_file: str,
+        summary: Dict[str, int],
+    ) -> None:
+        raw_batch: List[str] = []
+        transformed_batch: List[str] = []
+
+        for row in results:
+            try:
+                raw_batch.append(json.dumps(row))
+                summary["raw"] += 1
+
+                transformed_data = transform_metadata(typename, row)
+                if transformed_data is not None:
+                    transformed_batch.append(
+                        json.dumps(
+                            transformed_data.model_dump(), cls=PydanticJSONEncoder
+                        )
+                    )
+                    summary["transformed"] += 1
+                else:
+                    activity.logger.warning(f"Skipped invalid {typename} data: {row}")
+                    summary["errored"] += 1
+            except Exception as row_error:
+                activity.logger.error(
+                    f"Error processing row for {typename}: {row_error}"
+                )
+                summary["errored"] += 1
+
+        # Write batches to files
+        async with aiofiles.open(raw_file, "a") as raw_f:
+            await raw_f.write("\n".join(raw_batch) + "\n")
+
+        async with aiofiles.open(transformed_file, "a") as trans_f:
+            await trans_f.write("\n".join(transformed_batch) + "\n")
 
     @staticmethod
     @activity.defn

@@ -28,6 +28,9 @@ dapr = "^1.14.0"
 [tool.poetry.group.app.dependencies]
 temporalio = "^1.7.0"
 psycopg2-binary = "^2.9.9"
+aiofiles = "^24.1.0"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.35"}
+asyncpg = "^0.29.0"
 
 
 [tool.poetry.group.dev.dependencies]
