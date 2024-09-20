@@ -1,5 +1,7 @@
+import time
 import json
 import asyncio
+import uuid
 import aiofiles
 from concurrent.futures import ThreadPoolExecutor
 from temporalio import activity
@@ -65,7 +67,7 @@ class ExtractionActivities:
         typename: str,
         output_path: str,
         file_name: str,
-        batch_size: int = 10000,
+        batch_size: int = 100000,
     ) -> Dict[str, int]:
         activity.logger.info(f"Executing query for {typename}")
         summary = {"raw": 0, "transformed": 0, "errored": 0}
@@ -74,18 +76,37 @@ class ExtractionActivities:
 
         loop = asyncio.get_running_loop()
         with ThreadPoolExecutor() as pool:
-            cursor = await loop.run_in_executor(pool, conn.cursor)
-            try:
-                await loop.run_in_executor(pool, cursor.execute, query)
-                column_names = [desc[0] for desc in cursor.description]
+            # Use a unique name for the server-side cursor
+            cursor_name = f"cursor_{typename}_{uuid.uuid4()}"
+            cursor = await loop.run_in_executor(
+                pool, lambda: conn.cursor(name=cursor_name)
+            )
 
+            try:
+                # Execute the query
+                await loop.run_in_executor(pool, cursor.execute, query)
+                column_names: List[str] = []
+                total_rows = 0
                 while True:
+                    # Fetch a batch of results
+                    start_time = time.time()
                     rows = await loop.run_in_executor(
                         pool, cursor.fetchmany, batch_size
                     )
+                    if not column_names:
+                        column_names = [desc[0] for desc in cursor.description]
+
                     if not rows:
                         break
+
                     results = [dict(zip(column_names, row)) for row in rows]
+                    total_rows += len(rows)
+
+                    end_time = time.time()
+                    activity.logger.info(
+                        f"Fetched {len(rows)} rows in {end_time - start_time} seconds. Total rows: {total_rows}"
+                    )
+
                     await ExtractionActivities._process_batch(
                         results, typename, raw_file, transformed_file, summary
                     )

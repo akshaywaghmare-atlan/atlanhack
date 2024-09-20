@@ -128,64 +128,105 @@ TABLE_EXTRACTION_SQL = """
 COLUMN_EXTRACTION_SQL = """
 SELECT
     current_database() AS TABLE_CAT,
-    columns.TABLE_SCHEMA AS TABLE_SCHEM,
-    columns.ordinal_position AS ORDINAL_POSITION,
-    C.relispartition AS BELONGS_TO_PARTITION,
+    n.nspname AS TABLE_SCHEM,
+    c.relname AS TABLE_NAME,
+    a.attname AS COLUMN_NAME,
+    a.attnum AS ORDINAL_POSITION,
+    pg_get_expr(d.adbin, d.adrelid) AS COLUMN_DEF,
     CASE
-        WHEN C.relkind = 'p' THEN true
-        ELSE false
-    END AS PARTITIONED_TABLE,
+        WHEN a.attnotnull THEN 'NO'
+        ELSE 'YES'
+    END AS IS_NULLABLE,
+    format_type(a.atttypid, a.atttypmod) AS DATA_TYPE,
     CASE
-        WHEN C.relkind = 'r' THEN 'TABLE'
-        WHEN C.relkind = 'v' THEN 'VIEW'
-        WHEN C.relkind = 'm' THEN 'MATERIALIZED VIEW'
-        ELSE C.relkind::text
+        WHEN pg_get_expr(d.adbin, d.adrelid) LIKE 'nextval%' THEN 'YES'
+        ELSE 'NO'
+    END AS IS_AUTOINCREMENT,
+    CASE
+        WHEN t.typtype = 'd' THEN t.typtypmod
+        ELSE NULL
+    END AS NUMERIC_PRECISION,
+    CASE
+        WHEN t.typtype = 'b' AND t.typelem <> 0 THEN t.typlen
+        ELSE NULL
+    END AS CHARACTER_OCTET_LENGTH,
+    CASE
+        WHEN a.attgenerated = 's' THEN 'STORED'
+        WHEN a.attgenerated = 'v' THEN 'VIRTUAL'
+        ELSE 'NEVER'
+    END AS IS_GENERATEDCOLUMN,
+    CASE
+        WHEN a.attidentity = 'a' THEN 'YES'
+        WHEN a.attidentity = 'd' THEN 'YES'
+        ELSE 'NO'
+    END AS IS_IDENTITY,
+    CASE
+        WHEN a.attidentity = 'a' THEN 'YES'
+        WHEN a.attidentity = 'd' THEN 'NO'
+        ELSE NULL
+    END AS IDENTITY_CYCLE,
+    CASE
+        WHEN t.typelem <> 0 THEN t.typelem
+        ELSE t.oid
+    END::regtype::text AS COLUMN_SIZE,
+    2 AS NUM_PREC_RADIX,
+    CASE
+        WHEN t.typtype = 'b' AND t.typelem = 0 THEN
+            CASE
+                WHEN t.typname IN ('float4', 'float8') THEN NULL
+                ELSE information_schema._pg_numeric_precision(t.oid, -1)
+            END
+        ELSE NULL
+    END AS DECIMAL_DIGITS,
+    CASE
+        WHEN c.relkind = 'r' THEN 'TABLE'
+        WHEN c.relkind = 'v' THEN 'VIEW'
+        WHEN c.relkind = 'm' THEN 'MATERIALIZED VIEW'
+        ELSE c.relkind::text
     END AS TABLE_TYPE,
-    columns.*,
-    col_constraints.constraint_type,
-    col_constraints.constraint_name
+    c.relispartition AS BELONGS_TO_PARTITION,
+    CASE WHEN c.relkind = 'p' THEN true ELSE false END AS PARTITIONED_TABLE,
+    CASE
+        WHEN con.contype = 'p' THEN 'PRIMARY KEY'
+        WHEN con.contype = 'f' THEN 'FOREIGN KEY'
+        WHEN con.contype = 'u' THEN 'UNIQUE'
+        WHEN con.contype = 'c' THEN 'CHECK'
+        WHEN con.contype = 't' THEN 'TRIGGER'
+        WHEN con.contype = 'x' THEN 'EXCLUDE'
+        ELSE NULL
+    END AS CONSTRAINT_TYPE,
+    con.conname AS CONSTRAINT_NAME,
+    CASE
+        WHEN c.relispartition THEN (
+            SELECT a.attnum
+            FROM pg_attribute a
+            JOIN pg_partitioned_table pt ON pt.partrelid = c.oid
+            WHERE a.attrelid = c.oid AND a.attnum = ANY(pt.partattrs)
+        )
+        ELSE NULL
+    END AS PARTITION_ORDER
 FROM
-    information_schema.columns AS columns
-LEFT OUTER JOIN (
-    SELECT
-        tab_constraints.constraint_type,
-        col_constraints.constraint_name,
-        col_constraints.table_schema,
-        col_constraints.table_name,
-        col_constraints.column_name
-    FROM
-        information_schema.key_column_usage AS col_constraints
-    INNER JOIN
-        information_schema.table_constraints AS tab_constraints
-    ON
-        col_constraints.table_schema = tab_constraints.table_schema
-        AND col_constraints.table_name = tab_constraints.table_name
-        AND col_constraints.constraint_name = tab_constraints.constraint_name
-) AS col_constraints
-ON
-    columns.table_schema = col_constraints.table_schema
-    AND columns.table_name = col_constraints.table_name
-    AND columns.column_name = col_constraints.column_name
-INNER JOIN (
-    SELECT
-        N.nspname,
-        C.relname,
-        C.relispartition,
-        c.relkind
-    FROM
-        pg_class AS C
-    INNER JOIN
-        pg_namespace N ON N.oid = C.relnamespace
-) AS C
-ON
-    C.nspname = columns.table_schema
-    AND C.relname = columns.table_name
+    pg_catalog.pg_attribute a
+JOIN
+    pg_catalog.pg_class c ON c.oid = a.attrelid
+JOIN
+    pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+JOIN
+    pg_catalog.pg_type t ON a.atttypid = t.oid
+LEFT JOIN
+    pg_catalog.pg_attrdef d ON (a.attrelid, a.attnum) = (d.adrelid, d.adnum)
+LEFT JOIN
+    pg_catalog.pg_constraint con ON (con.conrelid = c.oid AND a.attnum = ANY(con.conkey))
 WHERE
-    columns.table_schema NOT LIKE 'pg_%%'
-    AND columns.table_schema != 'information_schema'
-    AND concat(columns.TABLE_CATALOG, concat('.', columns.TABLE_SCHEMA)) !~ '{normalized_exclude_regex}'
-    AND  concat(columns.TABLE_CATALOG, concat('.', columns.TABLE_SCHEMA)) ~ '{normalized_include_regex}'
-    AND columns.table_name !~ '{exclude_table}';
+    a.attnum > 0
+    AND NOT a.attisdropped
+    AND n.nspname NOT LIKE 'pg_%%'
+    AND n.nspname != 'information_schema'
+    AND concat(current_database(), concat('.', n.nspname)) !~ '{normalized_exclude_regex}'
+    AND concat(current_database(), concat('.', n.nspname)) ~ '{normalized_include_regex}'
+    AND c.relname !~ '{exclude_table}'
+ORDER BY
+    n.nspname, c.relname, a.attnum;
 """
 
 PROCEDURE_EXTRACTION_SQL = """

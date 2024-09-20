@@ -84,7 +84,7 @@ def transform_metadata(
                 dataType=data["data_type"],
                 constraints=ColumnConstraint(
                     notNull=not data.get("is_nullable") == "NO",
-                    autoIncrement=data.get("IS_AUTOINCREMENT") == "YES",
+                    autoIncrement=data.get("is_autoincrement") == "YES",
                 ),
             )
         except AssertionError as e:

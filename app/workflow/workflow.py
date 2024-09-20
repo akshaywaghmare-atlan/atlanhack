@@ -78,7 +78,8 @@ class ExtractionWorkflow:
                         workflowConfig=config, typename=typename, query=query
                     ),
                     retry_policy=retry_policy,
-                    start_to_close_timeout=timedelta(minutes=30),
+                    # https://community.temporal.io/t/long-running-activity-with-auto-heartbeater-failing/13586
+                    start_to_close_timeout=timedelta(minutes=600),
                 )
             )
 
