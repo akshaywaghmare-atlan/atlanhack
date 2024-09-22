@@ -104,7 +104,7 @@ async def test_extract_table_metadata(mock_platform, mock_connect_to_db):
     mock_conn.cursor.return_value = mock_cursor
     mock_connect_to_db.return_value = mock_conn
 
-    with patch("builtins.open", create=True) as mock_open:
+    with patch("aiofiles.open", create=True) as mock_open:
         result = await ExtractionActivities.extract_metadata(ext_config)
 
         assert result == {"table": {"raw": 2, "transformed": 2, "errored": 0}}
@@ -118,13 +118,13 @@ async def test_extract_table_metadata(mock_platform, mock_connect_to_db):
             os.path.join(
                 "/tmp/test_output/test_workflow/test_run", "raw", "table.json"
             ),
-            "w",
+            "a",
         )
         mock_open.assert_any_call(
             os.path.join(
                 "/tmp/test_output/test_workflow/test_run", "transformed", "table.json"
             ),
-            "w",
+            "a",
         )
 
 
@@ -160,7 +160,7 @@ async def test_extract_database_metadata(mock_platform, mock_connect_to_db):
     mock_conn.cursor.return_value = mock_cursor
     mock_connect_to_db.return_value = mock_conn
 
-    with patch("builtins.open", create=True) as mock_open:
+    with patch("aiofiles.open", create=True) as mock_open:
         result = await ExtractionActivities.extract_metadata(ext_config)
 
         assert result == {"database": {"raw": 2, "transformed": 2, "errored": 0}}
@@ -174,7 +174,7 @@ async def test_extract_database_metadata(mock_platform, mock_connect_to_db):
             os.path.join(
                 "/tmp/test_output/test_workflow/test_run", "raw", "database.json"
             ),
-            "w",
+            "a",
         )
         mock_open.assert_any_call(
             os.path.join(
@@ -182,7 +182,7 @@ async def test_extract_database_metadata(mock_platform, mock_connect_to_db):
                 "transformed",
                 "database.json",
             ),
-            "w",
+            "a",
         )
 
 
@@ -218,7 +218,7 @@ async def test_extract_schema_metadata(mock_platform, mock_connect_to_db):
     mock_conn.cursor.return_value = mock_cursor
     mock_connect_to_db.return_value = mock_conn
 
-    with patch("builtins.open", create=True) as mock_open:
+    with patch("aiofiles.open", create=True) as mock_open:
         result = await ExtractionActivities.extract_metadata(ext_config)
 
         assert result == {"schema": {"raw": 2, "transformed": 2, "errored": 0}}
@@ -234,13 +234,13 @@ async def test_extract_schema_metadata(mock_platform, mock_connect_to_db):
             os.path.join(
                 "/tmp/test_output/test_workflow/test_run", "raw", "schema.json"
             ),
-            "w",
+            "a",
         )
         mock_open.assert_any_call(
             os.path.join(
                 "/tmp/test_output/test_workflow/test_run", "transformed", "schema.json"
             ),
-            "w",
+            "a",
         )
 
 
@@ -309,7 +309,7 @@ async def test_extract_column_metadata(mock_platform, mock_connect_to_db):
     mock_conn.cursor.return_value = mock_cursor
     mock_connect_to_db.return_value = mock_conn
 
-    with patch("builtins.open", create=True) as mock_open:
+    with patch("aiofiles.open", create=True) as mock_open:
         result = await ExtractionActivities.extract_metadata(ext_config)
 
         assert result == {"column": {"raw": 2, "transformed": 2, "errored": 0}}
@@ -325,13 +325,13 @@ async def test_extract_column_metadata(mock_platform, mock_connect_to_db):
             os.path.join(
                 "/tmp/test_output/test_workflow/test_run", "raw", "column.json"
             ),
-            "w",
+            "a",
         )
         mock_open.assert_any_call(
             os.path.join(
                 "/tmp/test_output/test_workflow/test_run", "transformed", "column.json"
             ),
-            "w",
+            "a",
         )
 
         # TODO: verify the contents of the files
