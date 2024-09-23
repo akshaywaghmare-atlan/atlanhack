@@ -8,6 +8,7 @@ from temporalio import activity
 from app.common.converter import transform_metadata
 from app.common.utils import connect_to_db
 from sdk.interfaces.platform import Platform
+from sdk.workflows.utils.activity import auto_heartbeater
 from app.common.schema import PydanticJSONEncoder
 from app.dto.workflow import ExtractionConfig
 import os
@@ -26,7 +27,7 @@ class ExtractionActivities:
 
     @staticmethod
     @activity.defn
-    # @auto_heartbeater
+    @auto_heartbeater
     async def extract_metadata(
         extConfig: ExtractionConfig,
     ) -> Dict[str, Dict[str, int]]:

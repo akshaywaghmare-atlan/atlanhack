@@ -20,7 +20,7 @@ def auto_heartbeater(fn: F) -> F:
         if heartbeat_timeout:
             # Heartbeat twice as often as the timeout
             heartbeat_task = asyncio.create_task(
-                heartbeat_every(heartbeat_timeout.total_seconds() / 6)
+                heartbeat_every(heartbeat_timeout.total_seconds() / 3)
             )
         try:
             return await fn(*args, **kwargs)
