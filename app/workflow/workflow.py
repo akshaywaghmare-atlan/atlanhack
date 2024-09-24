@@ -1,18 +1,20 @@
 import asyncio
 from datetime import timedelta
-from app.const import (
-    DATABASE_EXTRACTION_SQL,
-    SCHEMA_EXTRACTION_SQL,
-    TABLE_EXTRACTION_SQL,
-    COLUMN_EXTRACTION_SQL,
-    PROCEDURE_EXTRACTION_SQL,
-)
-from app.interfaces.preflight import Preflight
+from typing import Any, Coroutine, Dict, List
+
 from temporalio import workflow
 from temporalio.common import RetryPolicy
-from app.workflow.activities import ExtractionActivities
+
+from app.const import (
+    COLUMN_EXTRACTION_SQL,
+    DATABASE_EXTRACTION_SQL,
+    PROCEDURE_EXTRACTION_SQL,
+    SCHEMA_EXTRACTION_SQL,
+    TABLE_EXTRACTION_SQL,
+)
 from app.dto.workflow import ExtractionConfig, WorkflowConfig
-from typing import Coroutine, Dict, List, Any
+from app.interfaces.preflight import Preflight
+from app.workflow.activities import ExtractionActivities
 
 
 @workflow.defn

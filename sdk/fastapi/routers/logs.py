@@ -1,12 +1,12 @@
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, Request
+from opentelemetry.proto.logs.v1.logs_pb2 import LogsData
 from sqlalchemy.orm import Session
 
 from sdk.database import get_session
-from sdk.schemas import Log
 from sdk.interfaces.logs import Logs
-from opentelemetry.proto.logs.v1.logs_pb2 import LogsData
+from sdk.schemas import Log
 
 router = APIRouter(
     prefix="/telemetry/v1/logs",

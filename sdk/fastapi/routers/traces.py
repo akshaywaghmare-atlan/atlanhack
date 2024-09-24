@@ -1,12 +1,12 @@
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, Request
+from opentelemetry.proto.trace.v1.trace_pb2 import TracesData
 from sqlalchemy.orm import Session
 
 from sdk.database import get_session
-from sdk.schemas import Trace
 from sdk.interfaces.traces import Traces
-from opentelemetry.proto.trace.v1.trace_pb2 import TracesData
+from sdk.schemas import Trace
 
 router = APIRouter(
     prefix="/telemetry/v1/traces",

@@ -1,10 +1,11 @@
 from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from sdk.database import get_session
-from sdk.schemas import Event, EventCreate
 from sdk.interfaces.events import Events
+from sdk.schemas import Event, EventCreate
 
 router = APIRouter(
     prefix="/telemetry/v1/events",

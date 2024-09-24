@@ -1,9 +1,11 @@
-from fastapi import APIRouter
 import platform
-import socket
 import re
+import socket
 import uuid
+
 import psutil
+from fastapi import APIRouter
+
 from sdk.logging import get_logger
 
 logger = get_logger(__name__)

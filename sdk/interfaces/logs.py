@@ -2,10 +2,10 @@ import time
 from datetime import UTC, datetime
 from typing import List, Optional, Sequence
 
+from opentelemetry.proto.logs.v1.logs_pb2 import LogsData
 from sqlalchemy.orm import Session
 
 from sdk.models import Log
-from opentelemetry.proto.logs.v1.logs_pb2 import LogsData
 
 
 class Logs:

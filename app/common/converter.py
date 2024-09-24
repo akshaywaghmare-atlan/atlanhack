@@ -1,13 +1,14 @@
 import logging
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
 from app.common.schema import (
     BaseObjectEntity,
+    ColumnConstraint,
+    ColumnEntity,
     DatabaseEntity,
     SchemaEntity,
     TableEntity,
     ViewEntity,
-    ColumnEntity,
-    ColumnConstraint,
 )
 
 logging.basicConfig(level=logging.INFO)

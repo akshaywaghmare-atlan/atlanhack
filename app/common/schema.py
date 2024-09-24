@@ -1,6 +1,7 @@
 import json
-from pydantic import BaseModel, Field, ConfigDict
 from typing import Any, Dict
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class BaseSchemaModel(BaseModel):

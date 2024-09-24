@@ -1,11 +1,11 @@
 import time
-from datetime import datetime, UTC
-from typing import Any, Dict, List, Sequence, Optional
+from datetime import UTC, datetime
+from typing import Any, Dict, List, Optional, Sequence
 
+from opentelemetry.proto.trace.v1.trace_pb2 import TracesData
 from sqlalchemy.orm import Session
 
 from sdk.models import Trace
-from opentelemetry.proto.trace.v1.trace_pb2 import TracesData
 
 
 class Traces:

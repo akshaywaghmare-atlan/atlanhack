@@ -1,8 +1,10 @@
-import pytest
 import os
-from unittest.mock import patch, MagicMock
-from app.workflow.activities import ExtractionActivities
+from unittest.mock import MagicMock, patch
+
+import pytest
+
 from app.dto.workflow import ExtractionConfig, WorkflowConfig
+from app.workflow.activities import ExtractionActivities
 
 pytestmark = pytest.mark.asyncio
 
@@ -115,9 +117,7 @@ async def test_extract_table_metadata(mock_platform, mock_connect_to_db):
 
         assert mock_open.call_count == 3
         mock_open.assert_any_call(
-            os.path.join(
-                "/tmp/test_output/test_workflow/test_run", "table-chunks.txt"
-            ),
+            os.path.join("/tmp/test_output/test_workflow/test_run", "table-chunks.txt"),
             "w",
         )
         mock_open.assert_any_call(
@@ -256,7 +256,9 @@ async def test_extract_schema_metadata(mock_platform, mock_connect_to_db):
         )
         mock_open.assert_any_call(
             os.path.join(
-                "/tmp/test_output/test_workflow/test_run", "transformed", "schema-0.json"
+                "/tmp/test_output/test_workflow/test_run",
+                "transformed",
+                "schema-0.json",
             ),
             "a",
         )
@@ -353,7 +355,9 @@ async def test_extract_column_metadata(mock_platform, mock_connect_to_db):
         )
         mock_open.assert_any_call(
             os.path.join(
-                "/tmp/test_output/test_workflow/test_run", "transformed", "column-0.json"
+                "/tmp/test_output/test_workflow/test_run",
+                "transformed",
+                "column-0.json",
             ),
             "a",
         )

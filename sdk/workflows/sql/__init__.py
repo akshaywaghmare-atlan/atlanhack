@@ -1,15 +1,14 @@
 import logging
+from abc import ABC, abstractmethod
+from typing import Any, Dict, Optional
 
 from sdk.workflows import (
+    WorkflowAuthInterface,
     WorkflowBuilderInterface,
     WorkflowMetadataInterface,
     WorkflowPreflightCheckInterface,
-    WorkflowAuthInterface,
     WorkflowWorkerInterface,
 )
-from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional
-
 from sdk.workflows.sql.auth import SQLWorkflowAuthInterface
 from sdk.workflows.sql.metadata import SQLWorkflowMetadataInterface
 from sdk.workflows.sql.preflight_check import SQLWorkflowPreflightCheckInterface

@@ -5,8 +5,8 @@ from opentelemetry.proto.metrics.v1.metrics_pb2 import MetricsData
 from sqlalchemy.orm import Session
 
 from sdk.database import get_session
-from sdk.schemas import Metric
 from sdk.interfaces.metrics import Metrics
+from sdk.schemas import Metric
 
 router = APIRouter(
     prefix="/telemetry/v1/metrics",

@@ -1,14 +1,13 @@
 import asyncio
-from typing import Optional
-from fastapi import FastAPI, APIRouter, HTTPException, status
 from abc import ABC, abstractmethod
+from typing import Optional
 
+from fastapi import APIRouter, FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
-
 
 from sdk import models
 from sdk.database import get_engine
-from sdk.fastapi.routers import events, logs, metrics, traces, health
+from sdk.fastapi.routers import events, health, logs, metrics, traces
 from sdk.workflows import WorkflowBuilderInterface
 
 

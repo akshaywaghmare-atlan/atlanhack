@@ -1,4 +1,6 @@
-from typing import Dict, Any, List
+from typing import Any, Dict, List
+from urllib.parse import quote_plus
+
 from app.const import METADATA_EXTRACTION_TASK_QUEUE
 from app.dto.credentials import CredentialPayload
 from app.dto.preflight import PreflightPayload
@@ -8,10 +10,8 @@ from app.interfaces.workflow import Workflow
 from app.workflow.activities import ExtractionActivities
 from app.workflow.workflow import ExtractionWorkflow
 from sdk.workflows.sql import SQLWorkflowBuilderInterface, SQLWorkflowMetadataInterface
-
 from sdk.workflows.sql.preflight_check import SQLWorkflowPreflightCheckInterface
 from sdk.workflows.sql.worker import SQLWorkflowWorkerInterface
-from urllib.parse import quote_plus
 
 
 class PostgresWorkflowMetadata(SQLWorkflowMetadataInterface):

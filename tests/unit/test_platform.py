@@ -1,9 +1,11 @@
-import pytest
-from unittest.mock import patch, MagicMock, call
-from sdk.const import OBJECT_CREATE_OPERATION, OBJECT_STORE_NAME, STATE_STORE_NAME
-from sdk.interfaces.platform import Platform
-from sdk.dto.credentials import BasicCredential
 import uuid
+from unittest.mock import MagicMock, call, patch
+
+import pytest
+
+from sdk.const import OBJECT_CREATE_OPERATION, OBJECT_STORE_NAME, STATE_STORE_NAME
+from sdk.dto.credentials import BasicCredential
+from sdk.interfaces.platform import Platform
 
 
 @pytest.fixture

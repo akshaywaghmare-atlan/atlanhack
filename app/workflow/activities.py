@@ -1,18 +1,20 @@
-import time
-import json
 import asyncio
+import json
+import os
+import time
 import uuid
-import aiofiles
 from concurrent.futures import ThreadPoolExecutor
+from typing import Any, Dict, List
+
+import aiofiles
 from temporalio import activity
+
 from app.common.converter import transform_metadata
+from app.common.schema import PydanticJSONEncoder
 from app.common.utils import connect_to_db
+from app.dto.workflow import ExtractionConfig
 from sdk.interfaces.platform import Platform
 from sdk.workflows.utils.activity import auto_heartbeater
-from app.common.schema import PydanticJSONEncoder
-from app.dto.workflow import ExtractionConfig
-import os
-from typing import Dict, List, Any
 
 
 class ExtractionActivities:
@@ -159,7 +161,9 @@ class ExtractionActivities:
 
         # Write batches to files
         raw_file = os.path.join(output_path, "raw", f"{typename}-{chunk_number}.json")
-        transformed_file = os.path.join(output_path, "transformed", f"{typename}-{chunk_number}.json")
+        transformed_file = os.path.join(
+            output_path, "transformed", f"{typename}-{chunk_number}.json"
+        )
 
         async with aiofiles.open(raw_file, "a") as raw_f:
             await raw_f.write("\n".join(raw_batch) + "\n")

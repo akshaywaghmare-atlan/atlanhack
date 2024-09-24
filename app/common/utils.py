@@ -1,7 +1,9 @@
-import psycopg2
-from sdk.dto.credentials import BasicCredential
-from sqlalchemy.ext.asyncio import create_async_engine as sqlalchemy_create_async_engine
 from urllib.parse import quote_plus
+
+import psycopg2
+from sqlalchemy.ext.asyncio import create_async_engine as sqlalchemy_create_async_engine
+
+from sdk.dto.credentials import BasicCredential
 
 
 def connect_to_db(db_params: BasicCredential):

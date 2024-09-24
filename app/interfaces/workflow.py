@@ -1,14 +1,14 @@
-from typing import Dict, Any
+import logging
 import uuid
+from typing import Any, Dict
 
 from temporalio import activity, workflow
 from temporalio.client import Client, WorkflowFailureError, WorkflowHandle
-import logging
-from sdk.interfaces.platform import Platform
-from app.workflow.workflow import ExtractionWorkflow
-from app.dto.workflow import WorkflowConfig, WorkflowRequestPayload
 
 from app.const import METADATA_EXTRACTION_TASK_QUEUE
+from app.dto.workflow import WorkflowConfig, WorkflowRequestPayload
+from app.workflow.workflow import ExtractionWorkflow
+from sdk.interfaces.platform import Platform
 from sdk.logging import get_logger
 
 logger = get_logger(__name__)

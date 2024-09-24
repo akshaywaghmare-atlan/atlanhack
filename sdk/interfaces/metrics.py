@@ -3,10 +3,10 @@ from datetime import datetime
 from typing import List, Optional, Sequence, Type
 
 from google.protobuf.json_format import MessageToDict
+from opentelemetry.proto.metrics.v1.metrics_pb2 import MetricsData
 from sqlalchemy.orm import Session
 
 from sdk.models import Metric
-from opentelemetry.proto.metrics.v1.metrics_pb2 import MetricsData
 
 
 class Metrics:

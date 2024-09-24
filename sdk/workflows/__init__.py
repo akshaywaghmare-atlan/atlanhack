@@ -1,9 +1,10 @@
+import logging
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-from typing import Dict, Any, Optional, Sequence
-from temporalio.types import ClassType, CallableType
-import logging
+from typing import Any, Dict, Optional, Sequence
+
 from temporalio.client import Client
+from temporalio.types import CallableType, ClassType
 from temporalio.worker import Worker
 from temporalio.worker.workflow_sandbox import (
     SandboxedWorkflowRunner,

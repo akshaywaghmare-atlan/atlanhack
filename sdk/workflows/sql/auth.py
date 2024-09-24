@@ -1,8 +1,9 @@
+import logging
+from typing import Any, Dict
+
 from sqlalchemy import create_engine, text
 
 from sdk.workflows import WorkflowAuthInterface
-from typing import Dict, Any
-import logging
 
 logger = logging.getLogger(__name__)
 

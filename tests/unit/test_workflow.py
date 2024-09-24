@@ -1,17 +1,18 @@
+import traceback
+from typing import Dict
+from unittest.mock import MagicMock, patch
+
 import pytest
+from temporalio import activity
 from temporalio.testing import WorkflowEnvironment
 from temporalio.worker import Worker
-from temporalio import activity
-from app.workflow.workflow import ExtractionWorkflow
 from temporalio.worker.workflow_sandbox import (
     SandboxedWorkflowRunner,
     SandboxRestrictions,
 )
 
-from app.dto.workflow import WorkflowConfig, ExtractionConfig
-from unittest.mock import MagicMock, patch
-import traceback
-from typing import Dict
+from app.dto.workflow import ExtractionConfig, WorkflowConfig
+from app.workflow.workflow import ExtractionWorkflow
 
 
 @pytest.mark.asyncio
