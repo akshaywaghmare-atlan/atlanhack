@@ -1,5 +1,4 @@
 import asyncio
-import logging
 from datetime import timedelta
 from app.const import (
     DATABASE_EXTRACTION_SQL,
@@ -21,7 +20,10 @@ class ExtractionWorkflow:
     @workflow.run
     async def run(self, config: WorkflowConfig) -> None:
         workflow.logger.info(f"Starting extraction workflow for {config.workflowId}")
-        retry_policy = RetryPolicy(maximum_attempts=3)
+        retry_policy = RetryPolicy(
+            maximum_attempts=6,
+            backoff_coefficient=2,
+        )
 
         workflow_run_id = workflow.info().run_id
         config.outputPath = (
@@ -76,7 +78,9 @@ class ExtractionWorkflow:
                         workflowConfig=config, typename=typename, query=query
                     ),
                     retry_policy=retry_policy,
-                    start_to_close_timeout=timedelta(minutes=30),
+                    # https://community.temporal.io/t/long-running--with-auto-heartbeater-failing/13586
+                    heartbeat_timeout=timedelta(minutes=1),
+                    start_to_close_timeout=timedelta(minutes=600),
                 )
             )
 
