@@ -41,7 +41,7 @@ class ExtractionActivities:
 
         try:
             summary = await ExtractionActivities._execute_query_and_process(
-                conn, query, typename, workflow_config.outputPath, typename
+                conn, query, typename, workflow_config.outputPath
             )
 
             activity.logger.info(f"Completed metadata extraction for {typename}:")
@@ -67,13 +67,10 @@ class ExtractionActivities:
         query: str,
         typename: str,
         output_path: str,
-        file_name: str,
         batch_size: int = 100000,
     ) -> Dict[str, int]:
         activity.logger.info(f"Executing query for {typename}")
         summary = {"raw": 0, "transformed": 0, "errored": 0}
-        raw_file = os.path.join(output_path, "raw", f"{file_name}.json")
-        transformed_file = os.path.join(output_path, "transformed", f"{file_name}.json")
 
         loop = asyncio.get_running_loop()
         with ThreadPoolExecutor() as pool:
@@ -87,7 +84,8 @@ class ExtractionActivities:
                 # Execute the query
                 await loop.run_in_executor(pool, cursor.execute, query)
                 column_names: List[str] = []
-                total_rows = 0
+                total_rows, chunk_number = 0, 0
+
                 while True:
                     # Fetch a batch of results
                     start_time = time.time()
@@ -109,9 +107,14 @@ class ExtractionActivities:
                     )
 
                     await ExtractionActivities._process_batch(
-                        results, typename, raw_file, transformed_file, summary
+                        results, typename, output_path, summary, chunk_number
                     )
 
+                    chunk_number += 1
+
+                chunk_meta_file = os.path.join(output_path, f"{typename}-chunks.txt")
+                async with aiofiles.open(chunk_meta_file, "w") as chunk_meta_f:
+                    await chunk_meta_f.write(str(chunk_number))
             except Exception as e:
                 activity.logger.error(f"Error executing query for {typename}: {e}")
                 raise e
@@ -125,9 +128,9 @@ class ExtractionActivities:
     async def _process_batch(
         results: List[Dict[str, Any]],
         typename: str,
-        raw_file: str,
-        transformed_file: str,
+        output_path: str,
         summary: Dict[str, int],
+        chunk_number: int,
     ) -> None:
         raw_batch: List[str] = []
         transformed_batch: List[str] = []
@@ -155,6 +158,9 @@ class ExtractionActivities:
                 summary["errored"] += 1
 
         # Write batches to files
+        raw_file = os.path.join(output_path, "raw", f"{typename}-{chunk_number}.json")
+        transformed_file = os.path.join(output_path, "transformed", f"{typename}-{chunk_number}.json")
+
         async with aiofiles.open(raw_file, "a") as raw_f:
             await raw_f.write("\n".join(raw_batch) + "\n")
 

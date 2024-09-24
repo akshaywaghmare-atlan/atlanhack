@@ -113,16 +113,22 @@ async def test_extract_table_metadata(mock_platform, mock_connect_to_db):
         mock_connect_to_db.assert_called_once()
         mock_cursor.execute.assert_called_once_with("SELECT * FROM tables")
 
-        assert mock_open.call_count == 2
+        assert mock_open.call_count == 3
         mock_open.assert_any_call(
             os.path.join(
-                "/tmp/test_output/test_workflow/test_run", "raw", "table.json"
+                "/tmp/test_output/test_workflow/test_run", "table-chunks.txt"
+            ),
+            "w",
+        )
+        mock_open.assert_any_call(
+            os.path.join(
+                "/tmp/test_output/test_workflow/test_run", "raw", "table-0.json"
             ),
             "a",
         )
         mock_open.assert_any_call(
             os.path.join(
-                "/tmp/test_output/test_workflow/test_run", "transformed", "table.json"
+                "/tmp/test_output/test_workflow/test_run", "transformed", "table-0.json"
             ),
             "a",
         )
@@ -169,10 +175,16 @@ async def test_extract_database_metadata(mock_platform, mock_connect_to_db):
         mock_connect_to_db.assert_called_once()
         mock_cursor.execute.assert_called_once_with("SELECT datname FROM pg_database")
 
-        assert mock_open.call_count == 2
+        assert mock_open.call_count == 3
         mock_open.assert_any_call(
             os.path.join(
-                "/tmp/test_output/test_workflow/test_run", "raw", "database.json"
+                "/tmp/test_output/test_workflow/test_run", "database-chunks.txt"
+            ),
+            "w",
+        )
+        mock_open.assert_any_call(
+            os.path.join(
+                "/tmp/test_output/test_workflow/test_run", "raw", "database-0.json"
             ),
             "a",
         )
@@ -180,7 +192,7 @@ async def test_extract_database_metadata(mock_platform, mock_connect_to_db):
             os.path.join(
                 "/tmp/test_output/test_workflow/test_run",
                 "transformed",
-                "database.json",
+                "database-0.json",
             ),
             "a",
         )
@@ -229,16 +241,22 @@ async def test_extract_schema_metadata(mock_platform, mock_connect_to_db):
             "SELECT schema_name, catalog_name FROM information_schema.schemata"
         )
 
-        assert mock_open.call_count == 2
+        assert mock_open.call_count == 3
         mock_open.assert_any_call(
             os.path.join(
-                "/tmp/test_output/test_workflow/test_run", "raw", "schema.json"
+                "/tmp/test_output/test_workflow/test_run", "schema-chunks.txt"
+            ),
+            "w",
+        )
+        mock_open.assert_any_call(
+            os.path.join(
+                "/tmp/test_output/test_workflow/test_run", "raw", "schema-0.json"
             ),
             "a",
         )
         mock_open.assert_any_call(
             os.path.join(
-                "/tmp/test_output/test_workflow/test_run", "transformed", "schema.json"
+                "/tmp/test_output/test_workflow/test_run", "transformed", "schema-0.json"
             ),
             "a",
         )
@@ -320,16 +338,22 @@ async def test_extract_column_metadata(mock_platform, mock_connect_to_db):
             "SELECT column_name, table_catalog, table_schema, table_name, ordinal_position, data_type, is_nullable, column_default, is_identity FROM information_schema.columns"
         )
 
-        assert mock_open.call_count == 2
+        assert mock_open.call_count == 3
         mock_open.assert_any_call(
             os.path.join(
-                "/tmp/test_output/test_workflow/test_run", "raw", "column.json"
+                "/tmp/test_output/test_workflow/test_run", "column-chunks.txt"
+            ),
+            "w",
+        )
+        mock_open.assert_any_call(
+            os.path.join(
+                "/tmp/test_output/test_workflow/test_run", "raw", "column-0.json"
             ),
             "a",
         )
         mock_open.assert_any_call(
             os.path.join(
-                "/tmp/test_output/test_workflow/test_run", "transformed", "column.json"
+                "/tmp/test_output/test_workflow/test_run", "transformed", "column-0.json"
             ),
             "a",
         )

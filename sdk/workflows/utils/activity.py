@@ -15,8 +15,11 @@ def auto_heartbeater(fn: F) -> F:
     # available via our wrapper, so we use the functools wraps decorator
     @wraps(fn)
     async def wrapper(*args, **kwargs):
-        heartbeat_timeout = activity.info().heartbeat_timeout
-        heartbeat_task = None
+        try:
+            heartbeat_timeout = activity.info().heartbeat_timeout
+        except RuntimeError as e:
+            heartbeat_timeout, heartbeat_task = None, None
+
         if heartbeat_timeout:
             # Heartbeat twice as often as the timeout
             heartbeat_task = asyncio.create_task(
