@@ -3,6 +3,7 @@ from typing import Dict
 from unittest.mock import MagicMock
 
 import pytest
+from phoenix_sdk.dto.workflow import ExtractionConfig, WorkflowConfig
 from temporalio import activity
 from temporalio.testing import WorkflowEnvironment
 from temporalio.worker import Worker
@@ -12,7 +13,6 @@ from temporalio.worker.workflow_sandbox import (
 )
 
 from app.workflow import ExtractionWorkflow
-from sdk.dto.workflow import ExtractionConfig, WorkflowConfig
 
 
 @pytest.mark.asyncio
@@ -69,7 +69,9 @@ async def test_extraction_workflow():
                 wrapped_mock_teardown_output_directory,
             ],
             workflow_runner=SandboxedWorkflowRunner(
-                restrictions=SandboxRestrictions.default.with_passthrough_modules("sdk")
+                restrictions=SandboxRestrictions.default.with_passthrough_modules(
+                    "phoenix_sdk"
+                )
             ),
         ):
             result = await env.client.execute_workflow(  # pyright: ignore[reportUnknownMemberType]

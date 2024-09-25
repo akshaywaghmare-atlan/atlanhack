@@ -2,9 +2,9 @@ import os
 from unittest.mock import MagicMock, patch
 
 import pytest
+from phoenix_sdk.dto.workflow import ExtractionConfig, WorkflowConfig
 
 from app.activities import ExtractionActivities
-from sdk.dto.workflow import ExtractionConfig, WorkflowConfig
 
 pytestmark = pytest.mark.asyncio
 
