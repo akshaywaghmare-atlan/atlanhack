@@ -11,24 +11,22 @@ from temporalio.worker.workflow_sandbox import (
     SandboxRestrictions,
 )
 
-from app.dto.workflow import ExtractionConfig, WorkflowConfig
-from app.workflow.workflow import ExtractionWorkflow
+from app.workflow import ExtractionWorkflow
+from sdk.dto.workflow import ExtractionConfig, WorkflowConfig
 
 
 @pytest.mark.asyncio
 async def test_extraction_workflow():
     workflow_config = WorkflowConfig(
         workflowId="test_workflow",
-        credentialsGUID="test_guid",
+        credentialsGUID="credential_1234",
         includeFilterStr="{}",
         excludeFilterStr="{}",
         tempTableRegexStr="[]",
         outputPrefix="/tmp/test_output",
     )
 
-    with patch(
-        "app.interfaces.preflight.Preflight.prepare_filters"
-    ) as mock_prepare_filters:
+    with patch("app.preflight.Preflight.prepare_filters") as mock_prepare_filters:
         mock_prepare_filters.return_value = (
             "include_regex",
             "exclude_regex",

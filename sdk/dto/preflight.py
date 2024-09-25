@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from app.dto.credentials import CredentialPayload  # Assuming this exists
+from sdk.dto.credentials import CredentialPayload
 
 
 class FormData(BaseModel):

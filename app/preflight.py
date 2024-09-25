@@ -2,10 +2,11 @@ import json
 import logging
 from typing import Any, Dict, List, Set, Tuple
 
-from app.common.utils import connect_to_db
+import psycopg2
+
 from app.const import FILTER_METADATA_SQL, TABLES_CHECK_SQL
-from app.dto.preflight import PreflightPayload
 from sdk.dto.credentials import BasicCredential
+from sdk.dto.preflight import PreflightPayload
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,7 @@ class Preflight:
 
     @staticmethod
     def fetch_metadata(credentials: BasicCredential) -> List[Dict[str, str]]:
-        conn = connect_to_db(credentials)
+        conn = psycopg2.connect(**credentials.model_dump())
         cursor = conn.cursor()
         cursor.execute(FILTER_METADATA_SQL)
 
@@ -130,7 +131,9 @@ class Preflight:
                     payload.form_data.temp_table_regex,
                 )
             )
-            connection = connect_to_db(payload.credentials.get_credential_config())
+
+            credentials = payload.credentials.get_credential_config()
+            connection = psycopg2.connect(**credentials.model_dump())
             cursor = connection.cursor()
             query = TABLES_CHECK_SQL.format(
                 exclude_table=exclude_table,

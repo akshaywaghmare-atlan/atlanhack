@@ -7,12 +7,12 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Dict, List
 
 import aiofiles
+import psycopg2
 from temporalio import activity
 
 from app.common.converter import transform_metadata
 from app.common.schema import PydanticJSONEncoder
-from app.common.utils import connect_to_db
-from app.dto.workflow import ExtractionConfig
+from sdk.dto.workflow import ExtractionConfig
 from sdk.interfaces.platform import Platform
 from sdk.workflows.utils.activity import auto_heartbeater
 
@@ -39,7 +39,7 @@ class ExtractionActivities:
 
         activity.logger.info(f"Starting metadata extraction for {typename}")
         credentials = Platform.extract_credentials(workflow_config.credentialsGUID)
-        conn = connect_to_db(credentials)
+        conn = psycopg2.connect(**credentials.model_dump())
 
         try:
             summary = await ExtractionActivities._execute_query_and_process(
@@ -183,3 +183,4 @@ class ExtractionActivities:
             Platform.push_to_object_store(output_prefix, output_path)
         except Exception as e:
             activity.logger.error(f"Error pushing results to object store: {e}")
+            raise e

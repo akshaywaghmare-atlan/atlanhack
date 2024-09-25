@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from app.dto.credentials import CredentialPayload
+from sdk.dto.credentials import CredentialPayload
 
 
 class WorkflowConfig(BaseModel):

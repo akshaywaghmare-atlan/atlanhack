@@ -1,9 +1,11 @@
 import logging
+import uuid
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from typing import Any, Dict, Optional, Sequence
 
-from temporalio.client import Client
+from temporalio import activity, workflow
+from temporalio.client import Client, WorkflowFailureError, WorkflowHandle
 from temporalio.types import CallableType, ClassType
 from temporalio.worker import Worker
 from temporalio.worker.workflow_sandbox import (
@@ -11,8 +13,12 @@ from temporalio.worker.workflow_sandbox import (
     SandboxRestrictions,
 )
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# from app.workflow import ExtractionWorkflow
+from sdk.dto.workflow import WorkflowConfig, WorkflowRequestPayload
+from sdk.interfaces.platform import Platform
+from sdk.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 class WorkflowAuthInterface(ABC):
@@ -58,8 +64,8 @@ class WorkflowPreflightCheckInterface(ABC):
 
 
 class WorkflowWorkerInterface(ABC):
-    QUEUE_NAME: str = ""
-    WORKFLOWS: Sequence[ClassType] = []
+    METADATA_EXTRACTION_TASK_QUEUE: str = ""
+    WORKFLOW: ClassType
     ACTIVITIES: Sequence[CallableType] = []
     PASSTHROUGH_MODULES: Sequence[str] = []
     HOST: str = "localhost"
@@ -73,22 +79,64 @@ class WorkflowWorkerInterface(ABC):
     ):
         self.get_sql_alchemy_string_fn = get_sql_alchemy_string_fn
         self.get_sql_alchemy_connect_args_fn = get_sql_alchemy_connect_args_fn
+        self.worker: Optional[Worker] = None
 
-    @abstractmethod
     async def run_workflow(self, workflow_args: Dict[str, Any]) -> Dict[str, Any]:
+        workflow_payload = WorkflowRequestPayload(**workflow_args)
+
+        client: Client = await Client.connect(
+            f"{self.HOST}:{self.PORT}", namespace=self.NAMESPACE
+        )
+        workflow_id = str(uuid.uuid4())
+        credential_config = workflow_payload.credentials.get_credential_config()
+        credential_guid = Platform.store_credentials(credential_config)
+
+        workflow.logger.setLevel(logging.DEBUG)
+        activity.logger.setLevel(logging.DEBUG)
+
+        config = WorkflowConfig(
+            workflowId=workflow_id,
+            credentialsGUID=credential_guid,
+            includeFilterStr=workflow_payload.metadata.include_filter,
+            excludeFilterStr=workflow_payload.metadata.exclude_filter,
+            tempTableRegexStr=workflow_payload.metadata.temp_table_regex,
+            outputType="JSON",
+            outputPrefix="/tmp/output",
+            verbose=True,
+        )
+
+        try:
+            handle: WorkflowHandle[Any, Any] = await client.start_workflow(  # pyright: ignore[reportUnknownMemberType]
+                self.WORKFLOW,
+                config,
+                id=workflow_id,
+                task_queue=self.METADATA_EXTRACTION_TASK_QUEUE,
+            )
+            logger.info(f"Workflow started: {handle.id} {handle.result_run_id}")
+            return {
+                "message": "Workflow started",
+                "workflow_id": handle.id,
+                "run_id": handle.result_run_id,
+            }
+
+        except WorkflowFailureError as e:
+            logger.error(f"Workflow failure: {e}")
+            raise e
+
+    async def schedule_workflow(self, workflow_args: Dict[str, Any]) -> Dict[str, Any]:
         raise NotImplementedError
 
     async def run_worker(
         self,
     ) -> None:
-        client = await Client.connect(
+        client: Client = await Client.connect(
             f"{self.HOST}:{self.PORT}", namespace=self.NAMESPACE
         )
 
-        worker = Worker(
+        self.worker = Worker(
             client,
-            task_queue=self.QUEUE_NAME,
-            workflows=self.WORKFLOWS,
+            task_queue=self.METADATA_EXTRACTION_TASK_QUEUE,
+            workflows=[self.WORKFLOW],
             activities=self.ACTIVITIES,
             workflow_runner=SandboxedWorkflowRunner(
                 restrictions=SandboxRestrictions.default.with_passthrough_modules(
@@ -97,8 +145,8 @@ class WorkflowWorkerInterface(ABC):
             ),
         )
 
-        logger.info(f"Starting worker for queue: {self.QUEUE_NAME}")
-        await worker.run()
+        logger.info(f"Starting worker for queue: {self.METADATA_EXTRACTION_TASK_QUEUE}")
+        await self.worker.run()
 
 
 class WorkflowBuilderInterface(ABC):

@@ -5,6 +5,7 @@ from typing import Any, Coroutine, Dict, List
 from temporalio import workflow
 from temporalio.common import RetryPolicy
 
+from app.activities import ExtractionActivities
 from app.const import (
     COLUMN_EXTRACTION_SQL,
     DATABASE_EXTRACTION_SQL,
@@ -12,9 +13,8 @@ from app.const import (
     SCHEMA_EXTRACTION_SQL,
     TABLE_EXTRACTION_SQL,
 )
-from app.dto.workflow import ExtractionConfig, WorkflowConfig
-from app.interfaces.preflight import Preflight
-from app.workflow.activities import ExtractionActivities
+from app.preflight import Preflight
+from sdk.dto.workflow import ExtractionConfig, WorkflowConfig
 
 
 @workflow.defn
@@ -37,7 +37,7 @@ class ExtractionWorkflow:
             ExtractionActivities.create_output_directory,
             config.outputPath,
             retry_policy=retry_policy,
-            start_to_close_timeout=timedelta(minutes=5),
+            start_to_close_timeout=timedelta(seconds=5),
         )
 
         # Define metadata types and their corresponding queries

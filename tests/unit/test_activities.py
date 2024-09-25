@@ -3,8 +3,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from app.dto.workflow import ExtractionConfig, WorkflowConfig
-from app.workflow.activities import ExtractionActivities
+from app.activities import ExtractionActivities
+from sdk.dto.workflow import ExtractionConfig, WorkflowConfig
 
 pytestmark = pytest.mark.asyncio
 
@@ -29,19 +29,19 @@ def mock_platform():
     Returns:
         MagicMock: A mock object for the Platform class.
     """
-    with patch("app.workflow.activities.Platform") as mock:
+    with patch("app.activities.Platform") as mock:
         yield mock
 
 
 @pytest.fixture
 def mock_connect_to_db():
     """
-    Fixture to mock the connect_to_db function.
+    Fixture to mock the psycopg2 module.
 
     Returns:
-        MagicMock: A mock object for the connect_to_db function.
+        MagicMock: A mock object for the psycopg2 module.
     """
-    with patch("app.workflow.activities.connect_to_db") as mock:
+    with patch("app.activities.psycopg2.connect") as mock:
         yield mock
 
 

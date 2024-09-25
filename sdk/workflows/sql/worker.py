@@ -1,5 +1,3 @@
-from typing import Any, Dict
-
 from sdk.workflows import WorkflowWorkerInterface
 
 
@@ -8,9 +6,6 @@ class SQLWorkflowWorkerInterface(WorkflowWorkerInterface):
     SCHEMA_SQL = ""
     TABLE_SQL = ""
     COLUMN_SQL = ""
-
-    async def run_workflow(self, workflow_args: Dict[str, Any]) -> Dict[str, Any]:
-        raise NotImplementedError
 
     def fetch_databases(self):
         raise NotImplementedError
