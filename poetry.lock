@@ -149,13 +149,13 @@ frozenlist = ">=1.1.0"
 
 [[package]]
 name = "alembic"
-version = "1.13.2"
+version = "1.13.3"
 description = "A database migration tool for SQLAlchemy."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "alembic-1.13.2-py3-none-any.whl", hash = "sha256:6b8733129a6224a9a711e17c99b08462dbf7cc9670ba8f2e2ae9af860ceb1953"},
-    {file = "alembic-1.13.2.tar.gz", hash = "sha256:1ff0ae32975f4fd96028c39ed9bb3c867fe3af956bd7bb37343b54c9fe7445ef"},
+    {file = "alembic-1.13.3-py3-none-any.whl", hash = "sha256:908e905976d15235fae59c9ac42c4c5b75cfcefe3d27c0fbf7ae15a37715d80e"},
+    {file = "alembic-1.13.3.tar.gz", hash = "sha256:203503117415561e203aa14541740643a611f641517f0209fcae63e9fa09f1a2"},
 ]
 
 [package.dependencies]
@@ -1531,6 +1531,31 @@ files = [
 ]
 
 [[package]]
+name = "phoenix-sdk"
+version = "0.1.0"
+description = ""
+optional = false
+python-versions = "^3.11"
+files = []
+develop = false
+
+[package.dependencies]
+alembic = "^1.13.3"
+dapr = "^1.14.0"
+fastapi-sqlalchemy = "^0.2.1"
+opentelemetry-distro = "^0.48b0"
+opentelemetry-exporter-otlp = "^1.27.0"
+opentelemetry-instrumentation-fastapi = "^0.48b0"
+opentelemetry-proto = "^1.27.0"
+psutil = "^6.0.0"
+
+[package.source]
+type = "git"
+url = "ssh://git@github.com/atlanhq/phoenix-sdk.git"
+reference = "4086db5"
+resolved_reference = "4086db5a18db2c0678cbd37ac67a48e40db4591d"
+
+[[package]]
 name = "platformdirs"
 version = "4.3.6"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a `user data dir`."
@@ -2750,4 +2775,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "d4f5a80a082883e139bcec301d0dd9f4e84d6670d12215b2f23af2bbfbef8c4a"
+content-hash = "1bfac52bb1b84112f0a938452f382a986d8e0ca1dcc77868850038cc03abbe14"

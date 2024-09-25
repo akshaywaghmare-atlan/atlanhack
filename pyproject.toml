@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11"
 fastapi = {extras = ["standard"], version = "^0.113.0"}
 pytest-asyncio = "^0.24.0"
+phoenix-sdk = {git = "ssh://git@github.com/atlanhq/phoenix-sdk.git", rev = "4086db5"}
 
 
 [tool.poetry.group.sdk]

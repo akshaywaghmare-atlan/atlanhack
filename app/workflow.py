@@ -2,6 +2,8 @@ import asyncio
 from datetime import timedelta
 from typing import Any, Coroutine, Dict, List
 
+from phoenix_sdk.dto.workflow import ExtractionConfig, WorkflowConfig
+from phoenix_sdk.workflows.sql.utils import prepare_filters
 from temporalio import workflow
 from temporalio.common import RetryPolicy
 
@@ -13,8 +15,6 @@ from app.const import (
     SCHEMA_EXTRACTION_SQL,
     TABLE_EXTRACTION_SQL,
 )
-from sdk.dto.workflow import ExtractionConfig, WorkflowConfig
-from sdk.workflows.sql.utils import prepare_filters
 
 
 @workflow.defn

@@ -9,14 +9,14 @@ from typing import Any, Dict, List
 
 import aiofiles
 import psycopg2
+from phoenix_sdk.common.converter import transform_metadata
+from phoenix_sdk.common.schema import PydanticJSONEncoder
+from phoenix_sdk.dto.workflow import ExtractionConfig
+from phoenix_sdk.interfaces.platform import Platform
+from phoenix_sdk.workflows.utils.activity import auto_heartbeater
 from temporalio import activity
 
 from app.const import CONNECTOR_NAME, CONNECTOR_TYPE
-from sdk.common.converter import transform_metadata
-from sdk.common.schema import PydanticJSONEncoder
-from sdk.dto.workflow import ExtractionConfig
-from sdk.interfaces.platform import Platform
-from sdk.workflows.utils.activity import auto_heartbeater
 
 
 class ExtractionActivities:
