@@ -1,6 +1,7 @@
 import asyncio
 import json
 import os
+import shutil
 import time
 import uuid
 from concurrent.futures import ThreadPoolExecutor
@@ -20,7 +21,7 @@ from sdk.workflows.utils.activity import auto_heartbeater
 class ExtractionActivities:
     @staticmethod
     @activity.defn
-    async def create_output_directory(output_prefix: str) -> None:
+    async def setup_output_directory(output_prefix: str) -> None:
         os.makedirs(output_prefix, exist_ok=True)
         os.makedirs(os.path.join(output_prefix, "raw"), exist_ok=True)
         os.makedirs(os.path.join(output_prefix, "transformed"), exist_ok=True)
@@ -39,11 +40,12 @@ class ExtractionActivities:
 
         activity.logger.info(f"Starting metadata extraction for {typename}")
         credentials = Platform.extract_credentials(workflow_config.credentialsGUID)
-        conn = psycopg2.connect(**credentials.model_dump())
+        connection = None
 
         try:
+            connection = psycopg2.connect(**credentials.model_dump())
             summary = await ExtractionActivities._execute_query_and_process(
-                conn, query, typename, workflow_config.outputPath
+                connection, query, typename, workflow_config.outputPath
             )
 
             activity.logger.info(f"Completed metadata extraction for {typename}:")
@@ -59,13 +61,14 @@ class ExtractionActivities:
             activity.logger.error(f"Error extracting metadata for {typename}: {e}")
             raise e
         finally:
-            conn.close()
+            if connection:
+                connection.close()
 
         return {typename: summary}
 
     @staticmethod
     async def _execute_query_and_process(
-        conn: Any,
+        connection: Any,
         query: str,
         typename: str,
         output_path: str,
@@ -79,7 +82,7 @@ class ExtractionActivities:
             # Use a unique name for the server-side cursor
             cursor_name = f"cursor_{typename}_{uuid.uuid4()}"
             cursor = await loop.run_in_executor(
-                pool, lambda: conn.cursor(name=cursor_name)
+                pool, lambda: connection.cursor(name=cursor_name)
             )
 
             try:
@@ -184,3 +187,9 @@ class ExtractionActivities:
         except Exception as e:
             activity.logger.error(f"Error pushing results to object store: {e}")
             raise e
+
+    @staticmethod
+    @activity.defn
+    async def teardown_output_directory(output_prefix: str) -> None:
+        activity.logger.info(f"Tearing down output directory: {output_prefix}")
+        shutil.rmtree(output_prefix)

@@ -41,9 +41,10 @@ class PostgresWorkflowWorker(SQLWorkflowWorkerInterface):
     METADATA_EXTRACTION_TASK_QUEUE = QUEUE_NAME
     WORKFLOW = ExtractionWorkflow
     ACTIVITIES = [
-        ExtractionActivities.create_output_directory,
+        ExtractionActivities.setup_output_directory,
         ExtractionActivities.extract_metadata,
         ExtractionActivities.push_results_to_object_store,
+        ExtractionActivities.teardown_output_directory,
     ]
     PASSTHROUGH_MODULES = ["sdk"]
 

@@ -34,7 +34,7 @@ class ExtractionWorkflow:
 
         # Create output directory
         await workflow.execute_activity(  # pyright: ignore[reportUnknownMemberType]
-            ExtractionActivities.create_output_directory,
+            ExtractionActivities.setup_output_directory,
             config.outputPath,
             retry_policy=retry_policy,
             start_to_close_timeout=timedelta(seconds=5),
@@ -100,6 +100,12 @@ class ExtractionWorkflow:
             start_to_close_timeout=timedelta(minutes=10),
         )
 
-        # TODO: cleanup output directory
+        # cleanup output directory
+        await workflow.execute_activity(  # pyright: ignore[reportUnknownMemberType]
+            ExtractionActivities.teardown_output_directory,
+            config.outputPath,
+            retry_policy=retry_policy,
+            start_to_close_timeout=timedelta(seconds=5),
+        )
         workflow.logger.info(f"Extraction workflow completed for {config.workflowId}")
         workflow.logger.info(f"Extraction results summary: {extraction_results}")

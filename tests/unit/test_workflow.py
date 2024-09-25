@@ -33,8 +33,8 @@ async def test_extraction_workflow():
             "exclude_table",
         )
 
-        mock_create_output_directory = MagicMock()
-        mock_create_output_directory.return_value = None
+        mock_setup_output_directory = MagicMock()
+        mock_setup_output_directory.return_value = None
         mock_extract_metadata = MagicMock()
         mock_extract_metadata.return_value = {
             "test_typename": {"raw": 1, "transformed": 1, "errored": 0}
@@ -42,9 +42,12 @@ async def test_extraction_workflow():
         mock_push_results_to_object_store = MagicMock()
         mock_push_results_to_object_store.return_value = None
 
-        @activity.defn(name="create_output_directory")
-        async def wrapped_mock_create_output_directory(output_path: str):
-            mock_create_output_directory(output_path)
+        mock_teardown_output_directory = MagicMock()
+        mock_teardown_output_directory.return_value = None
+
+        @activity.defn(name="setup_output_directory")
+        async def wrapped_mock_setup_output_directory(output_path: str):
+            mock_setup_output_directory(output_path)
 
         @activity.defn(name="extract_metadata")
         async def wrapped_mock_extract_metadata(config: ExtractionConfig):
@@ -56,6 +59,10 @@ async def test_extraction_workflow():
         ):
             mock_push_results_to_object_store(output_config)
 
+        @activity.defn(name="teardown_output_directory")
+        async def wrapped_mock_teardown_output_directory(output_path: str):
+            mock_teardown_output_directory(output_path)
+
         try:
             env = await WorkflowEnvironment.start_local()
             async with Worker(
@@ -63,9 +70,10 @@ async def test_extraction_workflow():
                 task_queue="test_queue",
                 workflows=[ExtractionWorkflow],
                 activities=[
-                    wrapped_mock_create_output_directory,
+                    wrapped_mock_setup_output_directory,
                     wrapped_mock_extract_metadata,
                     wrapped_mock_push_results_to_object_store,
+                    wrapped_mock_teardown_output_directory,
                 ],
                 workflow_runner=SandboxedWorkflowRunner(
                     restrictions=SandboxRestrictions.default.with_passthrough_modules(
@@ -88,6 +96,7 @@ async def test_extraction_workflow():
 
     assert result is None
 
-    assert mock_create_output_directory.call_count == 1
+    assert mock_setup_output_directory.call_count == 1
     assert mock_extract_metadata.call_count == 5  # Once for each metadata type
     assert mock_push_results_to_object_store.call_count == 1
+    assert mock_teardown_output_directory.call_count == 1

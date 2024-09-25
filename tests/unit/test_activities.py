@@ -46,16 +46,16 @@ def mock_connect_to_db():
 
 
 @pytest.mark.asyncio
-async def test_create_output_directory():
+async def test_setup_output_directory():
     """
-    Test the create_output_directory method of ExtractionActivities.
+    Test the setup_output_directory method of ExtractionActivities.
 
     Ensures that the method creates the expected directory structure.
     """
     output_prefix = "/tmp/metadata/workflowId/runId"
 
     with patch("os.makedirs") as mock_makedirs:
-        await ExtractionActivities.create_output_directory(output_prefix)
+        await ExtractionActivities.setup_output_directory(output_prefix)
 
         assert mock_makedirs.call_count == 3
         mock_makedirs.assert_any_call(output_prefix, exist_ok=True)

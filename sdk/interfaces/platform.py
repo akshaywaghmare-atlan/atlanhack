@@ -33,7 +33,7 @@ class Platform:
             return credential_guid
         except Exception as e:
             logger.error(f"Failed to store credentials: {str(e)}")
-            raise
+            raise e
         finally:
             client.close()
 
@@ -58,10 +58,10 @@ class Platform:
             return BasicCredential.model_validate_json(state.data)
         except ValueError as e:
             logger.error(str(e))
-            raise
+            raise e
         except Exception as e:
             logger.error(f"Failed to extract credentials: {str(e)}")
-            raise
+            raise e
         finally:
             client.close()
 
@@ -108,12 +108,13 @@ class Platform:
                         logger.error(
                             f"Error pushing file {relative_path} to object store: {str(e)}"
                         )
+                        raise e
 
             logger.info(f"Completed pushing data from {output_path} to object store")
         except Exception as e:
             logger.error(
                 f"An unexpected error occurred while pushing files to object store: {str(e)}"
             )
-            raise
+            raise e
         finally:
             client.close()
