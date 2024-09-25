@@ -11,8 +11,9 @@ import aiofiles
 import psycopg2
 from temporalio import activity
 
-from app.common.converter import transform_metadata
-from app.common.schema import PydanticJSONEncoder
+from app.const import CONNECTOR_NAME, CONNECTOR_TYPE
+from sdk.common.converter import transform_metadata
+from sdk.common.schema import PydanticJSONEncoder
 from sdk.dto.workflow import ExtractionConfig
 from sdk.interfaces.platform import Platform
 from sdk.workflows.utils.activity import auto_heartbeater
@@ -145,7 +146,9 @@ class ExtractionActivities:
                 raw_batch.append(json.dumps(row))
                 summary["raw"] += 1
 
-                transformed_data = transform_metadata(typename, row)
+                transformed_data = transform_metadata(
+                    CONNECTOR_NAME, CONNECTOR_TYPE, typename, row
+                )
                 if transformed_data is not None:
                     transformed_batch.append(
                         json.dumps(

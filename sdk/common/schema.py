@@ -22,14 +22,14 @@ class BaseSchemaModel(BaseModel):
 
 
 class Namespace(BaseSchemaModel):
-    id: str = "postgresql-internal"
-    name: str = "postgresql-internal"
+    id: str
+    name: str
     version: int = 1
 
 
 class Package(BaseSchemaModel):
-    id: str = "postgresql-internal"
-    name: str = "postgresql-internal"
+    id: str
+    name: str
     version: int = 1
 
 
@@ -45,16 +45,16 @@ class BaseObjectEntity(BaseSchemaModel):
 
 
 class DatabaseEntity(BaseObjectEntity):
-    namespace: Namespace = Field(default_factory=Namespace)
-    package: Package = Field(default_factory=Package)
+    namespace: Namespace
+    package: Package
 
 
 ## Schema
 
 
 class SchemaEntity(BaseObjectEntity):
-    namespace: Namespace = Field(default_factory=Namespace)
-    package: Package = Field(default_factory=Package)
+    namespace: Namespace
+    package: Package
 
 
 ## Table
@@ -63,8 +63,8 @@ class SchemaEntity(BaseObjectEntity):
 class TableEntity(BaseObjectEntity):
     isPartition: bool
     isSearchable: bool = True
-    namespace: Namespace = Field(default_factory=Namespace)
-    package: Package = Field(default_factory=Package)
+    namespace: Namespace
+    package: Package
 
 
 ## View
@@ -72,8 +72,8 @@ class TableEntity(BaseObjectEntity):
 
 class ViewEntity(BaseObjectEntity):
     isSearchable: bool = True
-    namespace: Namespace = Field(default_factory=Namespace)
-    package: Package = Field(default_factory=Package)
+    namespace: Namespace
+    package: Package
 
 
 ## Column
@@ -91,8 +91,8 @@ class ColumnEntity(BaseObjectEntity):
     dataType: str
     constraints: ColumnConstraint = Field(default_factory=ColumnConstraint)
     isSearchable: bool = True
-    namespace: Namespace = Field(default_factory=Namespace)
-    package: Package = Field(default_factory=Package)
+    namespace: Namespace
+    package: Package
 
 
 class PydanticJSONEncoder(json.JSONEncoder):

@@ -1,11 +1,13 @@
 import logging
 from typing import Any, Dict, Optional
 
-from app.common.schema import (
+from sdk.common.schema import (
     BaseObjectEntity,
     ColumnConstraint,
     ColumnEntity,
     DatabaseEntity,
+    Namespace,
+    Package,
     SchemaEntity,
     TableEntity,
     ViewEntity,
@@ -16,15 +18,30 @@ logger = logging.getLogger(__name__)
 
 
 def transform_metadata(
-    typename: str, data: Dict[str, Any]
+    connector_name: str, connector_type: str, typename: str, data: Dict[str, Any]
 ) -> Optional[BaseObjectEntity]:
+    """
+    Convert metadata to Atlan Open Spec. Currently a WIP.
+    """
+    connector_temp = f"{connector_name}_{connector_type}"
+    namespace = Namespace(
+        id=connector_temp,
+        name=connector_temp,
+    )
+    package = Package(
+        id=connector_temp,
+        name=connector_temp,
+    )
+
     if typename.upper() == "DATABASE":
         try:
             assert data["datname"] is not None, "Database name cannot be None"
             return DatabaseEntity(
+                namespace=namespace,
+                package=package,
                 typeName="DATABASE",
                 name=data["datname"],
-                URI=f"/postgres/sql/{data['datname']}",
+                URI=f"/{connector_name}/{connector_type}/{data['datname']}",
             )
         except AssertionError as e:
             logger.error(f"Error creating DatabaseEntity: {str(e)}")
@@ -35,9 +52,11 @@ def transform_metadata(
             assert data["schema_name"] is not None, "Schema name cannot be None"
             assert data["catalog_name"] is not None, "Catalog name cannot be None"
             return SchemaEntity(
+                namespace=namespace,
+                package=package,
                 typeName="SCHEMA",
                 name=data["schema_name"],
-                URI=f"/postgres/sql/{data['catalog_name']}/{data['schema_name']}",
+                URI=f"/{connector_name}/{connector_type}/{data['catalog_name']}/{data['schema_name']}",
             )
         except AssertionError as e:
             logger.error(f"Error creating SchemaEntity: {str(e)}")
@@ -51,15 +70,19 @@ def transform_metadata(
 
             if data.get("table_type") == "VIEW":
                 return ViewEntity(
+                    namespace=namespace,
+                    package=package,
                     typeName="VIEW",
                     name=data["table_name"],
-                    URI=f"/postgres/sql/{data['table_cat']}/{data['table_schem']}/{data['table_name']}",
+                    URI=f"/{connector_name}/{connector_type}/{data['table_cat']}/{data['table_schem']}/{data['table_name']}",
                 )
             else:
                 return TableEntity(
+                    namespace=namespace,
+                    package=package,
                     typeName="TABLE",
                     name=data["table_name"],
-                    URI=f"/postgres/sql/{data['table_cat']}/{data['table_schem']}/{data['table_name']}",
+                    URI=f"/{connector_name}/{connector_type}/{data['table_cat']}/{data['table_schem']}/{data['table_name']}",
                     isPartition=data.get("is_partition") or False,
                 )
         except AssertionError as e:
@@ -78,9 +101,11 @@ def transform_metadata(
             assert data["data_type"] is not None, "Data type cannot be None"
 
             return ColumnEntity(
+                namespace=namespace,
+                package=package,
                 typeName="COLUMN",
                 name=data["column_name"],
-                URI=f"/postgres/sql/{data['table_cat']}/{data['table_schem']}/{data['table_name']}/{data['column_name']}",
+                URI=f"/{connector_name}/{connector_type}/{data['table_cat']}/{data['table_schem']}/{data['table_name']}/{data['column_name']}",
                 order=data["ordinal_position"],
                 dataType=data["data_type"],
                 constraints=ColumnConstraint(
@@ -98,5 +123,5 @@ def transform_metadata(
         return BaseObjectEntity(
             typeName=typename.upper(),
             name=name,
-            URI=f"/postgres/sql/{name}",
+            URI=f"/{connector_name}/{connector_type}/{name}",
         )

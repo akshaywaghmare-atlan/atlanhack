@@ -2,7 +2,7 @@ from typing import Any, Dict, List
 from urllib.parse import quote_plus
 
 from app.activities import ExtractionActivities
-from app.const import QUEUE_NAME
+from app.const import TASK_QUEUE_NAME
 from app.preflight import Preflight
 from app.workflow import ExtractionWorkflow
 from sdk.dto.credentials import CredentialPayload
@@ -38,7 +38,7 @@ class PostgresWorkflowPreflight(SQLWorkflowPreflightCheckInterface):
 
 
 class PostgresWorkflowWorker(SQLWorkflowWorkerInterface):
-    METADATA_EXTRACTION_TASK_QUEUE = QUEUE_NAME
+    METADATA_EXTRACTION_TASK_QUEUE = TASK_QUEUE_NAME
     WORKFLOW = ExtractionWorkflow
     ACTIVITIES = [
         ExtractionActivities.setup_output_directory,
