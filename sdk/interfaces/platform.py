@@ -20,7 +20,6 @@ class Platform:
         :return: The generated credential GUID.
         :raises Exception: If there's an error with the Dapr client operations.
         """
-
         client = DaprClient()
         try:
             credential_guid = f"credential_{str(uuid.uuid4())}"

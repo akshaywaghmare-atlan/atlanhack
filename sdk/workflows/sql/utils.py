@@ -2,12 +2,6 @@ import json
 from typing import Dict, List, Tuple
 
 
-def rows_as_dicts(cursor) -> list[dict]:
-    """convert tuple result to dict with cursor"""
-    col_names = [i[0] for i in cursor.description]
-    return [dict(zip(col_names, row)) for row in cursor]
-
-
 def prepare_filters(
     include_filter_str: str, exclude_filter_str: str, temp_table_regex_str: str
 ) -> Tuple[str, str, str]:
