@@ -13,8 +13,8 @@ from app.const import (
     SCHEMA_EXTRACTION_SQL,
     TABLE_EXTRACTION_SQL,
 )
-from app.preflight import Preflight
 from sdk.dto.workflow import ExtractionConfig, WorkflowConfig
+from sdk.workflows.sql.utils import prepare_filters
 
 
 @workflow.defn
@@ -42,7 +42,7 @@ class ExtractionWorkflow:
 
         # Define metadata types and their corresponding queries
         normalized_include_regex, normalized_exclude_regex, exclude_table = (
-            Preflight.prepare_filters(
+            prepare_filters(
                 config.includeFilterStr,
                 config.excludeFilterStr,
                 config.tempTableRegexStr,

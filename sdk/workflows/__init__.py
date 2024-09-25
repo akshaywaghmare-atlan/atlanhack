@@ -2,7 +2,7 @@ import logging
 import uuid
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-from typing import Any, Dict, Optional, Sequence
+from typing import Any, Dict, List, Optional, Sequence
 
 from temporalio import activity, workflow
 from temporalio.client import Client, WorkflowFailureError, WorkflowHandle
@@ -13,7 +13,6 @@ from temporalio.worker.workflow_sandbox import (
     SandboxRestrictions,
 )
 
-# from app.workflow import ExtractionWorkflow
 from sdk.dto.workflow import WorkflowConfig, WorkflowRequestPayload
 from sdk.interfaces.platform import Platform
 from sdk.logging import get_logger
@@ -45,7 +44,7 @@ class WorkflowMetadataInterface(ABC):
         self.get_sql_alchemy_connect_args_fn = get_sql_alchemy_connect_args_fn
 
     @abstractmethod
-    def fetch_metadata(self, credential: Dict[str, Any]):
+    def fetch_metadata(self, credential: Dict[str, Any]) -> List[Dict[str, str]]:
         raise NotImplementedError
 
 
@@ -59,7 +58,7 @@ class WorkflowPreflightCheckInterface(ABC):
         self.get_sql_alchemy_connect_args_fn = get_sql_alchemy_connect_args_fn
 
     @abstractmethod
-    def preflight_check(self, credential: Dict[str, Any]) -> bool:
+    def preflight_check(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         raise NotImplementedError
 
 

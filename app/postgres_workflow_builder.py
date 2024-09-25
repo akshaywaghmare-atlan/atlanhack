@@ -1,40 +1,21 @@
-from typing import Any, Dict, List
+from typing import Any, Dict
 from urllib.parse import quote_plus
 
 from app.activities import ExtractionActivities
-from app.const import TASK_QUEUE_NAME
-from app.preflight import Preflight
+from app.const import FILTER_METADATA_SQL, TABLES_CHECK_SQL, TASK_QUEUE_NAME
 from app.workflow import ExtractionWorkflow
-from sdk.dto.credentials import CredentialPayload
-from sdk.dto.preflight import PreflightPayload
 from sdk.workflows.sql import SQLWorkflowBuilderInterface, SQLWorkflowMetadataInterface
 from sdk.workflows.sql.preflight_check import SQLWorkflowPreflightCheckInterface
 from sdk.workflows.sql.worker import SQLWorkflowWorkerInterface
 
 
 class PostgresWorkflowMetadata(SQLWorkflowMetadataInterface):
-    METADATA_SQL = """
-        SELECT
-            CATALOG_NAME as DATABASE_NAME,
-            SCHEMA_NAME as SCHEMA_NAME
-        FROM INFORMATION_SCHEMA.SCHEMATA
-    """
-
-    def fetch_metadata(self, credential: Dict[str, Any]) -> List[Dict[str, Any]]:
-        basic_credentials = CredentialPayload(**credential).get_credential_config()
-        return Preflight.fetch_metadata(basic_credentials)
+    METADATA_SQL = FILTER_METADATA_SQL
 
 
 class PostgresWorkflowPreflight(SQLWorkflowPreflightCheckInterface):
-    METADATA_SQL = """
-        SELECT
-            CATALOG_NAME as DATABASE_NAME,
-            SCHEMA_NAME as SCHEMA_NAME
-        FROM INFORMATION_SCHEMA.SCHEMATA
-    """
-
-    def preflight_check(self, form_data: Dict[str, Any]) -> Dict[str, Any]:
-        return Preflight.check(PreflightPayload(**form_data))
+    METADATA_SQL = FILTER_METADATA_SQL
+    TABLES_CHECK_SQL = TABLES_CHECK_SQL
 
 
 class PostgresWorkflowWorker(SQLWorkflowWorkerInterface):
