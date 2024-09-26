@@ -29,6 +29,9 @@
 3. [Temporal CLI installed](https://docs.temporal.io/docs/cli/) to run Temporal server
 4. [DAPR CLI installed](https://docs.dapr.io/getting-started/install-dapr-cli/) to run the PaaS System
     - `dapr init --slim` to initialize the DAPR system locally.
+5. Make sure you have access to the following SDK repos. If you don't have access, please reach out to the IT team.
+   - [Python Application SDK](https://github.com/atlanhq/application-sdk)
+   - [UI SDK](https://github.com/atlanhq/application-sdk)
 
 
 ### Setting up the local development environment
