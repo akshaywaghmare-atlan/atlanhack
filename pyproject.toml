@@ -7,23 +7,9 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-fastapi = {extras = ["standard"], version = "^0.113.0"}
+fastapi = {extras = ["standard"], version = "^0.115.0"}
 pytest-asyncio = "^0.24.0"
-phoenix-sdk = {git = "ssh://git@github.com/atlanhq/phoenix-sdk.git", rev = "4086db5"}
-
-
-[tool.poetry.group.sdk]
-optional = false
-
-[tool.poetry.group.sdk.dependencies]
-fastapi-sqlalchemy = "^0.2.1"
-alembic = "^1.13.2"
-opentelemetry-distro = "^0.48b0"
-opentelemetry-exporter-otlp = "^1.27.0"
-opentelemetry-proto = "^1.27.0"
-opentelemetry-instrumentation-fastapi = "^0.48b0"
-psutil = "^6.0.0"
-dapr = "^1.14.0"
+phoenix-sdk = {git = "ssh://git@github.com/atlanhq/phoenix-sdk.git", rev = "4b7e00a"}
 
 
 [tool.poetry.group.app.dependencies]

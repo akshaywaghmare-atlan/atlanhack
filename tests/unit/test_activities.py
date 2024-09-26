@@ -17,7 +17,7 @@ def mock_dapr_client():
     Returns:
         MagicMock: A mocked instance of DaprClient.
     """
-    with patch("sdk.interfaces.platform.DaprClient") as mock:
+    with patch("phoenix_sdk.interfaces.platform.DaprClient") as mock:
         yield mock.return_value
 
 
