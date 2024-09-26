@@ -2,7 +2,7 @@ import os
 from unittest.mock import MagicMock, patch
 
 import pytest
-from phoenix_sdk.dto.workflow import ExtractionConfig, WorkflowConfig
+from application_sdk.dto.workflow import ExtractionConfig, WorkflowConfig
 
 from app.activities import ExtractionActivities
 
@@ -17,7 +17,7 @@ def mock_dapr_client():
     Returns:
         MagicMock: A mocked instance of DaprClient.
     """
-    with patch("phoenix_sdk.interfaces.platform.DaprClient") as mock:
+    with patch("application_sdk.interfaces.platform.DaprClient") as mock:
         yield mock.return_value
 
 

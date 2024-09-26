@@ -3,9 +3,9 @@ import threading
 from contextlib import asynccontextmanager
 
 import uvicorn
+from application_sdk import FastAPIApplicationBuilder
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from phoenix_sdk import FastAPIApplicationBuilder
 
 from app.postgres_workflow_builder import PostgresWorkflowBuilder
 

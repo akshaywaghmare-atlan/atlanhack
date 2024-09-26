@@ -1,12 +1,14 @@
 from typing import Any, Dict
 from urllib.parse import quote_plus
 
-from phoenix_sdk.workflows.sql import (
+from application_sdk.workflows.sql import (
     SQLWorkflowBuilderInterface,
     SQLWorkflowMetadataInterface,
 )
-from phoenix_sdk.workflows.sql.preflight_check import SQLWorkflowPreflightCheckInterface
-from phoenix_sdk.workflows.sql.worker import SQLWorkflowWorkerInterface
+from application_sdk.workflows.sql.preflight_check import (
+    SQLWorkflowPreflightCheckInterface,
+)
+from application_sdk.workflows.sql.worker import SQLWorkflowWorkerInterface
 
 from app.activities import ExtractionActivities
 from app.const import FILTER_METADATA_SQL, TABLES_CHECK_SQL, TASK_QUEUE_NAME
@@ -31,7 +33,7 @@ class PostgresWorkflowWorker(SQLWorkflowWorkerInterface):
         ExtractionActivities.push_results_to_object_store,
         ExtractionActivities.teardown_output_directory,
     ]
-    PASSTHROUGH_MODULES = ["phoenix_sdk"]
+    PASSTHROUGH_MODULES = ["application_sdk"]
 
 
 class PostgresWorkflowBuilder(SQLWorkflowBuilderInterface):

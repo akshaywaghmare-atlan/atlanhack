@@ -198,6 +198,33 @@ test = ["anyio[trio]", "coverage[toml] (>=7)", "exceptiongroup (>=1.2.0)", "hypo
 trio = ["trio (>=0.26.1)"]
 
 [[package]]
+name = "application-sdk"
+version = "0.1.0"
+description = ""
+optional = false
+python-versions = "^3.11"
+files = []
+develop = false
+
+[package.dependencies]
+alembic = "^1.13.3"
+dapr = "^1.14.0"
+fastapi = {version = "^0.115.0", extras = ["standard"]}
+fastapi-sqlalchemy = "^0.2.1"
+opentelemetry-distro = "^0.48b0"
+opentelemetry-exporter-otlp = "^1.27.0"
+opentelemetry-instrumentation-fastapi = "^0.48b0"
+opentelemetry-proto = "^1.27.0"
+psutil = "^6.0.0"
+temporalio = "^1.7.1"
+
+[package.source]
+type = "git"
+url = "ssh://git@github.com/atlanhq/application-sdk.git"
+reference = "0bf9469"
+resolved_reference = "0bf9469db4e723857bb29782e4a3b501afe8baf2"
+
+[[package]]
 name = "asgiref"
 version = "3.8.1"
 description = "ASGI specs, helper code, and adapters"
@@ -1538,33 +1565,6 @@ files = [
 ]
 
 [[package]]
-name = "phoenix-sdk"
-version = "0.1.0"
-description = ""
-optional = false
-python-versions = "^3.11"
-files = []
-develop = false
-
-[package.dependencies]
-alembic = "^1.13.3"
-dapr = "^1.14.0"
-fastapi = {version = "^0.115.0", extras = ["standard"]}
-fastapi-sqlalchemy = "^0.2.1"
-opentelemetry-distro = "^0.48b0"
-opentelemetry-exporter-otlp = "^1.27.0"
-opentelemetry-instrumentation-fastapi = "^0.48b0"
-opentelemetry-proto = "^1.27.0"
-psutil = "^6.0.0"
-temporalio = "^1.7.1"
-
-[package.source]
-type = "git"
-url = "ssh://git@github.com/atlanhq/phoenix-sdk.git"
-reference = "4b7e00a"
-resolved_reference = "4b7e00aa96ec08fae7af3edf432ffbc630e3b31c"
-
-[[package]]
 name = "platformdirs"
 version = "4.3.6"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a `user data dir`."
@@ -2781,4 +2781,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "ea318a0eb8a2b325e6e43f0e45fc28acec6ffbe74d882f555296b39e25a718dd"
+content-hash = "ffe7570a133a3664373bf9d053c54e1ffcb0feee66e80df5ae20e786a95f47b9"

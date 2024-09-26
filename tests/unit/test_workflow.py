@@ -3,7 +3,7 @@ from typing import Dict
 from unittest.mock import MagicMock
 
 import pytest
-from phoenix_sdk.dto.workflow import ExtractionConfig, WorkflowConfig
+from application_sdk.dto.workflow import ExtractionConfig, WorkflowConfig
 from temporalio import activity
 from temporalio.testing import WorkflowEnvironment
 from temporalio.worker import Worker
@@ -70,7 +70,7 @@ async def test_extraction_workflow():
             ],
             workflow_runner=SandboxedWorkflowRunner(
                 restrictions=SandboxRestrictions.default.with_passthrough_modules(
-                    "phoenix_sdk"
+                    "application_sdk"
                 )
             ),
         ):

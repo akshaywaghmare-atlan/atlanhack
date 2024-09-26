@@ -2,8 +2,8 @@ import asyncio
 from datetime import timedelta
 from typing import Any, Coroutine, Dict, List
 
-from phoenix_sdk.dto.workflow import ExtractionConfig, WorkflowConfig
-from phoenix_sdk.workflows.sql.utils import prepare_filters
+from application_sdk.dto.workflow import ExtractionConfig, WorkflowConfig
+from application_sdk.workflows.sql.utils import prepare_filters
 from temporalio import workflow
 from temporalio.common import RetryPolicy
 
@@ -80,7 +80,8 @@ class ExtractionWorkflow:
                         workflowConfig=config, typename=typename, query=query
                     ),
                     retry_policy=retry_policy,
-                    # https://community.temporal.io/t/long-running--with-auto-heartbeater-failing/13586
+                    # heartbeat_timeout is needed because the activity is long running and a failure
+                    # in the would cause wait for a duration of start_to_close_timeout
                     heartbeat_timeout=timedelta(minutes=1),
                     start_to_close_timeout=timedelta(minutes=600),
                 )
