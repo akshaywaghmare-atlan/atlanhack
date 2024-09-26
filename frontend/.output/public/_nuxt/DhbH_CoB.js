@@ -1,4 +1,4 @@
-var u=Object.defineProperty;var p=(n,t,e)=>t in n?u(n,t,{enumerable:!0,configurable:!0,writable:!0,value:e}):n[t]=e;var o=(n,t,e)=>p(n,typeof t!="symbol"?t+"":t,e);import{i as g,F as b,f as x,a as f,R as m}from"./DWyYeOWN.js";function v(n,t){let e=null;return function(...a){const i=this;e!==null&&clearTimeout(e),e=setTimeout(()=>{n.apply(i,a),e=null},t)}}class y{constructor(t,e){o(this,"container");o(this,"columns");o(this,"data");o(this,"options");o(this,"searchTerm","");o(this,"dateRange","Last 1 hour");o(this,"startDate",null);o(this,"endDate",null);o(this,"expandedGroups",new Set);o(this,"filterData",async(t,e)=>{const a=await this.options.onChange({key:t,value:e}),i=this.container.querySelector("#tableBody");i.innerHTML=this.renderTableRows(a);const r=this.container.querySelector("#searchInput");r&&(r.value=this.searchTerm)});this.container=document.getElementById(t),this.columns=e.columns,this.data=e.data,this.options=e.options,this.render(),this.attachEventListeners()}getInputStyles(){return`
+var u=Object.defineProperty;var p=(n,t,e)=>t in n?u(n,t,{enumerable:!0,configurable:!0,writable:!0,value:e}):n[t]=e;var o=(n,t,e)=>p(n,typeof t!="symbol"?t+"":t,e);import{i as g,F as b,f as x,a as f,R as m}from"./C3frKiCu.js";function v(n,t){let e=null;return function(...a){const i=this;e!==null&&clearTimeout(e),e=setTimeout(()=>{n.apply(i,a),e=null},t)}}class y{constructor(t,e){o(this,"container");o(this,"columns");o(this,"data");o(this,"options");o(this,"searchTerm","");o(this,"dateRange","Last 1 hour");o(this,"startDate",null);o(this,"endDate",null);o(this,"expandedGroups",new Set);o(this,"filterData",async(t,e)=>{const a=await this.options.onChange({key:t,value:e}),i=this.container.querySelector("#tableBody");i.innerHTML=this.renderTableRows(a);const r=this.container.querySelector("#searchInput");r&&(r.value=this.searchTerm)});this.container=document.getElementById(t),this.columns=e.columns,this.data=e.data,this.options=e.options,this.render(),this.attachEventListeners()}getInputStyles(){return`
             width: 100%;
             padding: 6px 12px;
             border: 1px solid rgb(224, 228, 235);
@@ -63,11 +63,11 @@ var u=Object.defineProperty;var p=(n,t,e)=>t in n?u(n,t,{enumerable:!0,configura
                         <div class="overflow-hidden shadow-sm">
                             <div class="max-h-[calc(100vh-72px)] overflow-y-auto">
                                 <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-100">
+                                    <thead class="bg-gray-50">
                                         <tr>
-                                            ${this.options.expandable?'<th scope="col" class="px-4 py-2 text-left text-base bold text-gray-900 tracking-wider sticky top-0 bg-slate-200 font-semibold"></th>':""}
+                                            ${this.options.expandable?'<th scope="col" class="px-4 py-2 text-left text-base bold text-gray-900 tracking-wider sticky top-0 bg-slate-100 rounded-md font-semibold"></th>':""}
                                             ${this.columns.map(t=>`
-                                                <th scope="col" class="px-4 py-2 text-left text-base bold text-gray-900 tracking-wider sticky top-0 bg-slate-200 font-semibold">
+                                                <th scope="col" class="px-4 py-2 text-left text-base bold text-gray-900 tracking-wider sticky top-0 bg-slate-100 rounded-mdfont-semibold">
                                                     <div class="flex items-center">
                                                         ${t.header}
                                                     </div>
@@ -86,7 +86,7 @@ var u=Object.defineProperty;var p=(n,t,e)=>t in n?u(n,t,{enumerable:!0,configura
             </div>
         </div>
         `}renderTableRows(t){return(t||this.data).map((a,i)=>{const r=this.expandedGroups.has(a.trace_id);return`
-                <tr class="hover:bg-blue-50 text-base">
+                <tr class="hover:bg-blue-50 text-base font-normal">
                     ${this.options.expandable?`
                         <td class="px-2 py-1">
                             <button class="expand-button p-1 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600" data-index="${i}" data-trace-id="${a.trace_id}">

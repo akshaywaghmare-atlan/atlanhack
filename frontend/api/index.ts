@@ -11,6 +11,7 @@ const urls = {
         logs: '/telemetry/v1/logs',
         metrics: '/telemetry/v1/metrics',
         traces: '/telemetry/v1/traces',
+        events: '/telemetry/v1/events',
     }
 }
 
@@ -37,6 +38,12 @@ const api = {
     fetchTelemetryMetrics: async (payload: any) => {
         const { keyword, limit = 100 } = payload;
         const response = await apiClient.get(`${urls.telemetry.metrics}?skip=${0}&limit=${limit}`);
+        return response;
+    },
+
+    fetchTelemetryEvents: async (payload: any) => {
+        const { keyword, limit = 100 } = payload;
+        const response = await apiClient.get(`${urls.telemetry.events}?skip=${0}&limit=${limit}`);
         return response;
     },
 
