@@ -64,12 +64,12 @@
             "request": "launch",
             "program": "${workspaceFolder}/.venv/bin/pytest",
             "args": [
-                "-v",
+                "-v"
             ],
             "cwd": "${workspaceFolder}",
             "env": {
                 "PYTHONPATH": "${workspaceFolder}"
-            },
+            }
         },
         {
             "name": "Python: Instrumented",
@@ -92,7 +92,8 @@
                 "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:8000/telemetry",
                 "OTEL_EXPORTER_OTLP_PROTOCOL": "http/protobuf",
                 "PYTHONUNBUFFERED": "1",
-                "OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED": "true"
+                "OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED": "true",
+                "OTEL_PYTHON_EXCLUDED_URLS": "/telemetry/.*,/system/.*"
             }
         }
     ]
@@ -122,7 +123,7 @@
 1. Create a new run configuration for the project
 2. Set the script path to `.venv/bin/opentelemetry-instrument`
 3. Set parameters to `--traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-app python main.py`
-4. Add environment variable `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:8000/telemetry;OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf;PYTHONUNBUFFERED=1;OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true`
+4. Add environment variable `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:8000/telemetry;OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf;PYTHONUNBUFFERED=1;OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true;OTEL_PYTHON_EXCLUDED_URLS=/telemetry/.*,/system/.*`
 5. Run the configuration
 
 ## Advanced Configuration
