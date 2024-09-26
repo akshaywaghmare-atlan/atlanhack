@@ -2,9 +2,9 @@ import os
 from unittest.mock import MagicMock, patch
 
 import pytest
+from phoenix_sdk.dto.workflow import ExtractionConfig, WorkflowConfig
 
-from app.dto.workflow import ExtractionConfig, WorkflowConfig
-from app.workflow.activities import ExtractionActivities
+from app.activities import ExtractionActivities
 
 pytestmark = pytest.mark.asyncio
 
@@ -17,7 +17,7 @@ def mock_dapr_client():
     Returns:
         MagicMock: A mocked instance of DaprClient.
     """
-    with patch("sdk.interfaces.platform.DaprClient") as mock:
+    with patch("phoenix_sdk.interfaces.platform.DaprClient") as mock:
         yield mock.return_value
 
 
@@ -29,33 +29,33 @@ def mock_platform():
     Returns:
         MagicMock: A mock object for the Platform class.
     """
-    with patch("app.workflow.activities.Platform") as mock:
+    with patch("app.activities.Platform") as mock:
         yield mock
 
 
 @pytest.fixture
 def mock_connect_to_db():
     """
-    Fixture to mock the connect_to_db function.
+    Fixture to mock the psycopg2 module.
 
     Returns:
-        MagicMock: A mock object for the connect_to_db function.
+        MagicMock: A mock object for the psycopg2 module.
     """
-    with patch("app.workflow.activities.connect_to_db") as mock:
+    with patch("app.activities.psycopg2.connect") as mock:
         yield mock
 
 
 @pytest.mark.asyncio
-async def test_create_output_directory():
+async def test_setup_output_directory():
     """
-    Test the create_output_directory method of ExtractionActivities.
+    Test the setup_output_directory method of ExtractionActivities.
 
     Ensures that the method creates the expected directory structure.
     """
     output_prefix = "/tmp/metadata/workflowId/runId"
 
     with patch("os.makedirs") as mock_makedirs:
-        await ExtractionActivities.create_output_directory(output_prefix)
+        await ExtractionActivities.setup_output_directory(output_prefix)
 
         assert mock_makedirs.call_count == 3
         mock_makedirs.assert_any_call(output_prefix, exist_ok=True)

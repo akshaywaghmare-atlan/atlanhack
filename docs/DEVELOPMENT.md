@@ -28,16 +28,21 @@
 2. [Poetry](https://python-poetry.org/) for dependency management
 3. [Temporal CLI installed](https://docs.temporal.io/docs/cli/) to run Temporal server
 4. [DAPR CLI installed](https://docs.dapr.io/getting-started/install-dapr-cli/) to run the PaaS System
+    - `dapr init --slim` to initialize the DAPR system locally.
 
 
 ### Setting up the local development environment
 1. Install poetry by running `pip install poetry`
 2. Run `poetry install` to install the dependencies
 > [!NOTE]
-> It is suggested to use run `poetry config virtualenvs.in-project true` to configure poetry to create the virtual environment in the project directory. This will create a `.venv` directory in the project root.
-3. Run `source .venv/bin/activate` to activate the virtual environment
-4. Run `pre-commit install` to install the pre-commit hooks
-5. Start the platform by running `make start-all`. This will start the Temporal server and the DAPR system.
+> 1. You need to have your SSH private key enabled in the terminal you run the install command or you will see a permission denied error while pulling from the private repositories. If you use HTTP tokens/PAT to authenticate, then run the following:
+    ```
+    git config --global url."https://".insteadOf "ssh://"
+    ```
+> 2. It is suggested to use run `poetry config virtualenvs.in-project true` to configure poetry to create the virtual environment in the project directory. This will create a `.venv` directory in the project root.
+4. Run `source .venv/bin/activate` to activate the virtual environment
+5. Run `pre-commit install` to install the pre-commit hooks
+6. Start the platform by running `make start-all`. This will start the Temporal server and the DAPR system.
 
 
 ### Development with VSCode or Cursor

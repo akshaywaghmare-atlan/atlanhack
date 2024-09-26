@@ -1,26 +1,28 @@
 import asyncio
 import json
 import os
+import shutil
 import time
 import uuid
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Dict, List
 
 import aiofiles
+import psycopg2
+from phoenix_sdk.common.converter import transform_metadata
+from phoenix_sdk.common.schema import PydanticJSONEncoder
+from phoenix_sdk.dto.workflow import ExtractionConfig
+from phoenix_sdk.interfaces.platform import Platform
+from phoenix_sdk.workflows.utils.activity import auto_heartbeater
 from temporalio import activity
 
-from app.common.converter import transform_metadata
-from app.common.schema import PydanticJSONEncoder
-from app.common.utils import connect_to_db
-from app.dto.workflow import ExtractionConfig
-from sdk.interfaces.platform import Platform
-from sdk.workflows.utils.activity import auto_heartbeater
+from app.const import CONNECTOR_NAME, CONNECTOR_TYPE
 
 
 class ExtractionActivities:
     @staticmethod
     @activity.defn
-    async def create_output_directory(output_prefix: str) -> None:
+    async def setup_output_directory(output_prefix: str) -> None:
         os.makedirs(output_prefix, exist_ok=True)
         os.makedirs(os.path.join(output_prefix, "raw"), exist_ok=True)
         os.makedirs(os.path.join(output_prefix, "transformed"), exist_ok=True)
@@ -39,11 +41,12 @@ class ExtractionActivities:
 
         activity.logger.info(f"Starting metadata extraction for {typename}")
         credentials = Platform.extract_credentials(workflow_config.credentialsGUID)
-        conn = connect_to_db(credentials)
+        connection = None
 
         try:
+            connection = psycopg2.connect(**credentials.model_dump())
             summary = await ExtractionActivities._execute_query_and_process(
-                conn, query, typename, workflow_config.outputPath
+                connection, query, typename, workflow_config.outputPath
             )
 
             activity.logger.info(f"Completed metadata extraction for {typename}:")
@@ -59,13 +62,14 @@ class ExtractionActivities:
             activity.logger.error(f"Error extracting metadata for {typename}: {e}")
             raise e
         finally:
-            conn.close()
+            if connection:
+                connection.close()
 
         return {typename: summary}
 
     @staticmethod
     async def _execute_query_and_process(
-        conn: Any,
+        connection: Any,
         query: str,
         typename: str,
         output_path: str,
@@ -79,7 +83,7 @@ class ExtractionActivities:
             # Use a unique name for the server-side cursor
             cursor_name = f"cursor_{typename}_{uuid.uuid4()}"
             cursor = await loop.run_in_executor(
-                pool, lambda: conn.cursor(name=cursor_name)
+                pool, lambda: connection.cursor(name=cursor_name)
             )
 
             try:
@@ -142,7 +146,9 @@ class ExtractionActivities:
                 raw_batch.append(json.dumps(row))
                 summary["raw"] += 1
 
-                transformed_data = transform_metadata(typename, row)
+                transformed_data = transform_metadata(
+                    CONNECTOR_NAME, CONNECTOR_TYPE, typename, row
+                )
                 if transformed_data is not None:
                     transformed_batch.append(
                         json.dumps(
@@ -183,3 +189,10 @@ class ExtractionActivities:
             Platform.push_to_object_store(output_prefix, output_path)
         except Exception as e:
             activity.logger.error(f"Error pushing results to object store: {e}")
+            raise e
+
+    @staticmethod
+    @activity.defn
+    async def teardown_output_directory(output_prefix: str) -> None:
+        activity.logger.info(f"Tearing down output directory: {output_prefix}")
+        shutil.rmtree(output_prefix)

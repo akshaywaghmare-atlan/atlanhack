@@ -2,9 +2,12 @@ import asyncio
 from datetime import timedelta
 from typing import Any, Coroutine, Dict, List
 
+from phoenix_sdk.dto.workflow import ExtractionConfig, WorkflowConfig
+from phoenix_sdk.workflows.sql.utils import prepare_filters
 from temporalio import workflow
 from temporalio.common import RetryPolicy
 
+from app.activities import ExtractionActivities
 from app.const import (
     COLUMN_EXTRACTION_SQL,
     DATABASE_EXTRACTION_SQL,
@@ -12,9 +15,6 @@ from app.const import (
     SCHEMA_EXTRACTION_SQL,
     TABLE_EXTRACTION_SQL,
 )
-from app.dto.workflow import ExtractionConfig, WorkflowConfig
-from app.interfaces.preflight import Preflight
-from app.workflow.activities import ExtractionActivities
 
 
 @workflow.defn
@@ -34,15 +34,15 @@ class ExtractionWorkflow:
 
         # Create output directory
         await workflow.execute_activity(  # pyright: ignore[reportUnknownMemberType]
-            ExtractionActivities.create_output_directory,
+            ExtractionActivities.setup_output_directory,
             config.outputPath,
             retry_policy=retry_policy,
-            start_to_close_timeout=timedelta(minutes=5),
+            start_to_close_timeout=timedelta(seconds=5),
         )
 
         # Define metadata types and their corresponding queries
         normalized_include_regex, normalized_exclude_regex, exclude_table = (
-            Preflight.prepare_filters(
+            prepare_filters(
                 config.includeFilterStr,
                 config.excludeFilterStr,
                 config.tempTableRegexStr,
@@ -100,6 +100,12 @@ class ExtractionWorkflow:
             start_to_close_timeout=timedelta(minutes=10),
         )
 
-        # TODO: cleanup output directory
+        # cleanup output directory
+        await workflow.execute_activity(  # pyright: ignore[reportUnknownMemberType]
+            ExtractionActivities.teardown_output_directory,
+            config.outputPath,
+            retry_policy=retry_policy,
+            start_to_close_timeout=timedelta(seconds=5),
+        )
         workflow.logger.info(f"Extraction workflow completed for {config.workflowId}")
         workflow.logger.info(f"Extraction results summary: {extraction_results}")

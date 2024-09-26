@@ -1,58 +1,37 @@
-from typing import Any, Dict, List
+from typing import Any, Dict
 from urllib.parse import quote_plus
 
-from app.const import METADATA_EXTRACTION_TASK_QUEUE
-from app.dto.credentials import CredentialPayload
-from app.dto.preflight import PreflightPayload
-from app.dto.workflow import WorkflowRequestPayload
-from app.interfaces.preflight import Preflight
-from app.interfaces.workflow import Workflow
-from app.workflow.activities import ExtractionActivities
-from app.workflow.workflow import ExtractionWorkflow
-from sdk.workflows.sql import SQLWorkflowBuilderInterface, SQLWorkflowMetadataInterface
-from sdk.workflows.sql.preflight_check import SQLWorkflowPreflightCheckInterface
-from sdk.workflows.sql.worker import SQLWorkflowWorkerInterface
+from phoenix_sdk.workflows.sql import (
+    SQLWorkflowBuilderInterface,
+    SQLWorkflowMetadataInterface,
+)
+from phoenix_sdk.workflows.sql.preflight_check import SQLWorkflowPreflightCheckInterface
+from phoenix_sdk.workflows.sql.worker import SQLWorkflowWorkerInterface
+
+from app.activities import ExtractionActivities
+from app.const import FILTER_METADATA_SQL, TABLES_CHECK_SQL, TASK_QUEUE_NAME
+from app.workflow import ExtractionWorkflow
 
 
 class PostgresWorkflowMetadata(SQLWorkflowMetadataInterface):
-    METADATA_SQL = """
-        SELECT
-            CATALOG_NAME as DATABASE_NAME,
-            SCHEMA_NAME as SCHEMA_NAME
-        FROM INFORMATION_SCHEMA.SCHEMATA
-    """
-
-    def fetch_metadata(self, credential: Dict[str, Any]) -> List[Dict[str, Any]]:
-        basic_credentials = CredentialPayload(**credential).get_credential_config()
-        return Preflight.fetch_metadata(basic_credentials)
+    METADATA_SQL = FILTER_METADATA_SQL
 
 
 class PostgresWorkflowPreflight(SQLWorkflowPreflightCheckInterface):
-    METADATA_SQL = """
-        SELECT
-            CATALOG_NAME as DATABASE_NAME,
-            SCHEMA_NAME as SCHEMA_NAME
-        FROM INFORMATION_SCHEMA.SCHEMATA
-    """
-
-    def preflight_check(self, form_data: Dict[str, Any]) -> Dict[str, Any]:
-        return Preflight.check(PreflightPayload(**form_data))
+    METADATA_SQL = FILTER_METADATA_SQL
+    TABLES_CHECK_SQL = TABLES_CHECK_SQL
 
 
 class PostgresWorkflowWorker(SQLWorkflowWorkerInterface):
-    QUEUE_NAME = METADATA_EXTRACTION_TASK_QUEUE
-    WORKFLOWS = [ExtractionWorkflow]
+    METADATA_EXTRACTION_TASK_QUEUE = TASK_QUEUE_NAME
+    WORKFLOW = ExtractionWorkflow
     ACTIVITIES = [
-        ExtractionActivities.create_output_directory,
+        ExtractionActivities.setup_output_directory,
         ExtractionActivities.extract_metadata,
         ExtractionActivities.push_results_to_object_store,
+        ExtractionActivities.teardown_output_directory,
     ]
-    PASSTHROUGH_MODULES = ["sdk"]
-
-    async def run_workflow(self, workflow_args: Dict[str, Any]) -> Dict[str, Any]:
-        workflow_payload = WorkflowRequestPayload(**workflow_args)
-        workflow_run_details = await Workflow.run(workflow_payload)
-        return workflow_run_details
+    PASSTHROUGH_MODULES = ["phoenix_sdk"]
 
 
 class PostgresWorkflowBuilder(SQLWorkflowBuilderInterface):

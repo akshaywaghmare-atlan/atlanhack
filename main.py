@@ -5,9 +5,9 @@ from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from phoenix_sdk import FastAPIApplicationBuilder
 
 from app.postgres_workflow_builder import PostgresWorkflowBuilder
-from sdk import FastAPIApplicationBuilder
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
