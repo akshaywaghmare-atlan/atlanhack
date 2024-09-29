@@ -29,6 +29,11 @@ WORKDIR /app
 
 # Install Python dependencies
 COPY ./pyproject.toml ./poetry.lock ./
+
+# Set the GITHUB_TOKEN environment variable for the application-sdk dependency to be installed from atlan github
+ARG GITHUB_TOKEN
+RUN git config --global url."https://${GITHUB_TOKEN}".insteadOf "ssh://git";
+
 # the cache directory makes rebuilding a docker image if pyproject.toml changes near instant
 RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root --without dev,test --no-interaction --no-ansi
 
