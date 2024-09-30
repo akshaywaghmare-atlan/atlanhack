@@ -1,9 +1,3 @@
-# Constants shared across the application
-
-CONNECTOR_NAME = "postgres"
-CONNECTOR_TYPE = "sql"
-TASK_QUEUE_NAME = "POSTGRES_METADATA_EXTRACTION_TASK_QUEUE"
-
 # Queries
 TABLES_CHECK_SQL = """
     SELECT count(*)

@@ -16,7 +16,6 @@ from app.const import (
     SCHEMA_EXTRACTION_SQL,
     TABLE_EXTRACTION_SQL,
     TABLES_CHECK_SQL,
-    TASK_QUEUE_NAME,
 )
 
 APPLICATION_NAME = "postgres-connector"
