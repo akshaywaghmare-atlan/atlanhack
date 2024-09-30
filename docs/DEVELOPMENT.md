@@ -1,6 +1,6 @@
 # Development
 
-### How this works?
+### How does this work?
 _If you are using the Atlan CLI to create a new application, you can skip this section._
 - There are 3 main components to this application:
     - **Temporal**: This is the workflow engine that is used to schedule and execute the workflow.
@@ -15,10 +15,11 @@ _If you are using the Atlan CLI to create a new application, you can skip this s
     - [Development Tools](#development-tools)
     - [Setting up the local development environment](#setting-up-the-local-development-environment)
 - [Using VSCode or Cursor](#development-with-vscode-or-cursor)
+- [Working with the frontend (Optional)](#working-with-the-frontend-optional)
 - [Using Intellij IDEA](#using-intellij-idea)
-- [Add OTel agent during IntelliJ run](#add-otel-agent-during-intellij-run)
+  - [Add OTel agent during IntelliJ run](#add-otel-agent-during-intellij-run)
 - [Advanced Configuration](#advanced-configuration)
-- [Changing storage of telemetry data](#changing-storage-of-telemetry-data)
+  - [Changing storage of telemetry data](#changing-storage-of-telemetry-data)
 
 
 ## Prerequisites
@@ -37,19 +38,13 @@ _If you are using the Atlan CLI to create a new application, you can skip this s
 
 ### Setting up the local development environment
 1. Install poetry by running `pip install poetry`
-2. Run `poetry install` to install the dependencies
-> [!NOTE]
-> 1. You need to have your SSH private key enabled in the terminal you run the install command or you will see a permission denied error while pulling from the private repositories. If you use HTTP tokens/PAT to authenticate, then run the following:
-    ```
-    git config --global url."https://".insteadOf "ssh://"
-    ```
-> 2. It is suggested to use run `poetry config virtualenvs.in-project true` to configure poetry to create the virtual environment in the project directory. This will create a `.venv` directory in the project root.
-3. Run `source .venv/bin/activate` to activate the virtual environment
-4. Run `pre-commit install` to install the pre-commit hooks
-5. Start the platform by running `make start-all`. This will start the Temporal server and the DAPR system.
+2. Set poetry config `poetry config virtualenvs.in-project true`
+3. Run `make install` to install the dependencies
+4. Start the platform by running `make start-all`. This will start the Temporal server and the DAPR system.
+5. Run `make run` to start the FastAPI server
 
 
-### Development with VSCode or Cursor
+## Development with VSCode or Cursor
 1. Follow the above steps (1-5) to install the dependencies and start the platform.
 2. Add the following settings to the `.vscode/launch.json` file
 ```json
@@ -60,7 +55,7 @@ _If you are using the Atlan CLI to create a new application, you can skip this s
             "name": "Python: FastAPI Server",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/main.py",
+            "program": "${workspaceFolder}/main.py"
         },
         {
             "name": "Python: Debug Tests",
@@ -107,7 +102,7 @@ _If you are using the Atlan CLI to create a new application, you can skip this s
 - You can navigate to the Run and Debug section in the IDE to run the configurations of your choice.
 
 
-### Working with the frontend (Optional)
+## Working with the frontend (Optional)
 
 > While this repository already contains the compiled frontend, if you wish to work on the frontend, you can run the following commands to install the dependencies and build the frontend.
 
@@ -123,7 +118,7 @@ _If you are using the Atlan CLI to create a new application, you can skip this s
 5. The application support auto-reload, so you can make changes to the code and the server will automatically restart
 
 
-## Add OTel agent during IntelliJ run
+### Add OTel agent during IntelliJ run
 1. Create a new run configuration for the project
 2. Set the script path to `.venv/bin/opentelemetry-instrument`
 3. Set parameters to `--traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-app python main.py`

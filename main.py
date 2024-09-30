@@ -7,7 +7,7 @@ from application_sdk.app.rest import FastAPIApplicationBuilder
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from app.postgres_workflow_builder import PostgresWorkflowBuilder
+from app.workflow import PostgresWorkflowBuilder
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
