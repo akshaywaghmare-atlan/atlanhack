@@ -51,8 +51,8 @@ jobs:
           tags: |
             ${{ secrets.HARBOR_URL }}/applications/${{ github.event.repository.name }}:${{ steps.get_branch.outputs.branch }}-${{ steps.get_version.outputs.version }}
             ${{ secrets.HARBOR_URL }}/applications/${{ github.event.repository.name }}:${{ steps.get_branch.outputs.branch }}-latest
-          build-args: |
-            GITHUB_TOKEN=${{ secrets.ORG_PAT_GITHUB }}
+          secrets: |
+            github_token=${{ secrets.ORG_PAT_GITHUB }}
         env:
           DOCKER_CLIENT_TIMEOUT: 300
           COMPOSE_HTTP_TIMEOUT: 300
