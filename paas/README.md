@@ -1,6 +1,6 @@
-# Dapr Application Components
+# PaaS Components
 
-This repository contains Dapr components for various services.
+This folder contains Dapr PaaS components for various services.
 
 ## Requirements
 - Install [Dapr CLI](https://docs.dapr.io/getting-started/install-dapr-cli/)
