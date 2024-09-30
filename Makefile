@@ -9,7 +9,7 @@ start-temporal-dev:
 	temporal server start-dev
 
 start-dapr:
-	dapr run --app-id app --app-port 3000 --dapr-http-port 3500 --dapr-grpc-port 50001 --dapr-http-max-request-size 1024 --resources-path ./paas/components
+	dapr run --app-id app --app-port 3000 --dapr-http-port 3500 --dapr-grpc-port 50001 --dapr-http-max-request-size 1024 --resources-path .venv/src/application-sdk/components
 
 start-all:
 	make start-dapr & make start-temporal-dev

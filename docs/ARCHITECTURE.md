@@ -15,4 +15,5 @@ Head over to the [SDK documentation](https://github.com/atlanhq/application-sdk)
 - `app/` - The core functionality of the application.
   - `const.py` - Contains the constants used in the application.
   - `workflow.py` - Contains the implementation of the `SQLWorkflowInterface`.
-   
+- `tests/` - Contains the tests for the application.
+- `frontend/` - Contains the frontend code for the application.
