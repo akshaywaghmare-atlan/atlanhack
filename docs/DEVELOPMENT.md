@@ -1,7 +1,7 @@
 # Development
 
 ### How this works?
-
+_If you are using the Atlan CLI to create a new application, you can skip this section._
 - There are 3 main components to this application:
     - **Temporal**: This is the workflow engine that is used to schedule and execute the workflow.
     - **DAPR**: This is application runtime that is used to abstract the underlying infrastructure and provide a set of building blocks for the application. In this case, it is used to abstract the object store, secrets manager and state manager.
@@ -24,6 +24,7 @@
 ## Prerequisites
 
 ### Development Tools
+_If you are using the Atlan CLI to create a new application, you can skip this section._
 1. Python 3.11 or higher
 2. [Poetry](https://python-poetry.org/) for dependency management
 3. [Temporal CLI installed](https://docs.temporal.io/docs/cli/) to run Temporal server
@@ -43,9 +44,9 @@
     git config --global url."https://".insteadOf "ssh://"
     ```
 > 2. It is suggested to use run `poetry config virtualenvs.in-project true` to configure poetry to create the virtual environment in the project directory. This will create a `.venv` directory in the project root.
-4. Run `source .venv/bin/activate` to activate the virtual environment
-5. Run `pre-commit install` to install the pre-commit hooks
-6. Start the platform by running `make start-all`. This will start the Temporal server and the DAPR system.
+3. Run `source .venv/bin/activate` to activate the virtual environment
+4. Run `pre-commit install` to install the pre-commit hooks
+5. Start the platform by running `make start-all`. This will start the Temporal server and the DAPR system.
 
 
 ### Development with VSCode or Cursor

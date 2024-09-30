@@ -20,6 +20,9 @@ git clone --recurse-submodules https://github.com/atlanhq/phoenix-postgres-app.g
 
 ### Development
 - [Development and Quickstart Guide](./docs/DEVELOPMENT.md)
+- This application is just an SQL application implementation of Atlan's [Python Application SDK](https://github.com/atlanhq/application-sdk)
+  - Please refer to the [examples](https://github.com/atlanhq/application-sdk/tree/main/examples) in the SDK to see how to use the SDK to build different applications on the Atlan Platform
+
 
 ### Contributing
 - Slack - #collab-phoenix
