@@ -3,7 +3,7 @@ import threading
 from contextlib import asynccontextmanager
 
 import uvicorn
-from application_sdk import FastAPIApplicationBuilder
+from application_sdk.app.rest import FastAPIApplicationBuilder
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
