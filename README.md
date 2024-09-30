@@ -1,8 +1,8 @@
-![PostgresSQL Logo](./docs/images/postgres_logo.svg) 
-# PostgresSQL Application
+![PostgreSQL Logo](./docs/images/postgres_logo.svg)
+# PostgreSQL Application
 
 
-This application is designed to interact with a PostgresSQL database and perform actions on it. The application is built using the Atlan Python Application SDK and is intended to run on the Atlan Platform.
+This application is designed to interact with a PostgreSQL database and perform actions on it. The application is built using the Atlan Python Application SDK and is intended to run on the Atlan Platform.
 
 **Overview:**
 - The application is a FastAPI application.
