@@ -1,0 +1,39 @@
+schemaType: Bundle
+schemaVersion: 1.0.1
+name: applications/phoenix-postgres-app-main/edge
+description: "A CNAB bundle to manage the Postgres App"
+registry: "harbor-phoenix.atlan.dev"
+dockerfile: template.Dockerfile
+
+mixins:
+  - exec
+
+parameters:
+  - name: platform
+    type: string
+    default: "edge"
+    description: "The platform environment variable to pass at runtime"
+
+install:
+  - exec:
+      description: "Run the JDBC Extractor App"
+      command: /bin/sh
+      arguments:
+        - '-c'
+        - 'export PLATFORM={{bundle.parameters.platform}} && fastapi dev main.py'
+
+upgrade:
+  - exec:
+      description: "Upgrade"
+      command: /bin/sh
+      arguments:
+        - '-c'
+        - 'echo "No upgrade required"'
+
+uninstall:
+  - exec:
+      description: "Uninstall"
+      command: /bin/sh
+      arguments:
+        - '-c'
+        - 'echo "No uninstallation required"'
