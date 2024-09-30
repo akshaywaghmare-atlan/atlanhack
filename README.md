@@ -1,8 +1,11 @@
-![PostgreSQL Logo](./docs/images/postgres_logo.svg)
+<p align="center">
+  <img src="./docs/images/postgres_logo.svg" alt="PostgreSQL Logo" width="200" height="auto">
+</p>
+
 # PostgreSQL Application
 
 
-This application is designed to interact with a PostgreSQL database and perform actions on it. The application is built using the Atlan Python Application SDK and is intended to run on the Atlan Platform.
+This application is designed to interact with a PostgreSQL database and perform actions on it. The application is built using the [Atlan Python Application SDK](https://github.com/atlanhq/application-sdk) and is intended to run on the Atlan Platform.
 
 **Overview:**
 - The application is a FastAPI application.
@@ -48,4 +51,4 @@ git clone --recurse-submodules https://github.com/atlanhq/phoenix-postgres-app.g
 ```
 - [Development and Quickstart Guide](./docs/DEVELOPMENT.md)
 - This application is just an SQL application implementation of Atlan's [Python Application SDK](https://github.com/atlanhq/application-sdk)
-  - Please refer to the [examples](https://github.com/atlanhq/application-sdk/tree/main/examples) in the SDK to see how to use the SDK to build different applications on the Atlan Platform
+  - Please refer to the [examples](https://github.com/atlanhq/application-sdk/tree/main/examples) in the SDK to see how to use the SDK to build different applications on the Atlan Platform.
