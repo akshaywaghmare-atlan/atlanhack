@@ -35,7 +35,6 @@ if __name__ == "__main__":
 
     atlan_app_builder = FastAPIApplicationBuilder(app, postgres_workflow)
     atlan_app_builder.add_telemetry_routes()
-    atlan_app_builder.add_event_routes()
     atlan_app_builder.add_workflows_router()
 
     # always mount the frontend at the end
