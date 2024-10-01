@@ -1,11 +1,12 @@
 import ApiClient from './apiClient';
 
 const urls = {
-    preflight: '/workflows/preflight-check',
-    testAuthentication: '/workflows/test-authentication',
+    preflight: '/workflows/v1/check',
+    testAuthentication: '/workflows/v1/auth',
+    fetchMetadata: '/workflows/v1/metadata',
     login: '/login',
     logout: '/logout',
-    runWorkflow: '/workflows/start-workflow',
+    runWorkflow: '/workflows/v1/start',
     events: '/events',
     telemetry: {
         logs: '/telemetry/v1/logs',
