@@ -9,8 +9,8 @@ readme = "README.md"
 python = "^3.11"
 fastapi = {extras = ["standard"], version = "^0.115.0"}
 pytest-asyncio = "^0.24.0"
-#application-sdk = { path = "../application-sdk/", develop = true }
-application-sdk = {git = "ssh://git@github.com/atlanhq/application-sdk.git", rev = "f963343"}
+# application-sdk = { path = "../application-sdk/", develop = true }
+application-sdk = {git = "ssh://git@github.com/atlanhq/application-sdk.git", rev = "main"}
 
 [tool.poetry.group.app.dependencies]
 temporalio = "^1.7.0"
