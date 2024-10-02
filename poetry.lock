@@ -224,7 +224,7 @@ temporalio = "^1.7.1"
 type = "git"
 url = "https://github.com/atlanhq/application-sdk.git"
 reference = "main"
-resolved_reference = "fd8c62884597cda39e0bba626f2b8cd914a7d7ea"
+resolved_reference = "343076d8d6d4c03ef7669f670347d3ca0f1e71b8"
 
 [[package]]
 name = "asgiref"

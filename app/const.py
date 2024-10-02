@@ -51,8 +51,8 @@ WHERE
 
 TABLE_EXTRACTION_SQL = """
     SELECT
-        current_database() AS TABLE_CAT,
-        COALESCE(T.table_schema, MV.schemaname) AS TABLE_SCHEM,
+        current_database() AS TABLE_CATALOG,
+        COALESCE(T.table_schema, MV.schemaname) AS TABLE_SCHEMA,
         COALESCE(T.table_name, MV.matviewname) AS TABLE_NAME,
         (CASE
             WHEN c.reltuples < 0 THEN NULL
@@ -123,8 +123,8 @@ TABLE_EXTRACTION_SQL = """
 
 COLUMN_EXTRACTION_SQL = """
 SELECT
-    current_database() AS TABLE_CAT,
-    n.nspname AS TABLE_SCHEM,
+    current_database() AS TABLE_CATALOG,
+    n.nspname AS TABLE_SCHEMA,
     c.relname AS TABLE_NAME,
     a.attname AS COLUMN_NAME,
     a.attnum AS ORDINAL_POSITION,
