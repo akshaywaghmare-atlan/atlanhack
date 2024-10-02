@@ -1,0 +1,136 @@
+# Mac Setup Guide
+
+This guide will help you set up your Mac for developing this project, starting from scratch.
+
+## Setting up the environment
+
+### 1. Install Homebrew
+
+Homebrew is a package manager for macOS that simplifies the installation of software. Execute the following command in your Terminal:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+This script downloads and installs Homebrew on your system.
+
+[Learn more about Homebrew](https://brew.sh/)
+
+### 2. Install Python
+
+Install Python 3.11 or higher using Homebrew:
+
+```bash
+brew install python@3.11
+```
+
+This command installs Python 3.11, which is required for running the project.
+
+[Python documentation](https://docs.python.org/3.11/)
+
+### 3. Install poetry
+
+Poetry is a tool for dependency management and packaging in Python. Install it with:
+
+```bash
+curl -sSL https://install.python-poetry.org | python3 -
+```
+This command downloads and runs the Poetry installer script.
+
+[Poetry documentation](https://python-poetry.org/docs/)
+
+### 4. Install Temporal CLI
+
+We use Temporal as a orchestration platform. Install the Temporal CLI with:
+
+```bash
+brew install temporal
+```
+
+This allows you to interact with Temporal from the command line.
+
+[Temporal documentation](https://docs.temporal.io/develop/python)
+
+
+### 5. Install DAPR CLI
+
+Dapr (Distributed Application Runtime) simplifies microservice development. Install it with:
+
+```
+brew install dapr/tap/dapr-cli
+dapr init --slim
+```
+These commands install the Dapr CLI and initialize it in slim mode.
+
+[Dapr documentation](https://docs.dapr.io/)
+
+
+### 6. Install Node.js
+
+Node.js is a JavaScript runtime, which is required for building the frontend. Install it using Homebrew:
+```bash
+brew install node
+```
+
+This installs Node.js, which is needed for frontend development.
+
+[Node.js documentation](https://nodejs.org/en/docs/)
+
+## Setting up the project
+
+### 0. Repository Access
+
+Ensure you have access to the following SDK repositories:
+- [Python Application SDK](https://github.com/atlanhq/application-sdk): The SDK is used to develop applications on the Atlan platform.
+- [UI SDK](https://github.com/atlanhq/application-sdk): The SDK is used to develop the frontend of the application.
+
+If you don't have access, please reach out to the IT team.
+
+### 1. Clone the repository
+
+Make sure to clone this repository including the submodule, use the following command:
+```bash
+git clone --recurse-submodules https://github.com/atlanhq/phoenix-postgres-app.git
+```
+
+### 2. Install python project dependencies
+
+Configure Poetry and install dependencies:
+```
+poetry config virtualenvs.in-project true
+make install
+```
+This sets up a project-specific virtual environment and installs the required Python packages.
+
+### 3. Install frontend dependencies and build
+
+
+Set up the frontend:
+```bash
+npm install
+npm run generate
+```
+These commands install JavaScript dependencies and generate necessary frontend static files.
+
+### 4. Start the platform
+
+Open a new terminal window and start the platform by running:
+```bash
+make start-all
+```
+
+This will start the Temporal server and the DAPR system.
+
+### 5. Run the application
+
+Finally, open a new terminal window and start the application by running:
+```bash
+make run
+```
+
+This command launches your application, making it ready for development and testing.
+
+Open http://localhost:8000/ on your browser to access the application :rocket:
+
+> [!TIP]
+> Head over to the [development guide](./DEVELOPMENT.md) to learn more about local development.

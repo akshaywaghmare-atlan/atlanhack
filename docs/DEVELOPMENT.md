@@ -7,13 +7,11 @@ _If you are using the Atlan CLI to create a new application, you can skip this s
     - **DAPR**: This is application runtime that is used to abstract the underlying infrastructure and provide a set of building blocks for the application. In this case, it is used to abstract the object store, secrets manager and state manager.
     - **Application Server** - This is the application that is used to expose endpoints that are used to trigger the workflow via the frontend, view logs, metrics and traces and much more.
 
-
 > This guide will walk you through the steps to setup the local development environment and start contributing to the project.
 
 **Table of Contents**
 - [Prerequisites](#prerequisites)
     - [Development Tools](#development-tools)
-    - [Setting up the local development environment](#setting-up-the-local-development-environment)
 - [Using VSCode or Cursor](#development-with-vscode-or-cursor)
 - [Working with the frontend (Optional)](#working-with-the-frontend-optional)
 - [Using Intellij IDEA](#using-intellij-idea)
@@ -26,23 +24,7 @@ _If you are using the Atlan CLI to create a new application, you can skip this s
 
 ### Development Tools
 _If you are using the Atlan CLI to create a new application, you can skip this section._
-1. Python 3.11 or higher
-2. [Poetry](https://python-poetry.org/) for dependency management
-3. [Temporal CLI installed](https://docs.temporal.io/docs/cli/) to run Temporal server
-4. [DAPR CLI installed](https://docs.dapr.io/getting-started/install-dapr-cli/) to run the PaaS System
-    - `dapr init --slim` to initialize the DAPR system locally.
-5. Make sure you have access to the following SDK repos. If you don't have access, please reach out to the IT team.
-   - [Python Application SDK](https://github.com/atlanhq/application-sdk)
-   - [UI SDK](https://github.com/atlanhq/application-sdk)
-
-
-### Setting up the local development environment
-1. Install poetry by running `pip install poetry`
-2. Set poetry config `poetry config virtualenvs.in-project true`
-3. Run `make install` to install the dependencies
-4. Start the platform by running `make start-all`. This will start the Temporal server and the DAPR system.
-5. Run `make run` to start the FastAPI server
-
+- Setup the local development environment on [Mac](./SETUP_MAC.md)
 
 ## Development with VSCode or Cursor
 1. Follow the above steps (1-5) to install the dependencies and start the platform.
