@@ -15,6 +15,7 @@ start-all:
 	make start-dapr & make start-temporal-dev
 
 install:
+	git config --global url."https://".insteadOf "ssh://"
 	poetry install
 	. .venv/bin/activate
 	pre-commit install
