@@ -16,12 +16,12 @@ start-all:
 
 install:
 	poetry install
-	source .venv/bin/activate
+	. .venv/bin/activate
 	pre-commit install
 
 # Run the application
 run:
-	source .venv/bin/activate
+	. .venv/bin/activate
 	export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:8000/telemetry"
 	export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
 	export OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true
