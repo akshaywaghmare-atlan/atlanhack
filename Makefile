@@ -35,7 +35,7 @@ install:
 	poetry install -vv
 
 	# Activate the virtual environment and install pre-commit hooks
-	. .venv/bin/activate && pre-commit install
+	# . .venv/bin/activate && pre-commit install
 
 # Run the application
 run:
