@@ -14,10 +14,19 @@ start-dapr:
 start-all:
 	make start-dapr & make start-temporal-dev
 
+
 install:
-	# Configure git to use https instead of ssh
-	git config --global url."https://github.com/".insteadOf "git@github.com:"
-	git config --global url."https://".insteadOf "git://"
+	# Configure git to use https instead of ssh or git
+	@if git ls-remote ssh://github.com/atlanhq/application-sdk.git > /dev/null 2>&1; then \
+		echo "Git is configured to use SSH Protocol. Configuring to use HTTPS instead..."; \
+		git config --global url."https://".insteadOf "ssh://"; \
+	elif git ls-remote git://github.com/atlanhq/application-sdk.git > /dev/null 2>&1; then \
+		echo "Git is configured to use Git Protocol. Configuring to use HTTPS instead..."; \
+		git config --global url."https://".insteadOf "git://"; \
+	else \
+		echo "Git is not configured to use SSH or Git Protocol. Please configure Git to use SSH or Git Protocol."; \
+		exit 1; \
+	fi
 
 	# Configure poetry to use project-specific virtualenv
 	poetry config virtualenvs.in-project true

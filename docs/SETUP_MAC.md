@@ -18,13 +18,34 @@ This script downloads and installs Homebrew on your system.
 
 ### 2. Install Python
 
-Install Python 3.11 or higher using Homebrew:
+Install Python 3.11 or higher:
 
-```bash
-brew install python@3.11
+i. Install `pyenv`. `pyenv` is a tool for managing multiple Python versions.
+```
+brew install pyenv
+```
+ii. Add the following to your `~/.zshrc` (or `~/.bash_profile` for Bash):
+```
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+```
+iii. Reload your shell configuration `~/.zshrc` (or `~/.bash_profile` for Bash)
+```
+source ~/.zshrc
+```
+iv. Install and use Python 3.11 (or any version):
+```
+pyenv install 3.11.0
+pyenv global 3.11.0
+```
+v. Verify the active Python version:
+```
+python --version
 ```
 
-This command installs Python 3.11, which is required for running the project.
+
+This will install and set up Python 3.11, which is required for running the project.
 
 [Python documentation](https://docs.python.org/3.11/)
 
