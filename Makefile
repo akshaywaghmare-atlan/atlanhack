@@ -35,7 +35,7 @@ install:
 	poetry install -vv
 
 	# Activate the virtual environment and install pre-commit hooks
-	# . .venv/bin/activate && pre-commit install
+	# poetry run pre-commit install
 
 # Run the application
 run:
@@ -43,4 +43,4 @@ run:
 	export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
 	export OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true
 	export OTEL_PYTHON_EXCLUDED_URLS="/telemetry/.*,/system/.*"
-	. .venv/bin/activate && ./.venv/bin/opentelemetry-instrument --traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-application python main.py
+	poetry run ./.venv/bin/opentelemetry-instrument --traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-application python main.py
