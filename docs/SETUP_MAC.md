@@ -33,7 +33,7 @@ This command installs Python 3.11, which is required for running the project.
 Poetry is a tool for dependency management and packaging in Python. Install it with:
 
 ```bash
-curl -sSL https://install.python-poetry.org | python3 -
+curl -sSL https://install.python-poetry.org | python -
 ```
 This command downloads and runs the Poetry installer script.
 
@@ -95,22 +95,20 @@ git clone --recurse-submodules https://github.com/atlanhq/phoenix-postgres-app.g
 
 ### 2. Install python project dependencies
 
-Configure Poetry and install dependencies:
-```
-poetry config virtualenvs.in-project true
+Install the python dependencies using the command:
+```bash
 make install
 ```
 This sets up a project-specific virtual environment and installs the required Python packages.
 
 ### 3. Install frontend dependencies and build
 
-
-Set up the frontend:
+Install the frontend dependencies and build the frontend using the command:
 ```bash
 npm install
 npm run generate
 ```
-These commands install JavaScript dependencies and generate necessary frontend static files.
+These commands install node dependencies and generate necessary frontend static files.
 
 ### 4. Start the platform
 

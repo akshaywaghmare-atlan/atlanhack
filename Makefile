@@ -15,16 +15,23 @@ start-all:
 	make start-dapr & make start-temporal-dev
 
 install:
-	git config --global url."https://".insteadOf "ssh://"
-	poetry install
-	. .venv/bin/activate
-	pre-commit install
+	# Configure git to use https instead of ssh
+	git config --global url."https://github.com/".insteadOf "git@github.com:"
+	git config --global url."https://".insteadOf "git://"
+
+	# Configure poetry to use project-specific virtualenv
+	poetry config virtualenvs.in-project true
+
+	# Install the dependencies
+	poetry install -vv
+
+	# Activate the virtual environment and install pre-commit hooks
+	. .venv/bin/activate && pre-commit install
 
 # Run the application
 run:
-	. .venv/bin/activate
 	export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:8000/telemetry"
 	export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
 	export OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true
 	export OTEL_PYTHON_EXCLUDED_URLS="/telemetry/.*,/system/.*"
-	./.venv/bin/opentelemetry-instrument --traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-application python main.py
+	. .venv/bin/activate && ./.venv/bin/opentelemetry-instrument --traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-application python main.py
