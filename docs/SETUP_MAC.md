@@ -34,7 +34,7 @@ iii. Reload your shell configuration `~/.zshrc` (or `~/.bash_profile` for Bash)
 ```
 source ~/.zshrc
 ```
-iv. Install and use Python 3.11 (or any version):
+iv. Install and use Python 3.11 (or any higher version):
 ```
 pyenv install 3.11.0
 pyenv global 3.11.0
@@ -88,9 +88,14 @@ These commands install the Dapr CLI and initialize it in slim mode.
 
 ### 6. Install Node.js
 
-Node.js is a JavaScript runtime, which is required for building the frontend. Install it using Homebrew:
+Node.js is a JavaScript runtime, which is required for building the frontend.
+We recommend installing node via [NVM](https://github.com/nvm-sh/nvm#install--update-script)
 ```bash
-brew install node
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+
+nvm install --lts
+
+nvm use --lts
 ```
 
 This installs Node.js, which is needed for frontend development.

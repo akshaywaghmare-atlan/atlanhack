@@ -1,8 +1,11 @@
 name: Pre-commit Checks
 on:
   push:
+    branches:
+      - main
   pull_request:
-    types: [ opened, synchronize, labeled, reopened ]
+    branches:
+      - main
 
 jobs:
   pre-commit:
@@ -17,5 +20,6 @@ jobs:
     - name: Install dependencies
       run: |
         poetry config virtualenvs.in-project true
+        git config --global url."https://${{ secrets.ORG_PAT_GITHUB }}".insteadOf "ssh://git";
         poetry install --no-root --without dev,test
     - uses: pre-commit/action@v3.0.1

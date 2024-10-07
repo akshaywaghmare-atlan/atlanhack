@@ -1,19 +1,31 @@
-FROM python:3.11-buster as builder
+FROM python:3.11-slim as builder
 
-RUN pip install poetry==1.4.2
+RUN mkdir -p /app
 
-ENV POETRY_NO_INTERACTION=1 \
+ENV PIP_DEFAULT_TIMEOUT=100 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \
     POETRY_VIRTUALENVS_CREATE=1 \
-    POETRY_CACHE_DIR=/tmp/poetry_cache
+    POETRY_CACHE_DIR=/tmp/poetry_cache \
+    POETRY_VERSION=1.8.3
+
+# Install os build dependencies if any
+RUN  --mount=type=cache,target=/var/cache/apt \
+    runtimeDeps='' \
+    && set -x  \
+    && apt-get update \
+    && apt-get install -y git openssh-client build-essential \
+    && pip install --upgrade pip
+
+# installing via pip
+RUN pip install "poetry==$POETRY_VERSION"
+
+# To use the secret during build on your local: docker build -f Dockerfile . --secret id=PRIVATE_REPO_ACCESS_TOKEN,src=/tmp/my_token_on_host_machine
+RUN --mount=type=secret,id=PRIVATE_REPO_ACCESS_TOKEN export PRIVATE_REPO_ACCESS_TOKEN=$(cat /run/secrets/PRIVATE_REPO_ACCESS_TOKEN) && if [ ! -z "$PRIVATE_REPO_ACCESS_TOKEN" ]; then git config --global url."https://$PRIVATE_REPO_ACCESS_TOKEN".insteadOf "ssh://git"; fi
 
 WORKDIR /app
-
-COPY pyproject.toml poetry.lock ./
-
-RUN pip install poetry
-
-RUN poetry install --without dev --without test --no-root && rm -rf $POETRY_CACHE_DIR
 
 # Install Python dependencies
 COPY ./pyproject.toml ./poetry.lock ./
@@ -21,7 +33,7 @@ COPY ./pyproject.toml ./poetry.lock ./
 RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root --without dev,test --no-interaction --no-ansi
 
 # removing poetry alone saves 200 mb
-FROM python:3.11-slim-buster as runtime
+FROM python:3.11-slim as runtime
 
 ENV VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH"
