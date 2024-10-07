@@ -16,14 +16,10 @@ logger.setLevel(logging.DEBUG)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     atlan_app_builder.on_api_service_start()
-    if (
-        atlan_app_builder.workflow_builder_interface
-        and atlan_app_builder.workflow_builder_interface.worker_interface
-    ):
-        worker_thread = threading.Thread(
-            target=atlan_app_builder.start_worker, daemon=True
-        )
-        worker_thread.start()
+    worker_thread = threading.Thread(
+        target=postgres_workflow.start_worker, daemon=True
+    )
+    worker_thread.start()
     yield
 
 
