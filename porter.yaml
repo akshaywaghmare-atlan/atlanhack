@@ -16,7 +16,7 @@ parameters:
 
 install:
   - exec:
-      description: "Run the JDBC Extractor App"
+      description: "Install the Postgres App"
       command: /bin/sh
       arguments:
         - '-c'
@@ -24,7 +24,7 @@ install:
 
 upgrade:
   - exec:
-      description: "Upgrade"
+      description: "Upgrade the Postgres App"
       command: /bin/sh
       arguments:
         - '-c'
@@ -32,8 +32,8 @@ upgrade:
 
 uninstall:
   - exec:
-      description: "Uninstall"
+      description: "Uninstall the Postgres App"
       command: /bin/sh
       arguments:
         - '-c'
-        - 'echo "No uninstallation required"'
+        - 'echo "Goodbye!"'

@@ -1,5 +1,6 @@
 .idea/
 .cnab/
+.atlan/
 .ipynb_checkpoints
 .mypy_cache
 .vscode
