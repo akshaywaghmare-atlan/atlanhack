@@ -30,10 +30,6 @@ WORKDIR /app
 # Install Python dependencies
 COPY ./pyproject.toml ./poetry.lock ./
 
-# Configure git with GitHub Token using a secret
-RUN --mount=type=secret,id=github_token \
-    git config --global url."https://$(cat /run/secrets/github_token)@github.com/".insteadOf "ssh://git@github.com/"
-
 # the cache directory makes rebuilding a docker image if pyproject.toml changes near instant
 RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root --without dev,test --no-interaction --no-ansi
 
