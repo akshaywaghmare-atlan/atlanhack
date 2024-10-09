@@ -33,15 +33,15 @@ parameters:
 install:
   - exec:
       description: "Install the Postgres App"
-      command: /bin/sh
+      command: /bin/bash
       arguments:
         - '-c'
-        - 'export PLATFORM={{bundle.parameters.platform}}'
-        - 'export OTEL_EXPORTER_OTLP_ENDPOINT={{bundle.parameters.otel_endpoint}}'
-        - 'export OTEL_EXPORTER_OTLP_PROTOCOL={{bundle.parameters.otel_protocol}}'
-        - 'export OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED={{bundle.parameters.otel_logging_enabled}}'
-        - 'export OTEL_PYTHON_EXCLUDED_URLS={{bundle.parameters.otel_excluded_urls}}'
-        - 'poetry run ./.venv/bin/opentelemetry-instrument --traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-application python main.py'
+        - 'export PLATFORM={{bundle.parameters.platform}} &&
+          export OTEL_EXPORTER_OTLP_ENDPOINT={{bundle.parameters.otel_endpoint}} &&
+          export OTEL_EXPORTER_OTLP_PROTOCOL={{bundle.parameters.otel_protocol}} &&
+          export OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED={{bundle.parameters.otel_logging_enabled}} &&
+          export OTEL_PYTHON_EXCLUDED_URLS={{bundle.parameters.otel_excluded_urls}} &&
+          poetry run ./.venv/bin/opentelemetry-instrument --traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-application python main.py'
 
 upgrade:
   - exec:
