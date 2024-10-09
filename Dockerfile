@@ -1,6 +1,8 @@
-FROM python:3.11-slim as builder
+FROM python:3.11-slim AS builder
 
 RUN mkdir -p /app
+
+ARG TARGETARCH
 
 ENV PIP_DEFAULT_TIMEOUT=100 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
@@ -33,7 +35,7 @@ COPY ./pyproject.toml ./poetry.lock ./
 RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root --without dev,test --no-interaction --no-ansi
 
 # removing poetry alone saves 200 mb
-FROM python:3.11-slim as runtime
+FROM python:3.11-slim AS runtime
 
 ENV VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH"
