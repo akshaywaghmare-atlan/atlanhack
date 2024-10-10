@@ -51,7 +51,7 @@ const logsData = ref([])
 const tracesData = ref([])
 const eventsData = ref([])
 
-const tabs = ['Logs', 'Traces', 'Metrics', 'Events']
+const tabs = ['Logs', 'Traces', 'Events', 'Metrics']
 const activeTab = ref('Logs')
 
 const TracesColumns = [

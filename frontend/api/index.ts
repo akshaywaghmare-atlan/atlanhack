@@ -19,9 +19,19 @@ const urls = {
 const apiClient = new ApiClient()
 
 const api = {
+    testConnection: async (payload: any) => {
+        const response = await apiClient.post(urls.testAuthentication, payload);
+        return response;
+    },
+
+    fetchFilterMetaData: async (payload: any) => {
+        const response = await apiClient.post(urls.fetchMetadata, payload);
+        return response;
+    },
+
     preflight: async (payload: any) => {
         const response = await apiClient.post(urls.preflight, payload);
-        return response.json();
+        return response;
     },
 
     fetchTelemetryLogs: async (payload: any) => {
