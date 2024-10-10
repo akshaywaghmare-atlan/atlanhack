@@ -7,6 +7,7 @@ from application_sdk.workflows.sql.preflight_check import (
     SQLWorkflowPreflightCheckInterface,
 )
 from application_sdk.workflows.sql.workflow import SQLWorkflowWorkerInterface
+from application_sdk.workflows.transformers.phoenix import PhoenixTransformer
 from temporalio import workflow
 
 from app.const import (
@@ -41,7 +42,15 @@ class PostgresWorkflowWorker(SQLWorkflowWorkerInterface):
         self, application_name: str = APPLICATION_NAME, *args: Any, **kwargs: Any
     ):
         self.TEMPORAL_WORKFLOW_CLASS = PostgresWorkflowWorker
-        super().__init__(application_name, *args, **kwargs)
+        phoenix_transformer = PhoenixTransformer(
+            connector_name=application_name, connector_type="postgres"
+        )
+        super().__init__(
+            transformer=phoenix_transformer,
+            application_name=application_name,
+            *args,
+            **kwargs,
+        )
 
     @workflow.run
     async def run(self, workflow_args: Dict[str, Any]):

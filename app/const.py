@@ -70,7 +70,11 @@ TABLE_EXTRACTION_SQL = """
         P.partnatts AS NUMBER_COLUMNS_IN_PART_KEY,
         P.partattrs AS COLUMNS_PARTICIPATING_IN_PART_KEY,
         COALESCE(V.definition, MV.definition) AS VIEW_DEFINITION,
-        T.*
+        T.*,
+        CASE
+            WHEN t.table_type = 'BASE TABLE' THEN 'TABLE'
+            ELSE t.table_type
+        END AS TABLE_TYPE
     FROM pg_class C
     LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
     LEFT JOIN pg_stat_user_tables PSUT ON (C.oid = PSUT.relid)
