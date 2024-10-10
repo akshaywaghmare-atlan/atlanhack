@@ -45,4 +45,4 @@ COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 # Copy the rest of the code
 COPY . .
 
-ENTRYPOINT ["./.venv/bin/opentelemetry-instrument", "--traces_exporter", "otlp", "--metrics_exporter", "otlp", "--logs_exporter", "otlp", "--service_name", "postgresql-application", "python", "main.py"]
+ENTRYPOINT ["/app/.venv/bin/opentelemetry-instrument", "--traces_exporter", "otlp", "--metrics_exporter", "otlp", "--logs_exporter", "otlp", "--service_name", "postgresql-application", "python", "main.py"]
