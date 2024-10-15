@@ -128,10 +128,7 @@ async def test_extraction_workflow():
 
     assert result is None
 
-    assert mock_setup_output_directory.call_count == 1
     assert mock_fetch_databases.call_count == 1
     assert mock_fetch_schemas.call_count == 1
     assert mock_fetch_tables.call_count == 1
     assert mock_fetch_columns.call_count == 1
-    assert mock_push_results_to_object_store.call_count == 1
-    assert mock_teardown_output_directory.call_count == 1

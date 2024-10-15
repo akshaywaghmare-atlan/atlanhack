@@ -17,17 +17,15 @@ start-all:
 
 install:
 	# Configure git to use https instead of ssh or git
-	@if git ls-remote ssh://github.com/atlanhq/application-sdk.git > /dev/null 2>&1; then \
-		echo "Git is configured to use SSH Protocol. Configuring to use HTTPS instead..."; \
-		git config --global url."https://".insteadOf "ssh://"; \
-	elif git ls-remote git://github.com/atlanhq/application-sdk.git > /dev/null 2>&1; then \
-		echo "Git is configured to use Git Protocol. Configuring to use HTTPS instead..."; \
-		git config --global url."https://".insteadOf "git://"; \
+	@if git ls-remote git@github.com:atlanhq/application-sdk.git > /dev/null 2>&1; then \
+		echo "Git is configured to use SSH Protocol"; \
+	elif git ls-remote https://github.com/atlanhq/application-sdk.git > /dev/null 2>&1; then \
+		echo "Git is configured to use HTTPS Protocol. Configuring to use HTTPS instead..."; \
+		git config --global url."https://github.com/".insteadOf "git@github.com:"; \
 	else \
 		echo "Git is not configured to use SSH or Git Protocol. Please configure Git to use SSH or Git Protocol."; \
 		exit 1; \
 	fi
-
 	# Configure poetry to use project-specific virtualenv
 	poetry config virtualenvs.in-project true
 
@@ -35,12 +33,12 @@ install:
 	poetry install -vv
 
 	# Activate the virtual environment and install pre-commit hooks
-	# poetry run pre-commit install
+	poetry run pre-commit install
 
 # Run the application
 run:
-	export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:8000/telemetry"
-	export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
-	export OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true
-	export OTEL_PYTHON_EXCLUDED_URLS="/telemetry/.*,/system/.*"
+	OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:8000/telemetry" \
+	OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf" \
+	OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true \
+	OTEL_PYTHON_EXCLUDED_URLS="/telemetry/.*,/system/.*" \
 	poetry run ./.venv/bin/opentelemetry-instrument --traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-application python main.py
