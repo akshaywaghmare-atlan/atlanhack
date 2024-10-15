@@ -36,25 +36,30 @@ const api = {
 
     fetchTelemetryLogs: async (payload: any) => {
         const { keyword, limit = 100 } = payload;
-        const response = await apiClient.get(`${urls.telemetry.logs}?skip=${0}&limit=${limit}&keyword=${keyword}`);
+        const response = await apiClient.get(`${urls.telemetry.logs}?skip=${0}&limit=${limit}&body__contains=${keyword}`);
         return response;
     },
 
     fetchTelemetryTraces: async (payload: any) => {
         const { keyword, limit = 100 } = payload;
-        const response = await apiClient.get(`${urls.telemetry.traces}?skip=${0}&limit=${limit}`);
+        const response = await apiClient.get(`${urls.telemetry.traces}?skip=${0}&limit=${limit}&body__contains=${keyword}`);
         return response;
     },
 
     fetchTelemetryMetrics: async (payload: any) => {
         const { keyword, limit = 100 } = payload;
-        const response = await apiClient.get(`${urls.telemetry.metrics}?skip=${0}&limit=${limit}`);
+        const response = await apiClient.get(`${urls.telemetry.metrics}?skip=${0}&limit=${limit}&body__contains=${keyword}`);
         return response;
     },
 
     fetchTelemetryEvents: async (payload: any) => {
         const { keyword, limit = 100 } = payload;
-        const response = await apiClient.get(`${urls.telemetry.events}?skip=${0}&limit=${limit}`);
+        const response = await apiClient.get(`${urls.telemetry.events}?skip=${0}&limit=${limit}&body__contains=${keyword}`);
+        return response;
+    },
+
+    runWorkflow: async (payload: any) => {
+        const response = await apiClient.post(`${urls.runWorkflow}`, payload);
         return response;
     },
 
