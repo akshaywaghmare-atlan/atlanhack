@@ -6,15 +6,11 @@
                 insights into server load and traffic patterns.</p>
             <div id="lineChart" ref="lineChartRef" class="h-80"></div>
         </div>
-        <!-- <div id="lineChart" ref="lineChartRef" style="width: 600px; height: 400px'" class="mb-8"></div> -->
         <div v-for="(ref, index) in histogramChartRefs" :key="index" class="w-full mb-8 lg:w-1/2">
             <h3 class="mb-2 text-lg font-semibold">{{ chartTitles[index] }}</h3>
             <p class="mb-2 text-sm text-gray-600">{{ getExplanation(chartTitles[index]) }}</p>
             <div :id="`histogramChart-container-${index}`" :ref="ref" class="h-80"></div>
         </div>
-        <!-- <div id="histogramChart-container-0" ref="histogramChartRef0" style="width: 600px; height: 400px;" class="mb-8"></div>
-        <div id="histogramChart-container-1" ref="histogramChartRef1" style="width: 600px; height: 400px;" class="mb-8"></div>
-        <div id="histogramChart-container-2" ref="histogramChartRef2" style="width: 600px; height: 400px;" class="mb-8"></div> -->
     </div>
 </template>
 <script setup>
@@ -43,12 +39,6 @@ const fetchMetrics = async () => {
             keyword: ''
         }
         const response = await api.fetchTelemetryMetrics(payload)
-        console.log(response, "<-- response");
-        // if (response && response.length) {
-        //     metricsData.value = response
-        // } else {
-        //     metricsData.value = [];
-        // }
         return response
     } catch (error) {
         console.log(error);
@@ -113,7 +103,7 @@ function createHistogramChart(container, title, xAxisName, seriesData) {
 
     const maxCount = Math.max(...groupedData.flat());
     const option = {
-        container: container.id,
+        container: container[0]?.id,
         tooltip: {
             trigger: 'item',
             formatter: function (params) {

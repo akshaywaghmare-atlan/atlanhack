@@ -45,7 +45,7 @@ const formConfig = {
                 ]
             }
         },
-        "userName": {
+        "user": {
             "type": "string",
             "required": true,
             "default": "postgres",
@@ -99,7 +99,7 @@ const formConfig = {
                 "hidden": true
             }
         },
-        "credential-guid": {
+        "credential_guid": {
         "type": "string",
         "required": true,
         "ui": {
@@ -125,7 +125,7 @@ const formConfig = {
                 }
             }
         },
-        "publish-mode": {
+        "publish_mode": {
             "type": "string",
             "enum": ["production", "test", "dev"],
             "default": "production",
@@ -137,7 +137,7 @@ const formConfig = {
                 "placeholder": "Connection Mode"
             }
         },
-        "temp-table-regex": {
+        "temp_table_regex": {
             "type": "string",
             "required": false,
             "default": "",
@@ -150,7 +150,7 @@ const formConfig = {
                 "grid": 6
             }
         },
-        "include-filter": {
+        "include_filter": {
             "type": "object",
             "additionalProperties": {
                 "type": "array"
@@ -166,7 +166,7 @@ const formConfig = {
                 "placeholder": "Select databases and schemas"
             }
         },
-        "exclude-filter": {
+        "exclude_filter": {
             "type": "object",
             "additionalProperties": {
                 "type": "array"
@@ -182,7 +182,7 @@ const formConfig = {
                 "placeholder": "Select databases and schemas"
             }
         },
-        "use-source-schema-filtering": {
+        "use_source_schema_filtering": {
             "type": "string",
             "enum": ["true", "false"],
             "default": "false",
@@ -195,7 +195,7 @@ const formConfig = {
                 "hidden": false
             }
         },
-        "use-jdbc-internal-methods": {
+        "use_jdbc_internal_methods": {
             "type": "string",
             "enum": ["true", "false"],
             "default": "true",
@@ -208,7 +208,7 @@ const formConfig = {
                 "hidden": true
             }
         },
-        "advanced-config-strategy": {
+        "advanced_config_strategy": {
             "type": "string",
             "enum": ["default", "custom"],
             "default": "default",
@@ -359,7 +359,7 @@ const formConfig = {
                 "host",
                 "port",
                 "authentication",
-                "userName",
+                "user",
                 "password",
                 "database",
                 "test-connection"
@@ -376,12 +376,12 @@ const formConfig = {
             "title": "Metadata",
             "description": "Metadata",
             "properties": [
-                "exclude-filter",
-                "include-filter",
-                "temp-table-regex",
-                "advanced-config-strategy",
-                "use-source-schema-filtering",
-                "use-jdbc-internal-methods",
+                "exclude_filter",
+                "include_filter",
+                "temp_table_regex",
+                "advanced_config_strategy",
+                "use_source_schema_filtering",
+                "use_jdbc_internal_methods",
                 "preflight-check",
             ]
         }

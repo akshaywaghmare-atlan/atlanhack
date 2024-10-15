@@ -204,7 +204,7 @@ description = ""
 optional = false
 python-versions = "^3.11"
 files = []
-develop = false
+develop = true
 
 [package.dependencies]
 aiofiles = "^24.1.0"
@@ -225,10 +225,8 @@ sqlalchemy = "^2.0.35"
 temporalio = "^1.7.1"
 
 [package.source]
-type = "git"
-url = "git@github.com:atlanhq/application-sdk.git"
-reference = "main"
-resolved_reference = "09ff28ae86293cd84871b9a83935aebbab374eea"
+type = "directory"
+url = "../application-sdk"
 
 [[package]]
 name = "asgiref"
@@ -3203,4 +3201,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "b7b3647b855398a3dc1a1996fc5a947cf211aef778e38711d656aa1468f65cea"
+content-hash = "cb00d0b50e19fece333972272e8cc9a450ee5f342dbd4e2e59dabba14f93d7c8"
