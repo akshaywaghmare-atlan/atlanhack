@@ -1,60 +1,59 @@
 schemaType: Bundle
 schemaVersion: 1.0.1
-name: applications/phoenix-postgres-app-main/edge
+name: applications/phoenix-postgres-app-main
 description: "A CNAB bundle to manage the Postgres App"
 registry: "harbor-phoenix.atlan.dev"
-dockerfile: Dockerfile.tmpl
 
 mixins:
-  - exec
-
-parameters:
-  - name: platform
-    type: string
-    default: "edge"
-    description: "The platform environment variable to pass at runtime"
-  - name: otel_endpoint
-    type: string
-    default: "http://localhost:8000/telemetry"
-    description: "The OpenTelemetry OTLP endpoint"
-  - name: otel_protocol
-    type: string
-    default: "http/protobuf"
-    description: "The OpenTelemetry OTLP protocol"
-  - name: otel_logging_enabled
-    type: string
-    default: "true"
-    description: "The OpenTelemetry Python logging auto-instrumentation flag"
-  - name: otel_excluded_urls
-    type: string
-    default: "/telemetry/.*,/system/.*"
-    description: "The OpenTelemetry Python excluded URLs"
+  - docker
 
 install:
-  - exec:
-      description: "Install the Postgres App"
-      command: /bin/bash
-      arguments:
-        - '-c'
-        - 'export PLATFORM={{bundle.parameters.platform}} &&
-          export OTEL_EXPORTER_OTLP_ENDPOINT={{bundle.parameters.otel_endpoint}} &&
-          export OTEL_EXPORTER_OTLP_PROTOCOL={{bundle.parameters.otel_protocol}} &&
-          export OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED={{bundle.parameters.otel_logging_enabled}} &&
-          export OTEL_PYTHON_EXCLUDED_URLS={{bundle.parameters.otel_excluded_urls}} &&
-          poetry run ./.venv/bin/opentelemetry-instrument --traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-application python main.py'
+  - docker:
+      description: "Spin up the Postgres App container on port 8000"
+      run:
+        image: "harbor-phoenix.atlan.dev/applications/phoenix-postgres-app:main-latest"
+        name: "postgres-app"
+        ports:
+          - host: 8000
+            container: 8000
+        env:
+          OTEL_EXPORTER_OTLP_ENDPOINT: "http://localhost:8000/telemetry"
+          OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
+          OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED: "true"
+          OTEL_PYTHON_EXCLUDED_URLS: "/telemetry/.*,/system/.*"
+          TEMPORAL_HOST: "host.docker.internal"
+          TEMPORAL_PORT: 7233
 
 upgrade:
-  - exec:
-      description: "Upgrade the Postgres App"
-      command: /bin/bash
-      arguments:
-        - '-c'
-        - 'echo "No upgrade required"'
+  - docker:
+      description: "Upgrade image"
+      pull:
+        name: harbor-phoenix.atlan.dev/applications/phoenix-postgres-app
+        tag: main-latest
+  - docker:
+      description: "Remove postgres-app"
+      remove:
+        container: postgres-app
+        force: true
+  - docker:
+      description: "Spin up the Postgres App container on port 8000"
+      run:
+        image: "harbor-phoenix.atlan.dev/applications/phoenix-postgres-app:main-latest"
+        name: "postgres-app"
+        ports:
+          - host: 8000
+            container: 8000
+        env:
+          OTEL_EXPORTER_OTLP_ENDPOINT: "http://localhost:8000/telemetry"
+          OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
+          OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED: "true"
+          OTEL_PYTHON_EXCLUDED_URLS: "/telemetry/.*,/system/.*"
+          TEMPORAL_HOST: "host.docker.internal"
+          TEMPORAL_PORT: 7233
 
 uninstall:
-  - exec:
-      description: "Uninstall the Postgres App"
-      command: /bin/bash
-      arguments:
-        - '-c'
-        - 'echo "Goodbye!"'
+  - docker:
+      description: "Remove postgres-app"
+      remove:
+        container: postgres-app
+        force: true
