@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@atlanhq/application-ui-sdk": "^0.0.3",
     "echarts": "^5.5.1",
     "fs-extra": "^11.2.0",
     "nuxt": "^3.12.4",

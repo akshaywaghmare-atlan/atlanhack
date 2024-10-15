@@ -15,7 +15,7 @@
 </template>
 <script setup>
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import sdk from '../application-ui-sdk/src/index';
+import * as sdk from "@atlanhq/application-ui-sdk";
 
 import api from '../api';
 

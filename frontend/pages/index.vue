@@ -30,8 +30,7 @@ import { ref, onMounted } from 'vue';
 import '../assets/css/main.css';
 import api from '../api';
 import formConfig from '../assets/formConfig';
-import sdk from "../application-ui-sdk/src/index";
-const { FormBuilder } = sdk;
+import * as sdk from "@atlanhq/application-ui-sdk";
 
 const formContainer = ref(null);
 const navigationContainer = ref(null);
@@ -39,6 +38,7 @@ const navigationContainer = ref(null);
 onMounted(() => {
     // If formContainer and navigationContainer are not null, render the form
     if (formContainer.value && navigationContainer.value) {
+        const { FormBuilder } = sdk;
         const options = {
             api,                                              // API client
             config: formConfig,                               // Form configuration
