@@ -40,18 +40,17 @@
 
 import { ref, onMounted, nextTick, watch } from 'vue';
 import { useRoute } from 'vue-router'
-import sdk from '../application-ui-sdk/src/index';
+import * as sdk from "@atlanhq/application-ui-sdk";
 import api from '../api'
 import Metrics from '../components/Metrices';
 
 const { Table } = sdk;
-const route = useRoute()
 
 const logsData = ref([])
 const tracesData = ref([])
 const eventsData = ref([])
 
-const tabs = ['Logs', 'Traces', 'Metrics', 'Events']
+const tabs = ['Logs', 'Traces', 'Events', 'Metrics']
 const activeTab = ref('Logs')
 
 const TracesColumns = [

@@ -18,15 +18,35 @@
                         </button>
                     </div>
                 </div>
-                <div id="form-container" class="basis-3/4 "></div>
-                <div id="navigation" class="bg-white border-t border-solid border-slate-200"></div>
+                <div ref="formContainer" class="basis-3/4 "></div>
+                <div ref="navigationContainer" class="bg-white border-t border-solid border-slate-200"></div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import '../styles.css';
-import sdk from "../application-ui-sdk/src/index";
-const { formConfig, FormBuilder, formState } = sdk;
+import { ref, onMounted } from 'vue';
+import '../assets/css/main.css';
+import api from '../api';
+import formConfig from '../assets/formConfig';
+import * as sdk from "@atlanhq/application-ui-sdk";
+
+const formContainer = ref(null);
+const navigationContainer = ref(null);
+
+onMounted(() => {
+    // If formContainer and navigationContainer are not null, render the form
+    if (formContainer.value && navigationContainer.value) {
+        const { FormBuilder } = sdk;
+        const options = {
+            api,                                              // API client
+            config: formConfig,                               // Form configuration
+            container: formContainer.value,                   // Container to render the form
+            navigationContainer: navigationContainer.value    // Container to render the navigation
+        }
+        const formBuilder = new FormBuilder(options);
+        formBuilder.render();
+    }
+});
 </script>

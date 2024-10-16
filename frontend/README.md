@@ -1,77 +1,94 @@
-# Nuxt 3 Minimal Starter
+# Frontend Documentation
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+## Overview
 
-## Setup
+This frontend project is built using Nuxt.js and leverages a custom Application UI SDK to create dynamic and responsive user interfaces. The project includes various components and pages that interact with backend APIs to fetch and display data.
 
-Make sure to install the dependencies:
+## Table of Contents
 
-```bash
-# npm
-npm install
+1. [Installation](#installation)
+2. [Project Structure](#project-structure)
+5. [Usage](#usage)
+6. [API Integration](#api-integration)
+7. [Styling](#styling)
 
-    # // "application-ui-sdk": "git+https://<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>:x-oauth-basic@github.com/<Rahulkr204>/<https://github.com/atlanhq/application-ui-sdk>.git"
+## Installation
 
-# pnpm
-pnpm install
+To set up the project locally, follow these steps:
 
-# yarn
-yarn install
+1. Clone the repository:
+    ```
+    git clone https://github.com/your-repo/frontend.git
+    ```
 
-# bun
-bun install
-```
+2. Navigate to the project directory:
+    ```sh
+    cd frontend
+    ```
 
-## Development Server
+3. Install the dependencies:
+    ```sh
+    npm install
+    ```
 
-Start the development server on `http://localhost:3000`:
+4. Start the development server:
+    ```sh
+    npm run dev
+    ```
 
-```bash
-# npm
-npm run dev
+5. Generate static files:
+    ```sh
+    npm run generate
+    ```
 
-# pnpm
-pnpm run dev
+## Project Structure
 
-# yarn
-yarn dev
+The project structure is organized as follows:
 
-# bun
-bun run dev
-```
+- `assets/`: Contains static assets like images, fonts, and other media files.
+- `components/`: Reusable Vue components that can be used across different pages.
+- `pages/`: Contains the main pages of the application. Each `.vue` file in this directory represents a different route in the application. The pages folder works with Vue Router to map each file to a specific route. For example, `index.vue` maps to the root route `/`, and `telemetry.vue` maps to the `/telemetry` route.
+- `styles/`: Global styles and CSS files.
+- `api/`: API service files for making HTTP requests to the backend.
 
-## Production
+## Usage
 
-Build the application for production:
+1. Install the dependencies:
+    ```sh
+    npm install
+    ```
 
-```bash
-# npm
-npm run build
+2. Start the development server:
+    ```sh
+    npm run dev
+    ```
 
-# pnpm
-pnpm run build
+## API Integration
+To make an API call using `apiClient.ts`, follow these steps:
 
-# yarn
-yarn build
+1. Declare your API endpoints in `api/index.ts`:
+    ```javascript
+    export const urls = {
+        telemetry: {
+            logs: '/telemetry/logs',
+            events: '/telemetry/events',
+        },
+    };
+    ```
+2. Use the `apiClient` to make an API call. For example, to fetch telemetry logs:
+    ```javascript
+    const fetchTelemetryLogs = async () => {
+        try {
+            const response = await apiClient.get(urls.telemetry.logs);
+            if (response && response.data) {
+                return response.data;
+            } else {
+                return [];
+            }
+        } catch (error) {
+            console.error('Error fetching telemetry logs:', error);
+            return [];
+        }
+    };
+    ```
 
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
