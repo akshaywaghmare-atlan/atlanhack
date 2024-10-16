@@ -40,6 +40,9 @@ jobs:
       - name: Porter version
         run: porter version
 
+      - name: Install docker mixin
+        run: porter mixin install docker
+
       - name: Login to Harbor Registry
         run: |
           bash ./.github/scripts/registry-login.sh "${{ secrets.HARBOR_URL }}" '${{ secrets.HARBOR_USERNAME }}' "${{ secrets.HARBOR_PASSWORD }}"
