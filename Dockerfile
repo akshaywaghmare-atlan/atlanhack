@@ -1,6 +1,8 @@
-FROM python:3.11-slim as builder
+FROM python:3.11-slim AS builder
 
 RUN mkdir -p /app
+
+ARG TARGETARCH
 
 ENV PIP_DEFAULT_TIMEOUT=100 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
@@ -8,12 +10,11 @@ ENV PIP_DEFAULT_TIMEOUT=100 \
     POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \
     POETRY_VIRTUALENVS_CREATE=1 \
-    POETRY_CACHE_DIR=/tmp/poetry_cache \
+    POETRY_CACHE_DIR=/tmp/poetry_cache/$TARGETARCH \
     POETRY_VERSION=1.8.3
 
 # Install os build dependencies if any
-RUN  --mount=type=cache,target=/var/cache/apt \
-    runtimeDeps='' \
+RUN runtimeDeps='' \
     && set -x  \
     && apt-get update \
     && apt-get install -y git openssh-client build-essential \
@@ -29,11 +30,12 @@ WORKDIR /app
 
 # Install Python dependencies
 COPY ./pyproject.toml ./poetry.lock ./
+
 # the cache directory makes rebuilding a docker image if pyproject.toml changes near instant
 RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root --without dev,test --no-interaction --no-ansi
 
 # removing poetry alone saves 200 mb
-FROM python:3.11-slim as runtime
+FROM python:3.11-slim AS runtime
 
 ENV VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH"
@@ -43,4 +45,4 @@ COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 # Copy the rest of the code
 COPY . .
 
-ENTRYPOINT ["./.venv/bin/opentelemetry-instrument", "--traces_exporter", "otlp", "--metrics_exporter", "otlp", "--logs_exporter", "otlp", "--service_name", "postgresql-application", "python", "main.py"]
+ENTRYPOINT ["/app/.venv/bin/opentelemetry-instrument", "--traces_exporter", "otlp", "--metrics_exporter", "otlp", "--logs_exporter", "otlp", "--service_name", "postgresql-application", "python", "main.py"]
