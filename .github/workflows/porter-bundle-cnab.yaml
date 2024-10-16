@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - update-workflows
     paths:
       - '**'
       - '!kurl-installer.yaml'
@@ -39,6 +40,9 @@ jobs:
 
       - name: Porter version
         run: porter version
+
+      - name: Install docker mixin
+        run: porter mixin install docker
 
       - name: Login to Harbor Registry
         run: |
