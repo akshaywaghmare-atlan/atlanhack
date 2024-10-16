@@ -61,7 +61,6 @@ jobs:
           echo "Porter Explain"
           porter explain
           porter publish --registry ${{ secrets.HARBOR_URL }} --tag "v-$BRANCH_NAME-${{ steps.get_version.outputs.version }}"
-      
           if [ "$BRANCH_NAME" = "main" ]; then
             porter publish --registry ${{ secrets.HARBOR_URL }} --tag latest --force
           else
