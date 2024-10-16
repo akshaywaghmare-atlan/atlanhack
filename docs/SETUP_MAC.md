@@ -2,6 +2,30 @@
 
 This guide will help you set up your Mac for developing this project, starting from scratch.
 
+- [Setup using the script](#setup-using-the-script)
+- [Setup manually](#setup-manually)
+
+---
+
+# Setup using the script
+
+## 1. Download the script
+
+```
+curl -o setup_mac.sh https://raw.githubusercontent.com/atlanhq/phoenix-postgres-app/main/docs/scripts/setup_mac.sh
+```
+
+## 2. Run the script
+
+```
+chmod +x setup_mac.sh
+./setup_mac.sh
+```
+
+---
+
+# Setup manually
+
 ## Setting up the environment
 
 ### 1. Install Homebrew
