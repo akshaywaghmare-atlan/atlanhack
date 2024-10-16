@@ -5,6 +5,7 @@ description: "A CNAB bundle to manage the Postgres App"
 registry: "harbor-phoenix.atlan.dev"
 
 mixins:
+  - exec
   - docker
 
 install:
