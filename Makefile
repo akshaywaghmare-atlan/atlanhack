@@ -31,6 +31,7 @@ install:
 
 	# Install the dependencies
 	poetry install -vv
+	poetry update application-sdk --dry-run
 
 	# Activate the virtual environment and install pre-commit hooks
 	poetry run pre-commit install
