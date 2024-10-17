@@ -43,3 +43,10 @@ run:
 	OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true \
 	OTEL_PYTHON_EXCLUDED_URLS="/telemetry/.*,/system/.*" \
 	poetry run ./.venv/bin/opentelemetry-instrument --traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-application python main.py
+
+run-dashboard:
+	. .venv/bin/activate
+	python .venv/src/application-sdk/ui/app.py
+
+run-local:
+	$(MAKE) run & $(MAKE) run-dashboard
