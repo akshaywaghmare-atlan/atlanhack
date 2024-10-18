@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
-const sdkTailwindConfig = require('./application-ui-sdk/tailwind.config.js')
+// const sdkTailwindConfig = require('./application-ui-sdk/tailwind.config.js')
+const config = require('@atlanhq/application-ui-sdk');
 
 module.exports = {
   content: [
@@ -14,14 +15,10 @@ module.exports = {
     "./plugins/**/*.{js,ts}",
     "./nuxt.config.{js,ts}",
     "./app.vue",
-    "./application-ui-sdk/**/*.{js,ts}",
+    "./node_modules/@atlanhq/**/*.{js,ts}",
   ],
   theme: {
-    extend: {
-      ...sdkTailwindConfig.theme.extend,
-    },
+    extend: {},
   },
-  plugins: [
-    ...sdkTailwindConfig.plugins,
-  ],
+  plugins: [],
 }
