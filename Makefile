@@ -47,8 +47,10 @@ run:
 	poetry run ./.venv/bin/opentelemetry-instrument --traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-application python main.py
 
 run-dashboard:
-	. .venv/bin/activate
-	python .venv/src/application-sdk/ui/app.py
+	PYTHONPATH=./.venv/src/application-sdk/ poetry run python .venv/src/application-sdk/ui/app.py
 
 run-local:
-	$(MAKE) run & $(MAKE) run-dashboard
+	@echo "Starting local dashboard..."
+	$(MAKE) run-dashboard &
+	@echo "Starting local application..."
+	$(MAKE) run
