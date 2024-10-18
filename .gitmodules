@@ -1,3 +1,0 @@
-[submodule "frontend/application-ui-sdk"]
-	path = frontend/application-ui-sdk
-	url = https://github.com/atlanhq/application-ui-sdk.git

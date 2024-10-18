@@ -12,8 +12,10 @@ start-dapr:
 	dapr run --app-id app --app-port 3000 --dapr-http-port 3500 --dapr-grpc-port 50001 --dapr-http-max-request-size 1024 --resources-path .venv/src/application-sdk/components
 
 start-all:
-	make start-dapr & make start-temporal-dev
-
+	@echo "Starting all services in detached mode..."
+	make start-dapr &
+	make start-temporal-dev &
+	@echo "Services started. Proceeding..."
 
 install:
 	# Configure git to use https instead of ssh or git
@@ -31,6 +33,7 @@ install:
 
 	# Install the dependencies
 	poetry install -vv
+	poetry update application-sdk --dry-run
 
 	# Activate the virtual environment and install pre-commit hooks
 	poetry run pre-commit install
@@ -42,3 +45,12 @@ run:
 	OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true \
 	OTEL_PYTHON_EXCLUDED_URLS="/telemetry/.*,/system/.*" \
 	poetry run ./.venv/bin/opentelemetry-instrument --traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-application python main.py
+
+run-dashboard:
+	PYTHONPATH=./.venv/src/application-sdk/ poetry run python .venv/src/application-sdk/ui/app.py
+
+run-local:
+	@echo "Starting local dashboard..."
+	$(MAKE) run-dashboard &
+	@echo "Starting local application..."
+	$(MAKE) run

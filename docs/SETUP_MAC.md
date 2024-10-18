@@ -24,13 +24,13 @@ i. Install `pyenv`. `pyenv` is a tool for managing multiple Python versions.
 ```
 brew install pyenv
 ```
-ii. Add the following to your `~/.zshrc` (or `~/.bash_profile` for Bash):
+ii. Add the following to your `~/.zshrc` (or `~/.bashrc` for Bash):
 ```
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 ```
-iii. Reload your shell configuration `~/.zshrc` (or `~/.bash_profile` for Bash)
+iii. Reload your shell configuration `~/.zshrc` (or `~/.bashrc` for Bash)
 ```
 source ~/.zshrc
 ```
@@ -114,9 +114,18 @@ If you don't have access, please reach out to the IT team.
 
 ### 1. Clone the repository
 
-Make sure to clone this repository including the submodule, use the following command:
+You can choose to clone this repository using either SSH or HTTPS, including the submodules. Use one of the following commands:
+
+For SSH:
+```bash
+git clone --recurse-submodules git@github.com:atlanhq/application-sdk.git
+cd phoenix-postgres-app
+```
+
+For HTTPS:
 ```bash
 git clone --recurse-submodules https://github.com/atlanhq/phoenix-postgres-app.git
+cd phoenix-postgres-app
 ```
 
 ### 2. Install python project dependencies
@@ -131,8 +140,10 @@ This sets up a project-specific virtual environment and installs the required Py
 
 Install the frontend dependencies and build the frontend using the command:
 ```bash
+cd frontend
 npm install
 npm run generate
+cd ..
 ```
 These commands install node dependencies and generate necessary frontend static files.
 

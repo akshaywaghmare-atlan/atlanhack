@@ -4,6 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Amit Prabhu <amit.dp180@gmail.com>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -11,6 +12,12 @@ fastapi = {extras = ["standard"], version = "^0.115.0"}
 pytest-asyncio = "^0.24.0"
 # application-sdk = { path = "../application-sdk/", develop = true }
 application-sdk = {git = "git@github.com:atlanhq/application-sdk.git", rev = "main"}
+dash = "^2.18.1"
+dash-bootstrap-components = "^1.6.0"
+dash-ag-grid = "^31.2.0"
+dash-dangerously-set-inner-html = "^0.0.2"
+pandas = "^2.2.3"
+pygwalker = "^0.4.9.10"
 
 [tool.poetry.group.app.dependencies]
 temporalio = "^1.7.0"
