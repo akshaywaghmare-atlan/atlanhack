@@ -1,7 +1,7 @@
+@import 'treeselectjs/dist/treeselectjs.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 
 body {
     width: 100vw;

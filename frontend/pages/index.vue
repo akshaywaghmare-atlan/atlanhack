@@ -1,8 +1,8 @@
 <template>
     <div class="flex w-full h-full">
-        <div class="leftContainer">
+        <div class="flex w-full h-full">
             <div id="app" class="flex flex-col basis-full">
-                <div class="flex items-center justify-between max-w-[896px] min-w-[896px] m-auto my-4">
+                <div class="flex items-center justify-between max-w-[896px] min-w-[896px] m-auto my-8">
                     <div class="flex items-center">
                         <img src="https://www.postgresql.org/media/img/about/press/elephant.png" alt="PostgreSQL"
                             class="w-10 h-10" />
@@ -18,8 +18,9 @@
                         </button>
                     </div>
                 </div>
-                <div ref="formContainer" class="basis-3/4 "></div>
-                <div ref="navigationContainer" class="bg-white border-t border-solid border-slate-200"></div>
+                <div ref="formContainer"></div>
+                <div ref="navigationContainer"
+                    class="fixed bottom-0 w-full bg-white border-t border-solid border-slate-200"></div>
             </div>
         </div>
     </div>

@@ -9,7 +9,7 @@ export default defineNuxtConfig({
         // '~/assets/css/main.css',
         // '~/application-ui-sdk/src/styles/custom.css',
         './assets/css/main.css',
-        '~/application-ui-sdk/src/style.css'
+        // '~/application-ui-sdk/src/style.css'
     ],
     target: 'static',
     // other configurations...
