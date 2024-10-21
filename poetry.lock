@@ -239,7 +239,7 @@ temporalio = "^1.7.1"
 type = "git"
 url = "git@github.com:atlanhq/application-sdk.git"
 reference = "main"
-resolved_reference = "d375af955892c6aa9f167f7b7e14d96c6a857737"
+resolved_reference = "b93686e71d6a01df822497d50d85f3d69a77f6c1"
 
 [[package]]
 name = "arrow"

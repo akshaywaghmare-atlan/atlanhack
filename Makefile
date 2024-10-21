@@ -6,7 +6,7 @@ APP_NAME := phoenix-postgres-app
 
 # Run Temporal locally
 start-temporal-dev:
-	temporal server start-dev
+	temporal server start-dev --db-filename /tmp/temporal.db
 
 start-dapr:
 	dapr run --app-id app --app-port 3000 --dapr-http-port 3500 --dapr-grpc-port 50001 --dapr-http-max-request-size 1024 --resources-path .venv/src/application-sdk/components
@@ -54,3 +54,9 @@ run-local:
 	$(MAKE) run-dashboard &
 	@echo "Starting local application..."
 	$(MAKE) run
+
+stop-all:
+	@echo "Stopping all detached processes..."
+	@pkill -f "temporal server start-dev" || true
+	@pkill -f "dapr run --app-id app" || true
+	@echo "All detached processes stopped."

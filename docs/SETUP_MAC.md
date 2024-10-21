@@ -160,12 +160,14 @@ This will start the Temporal server and the DAPR system.
 
 Finally, open a new terminal window and start the application by running:
 ```bash
-make run
+make run-local
 ```
 
 This command launches your application, making it ready for development and testing.
 
 Open http://localhost:8000/ on your browser to access the application :rocket:
+
+Open http://localhost:8050/workflows on browser to access the application dashboard :computer:
 
 > [!TIP]
 > Head over to the [development guide](./DEVELOPMENT.md) to learn more about local development.
