@@ -2,7 +2,7 @@
 APP_NAME := phoenix-postgres-app
 
 # Phony targets
-.PHONY: run start-dapr start-temporal-dev start-all
+.PHONY: run start-deps run
 
 # Run Temporal locally
 start-temporal-dev:
@@ -11,13 +11,17 @@ start-temporal-dev:
 start-dapr:
 	dapr run --app-id app --app-port 3000 --dapr-http-port 3500 --dapr-grpc-port 50001 --dapr-http-max-request-size 1024 --resources-path .venv/src/application-sdk/components
 
-start-all:
+start-deps:
+	@echo "Stopping all dependencies before installing..."
+	$(MAKE) stop-all
 	@echo "Starting all services in detached mode..."
 	make start-dapr &
 	make start-temporal-dev &
 	@echo "Services started. Proceeding..."
 
 install:
+	# Setup Mac dependencies
+	./docs/scripts/setup_mac.sh
 	# Configure git to use https instead of ssh or git
 	@if git ls-remote git@github.com:atlanhq/application-sdk.git > /dev/null 2>&1; then \
 		echo "Git is configured to use SSH Protocol"; \
@@ -39,7 +43,7 @@ install:
 	poetry run pre-commit install
 
 # Run the application
-run:
+run-app:
 	OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:8000/telemetry" \
 	OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf" \
 	OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true \
@@ -49,14 +53,16 @@ run:
 run-dashboard:
 	PYTHONPATH=./.venv/src/application-sdk/ poetry run python .venv/src/application-sdk/ui/app.py
 
-run-local:
+run:
 	@echo "Starting local dashboard..."
 	$(MAKE) run-dashboard &
 	@echo "Starting local application..."
-	$(MAKE) run
+	$(MAKE) run-app &
 
 stop-all:
 	@echo "Stopping all detached processes..."
 	@pkill -f "temporal server start-dev" || true
 	@pkill -f "dapr run --app-id app" || true
+	@pkill -f "python main.py" || true        # For run-app
+	@pkill -f "python .venv/src/application-sdk/ui/app.py" || true  # For run-dashboard
 	@echo "All detached processes stopped."

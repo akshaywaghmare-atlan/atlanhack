@@ -82,9 +82,9 @@ log "Installing and using LTS version of Node.js..."
 nvm install --lts
 nvm use --lts
 
-# Install frontend dependencies and build
-log "Installing frontend dependencies and building..."
-npm install
-npm run generate
+# # Install frontend dependencies and build
+# log "Installing frontend dependencies and building..."
+# npm install
+# npm run generate
 
 log "Setup complete! You can now start the platform with 'make start-all' and run the application with 'make run'."
