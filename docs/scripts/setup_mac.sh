@@ -67,53 +67,20 @@ else
     log "Poetry is already installed."
 fi
 
-# Check and install Temporal CLI
-if ! command_exists temporal; then
-    log "Installing Temporal CLI..."
-    brew install temporal
-else
-    log "Temporal CLI is already installed."
-fi
-
-# Check and install Dapr CLI
-if ! command_exists dapr; then
-    log "Installing Dapr CLI..."
-    brew install dapr/tap/dapr-cli
-    dapr init --slim
-else
-    log "Dapr CLI is already installed."
-fi
-
 # Check and install NVM
 if ! command_exists nvm; then
     log "Installing NVM..."
-    # curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-    # export NVM_DIR="$HOME/.nvm"
-    # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 else
     log "NVM is already installed."
 fi
 
 # Install and use LTS version of Node.js
 log "Installing and using LTS version of Node.js..."
-# nvm install --lts
-# nvm use --lts
-
-# Clone the repository
-if [ ! -d "phoenix-postgres-app" ]; then
-    log "Cloning the repository..."
-    git clone --recurse-submodules https://github.com/atlanhq/phoenix-postgres-app.git
-    cd phoenix-postgres-app
-else
-    log "Repository already cloned. Updating..."
-    cd phoenix-postgres-app
-    git pull
-    git submodule update --init --recursive
-fi
-
-# Install Python project dependencies
-log "Installing Python project dependencies..."
-make install
+nvm install --lts
+nvm use --lts
 
 # Install frontend dependencies and build
 log "Installing frontend dependencies and building..."
