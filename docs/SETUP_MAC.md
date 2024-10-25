@@ -2,16 +2,14 @@
 
 This guide will help you set up your Mac for developing this project, starting from scratch.
 
-- [Setup using the script](#setup-using-the-script)
+- [Setup Automatically](#setup-automatically)
 - [Setup manually](#setup-manually)
 
 ---
 
 # Setup Automatically
 
-## Prerequisites
-
-- **Clone the Repository**
+## 1. Clone the Repository
 
 ```bash
 # https
@@ -24,18 +22,26 @@ git clone git@github.com:atlanhq/phoenix-postgres-app.git
 gh repo clone atlanhq/phoenix-postgres-app
 ```
 
-- Have PaaS Atlan CLI installed. To install the CLI follow the [README](https://github.com/atlanhq/phoenix-atlan-cli/blob/main/README.md).
+## 2. Install Atlan PaaS CLI
+- To install the CLI follow the [README](https://github.com/atlanhq/phoenix-atlan-cli/blob/main/README.md).
 
-## 1. Via the Makefile
-
-```bash
-make install
-```
-
-## 2. Via the PAtlan CLI
+## 3. Install the App Dependencies
 
 ```bash
 patlan app install
+```
+
+## 4. Run the App
+
+```bash
+patlan app run
+```
+
+> [!TIP]
+> If you want to stop and clean the process, run the below command:
+
+```bash
+patlan app stop
 ```
 
 ---
@@ -191,7 +197,7 @@ These commands install node dependencies and generate necessary frontend static 
 
 Open a new terminal window and start the platform by running:
 ```bash
-make start-all
+make start-deps
 ```
 
 This will start the Temporal server and the DAPR system.
@@ -200,7 +206,7 @@ This will start the Temporal server and the DAPR system.
 
 Finally, open a new terminal window and start the application by running:
 ```bash
-make run-local
+make run
 ```
 
 This command launches your application, making it ready for development and testing.
