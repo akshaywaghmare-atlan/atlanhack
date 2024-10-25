@@ -7,19 +7,33 @@ This guide will help you set up your Mac for developing this project, starting f
 
 ---
 
-# Setup using the script
+# Setup Automatically
 
-## 1. Download the script
+## Prerequisites
 
+- **Clone the Repository**
+
+```bash
+# https
+git clone https://github.com/atlanhq/phoenix-postgres-app.git
+
+# ssh
+git clone git@github.com:atlanhq/phoenix-postgres-app.git
+
+# github cli
+gh repo clone atlanhq/phoenix-postgres-app
 ```
-curl -o setup_mac.sh https://raw.githubusercontent.com/atlanhq/phoenix-postgres-app/main/docs/scripts/setup_mac.sh
+
+## 1. Via the Makefile
+
+```bash
+make install
 ```
 
-## 2. Run the script
+## 2. Via the PAtlan CLI
 
-```
-chmod +x setup_mac.sh
-./setup_mac.sh
+```bash
+patlan app install
 ```
 
 ---
