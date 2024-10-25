@@ -24,6 +24,8 @@ git clone git@github.com:atlanhq/phoenix-postgres-app.git
 gh repo clone atlanhq/phoenix-postgres-app
 ```
 
+- Have PaaS Atlan CLI installed. To install the CLI follow the [README](https://github.com/atlanhq/phoenix-atlan-cli/blob/main/README.md).
+
 ## 1. Via the Makefile
 
 ```bash
