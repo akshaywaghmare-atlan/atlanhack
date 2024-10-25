@@ -2,7 +2,7 @@
 APP_NAME := phoenix-postgres-app
 
 # Phony targets
-.PHONY: run start-deps run
+.PHONY: install start-deps run
 
 # Run Temporal locally
 start-temporal-dev:
