@@ -67,20 +67,20 @@ else
     log "Poetry is already installed."
 fi
 
-# Check and install NVM
-if ! command_exists nvm; then
-    log "Installing NVM..."
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-else
-    log "NVM is already installed."
-fi
+# # Check and install NVM
+# if ! command_exists nvm; then
+#     log "Installing NVM..."
+#     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+#     export NVM_DIR="$HOME/.nvm"
+#     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# else
+#     log "NVM is already installed."
+# fi
 
-# Install and use LTS version of Node.js
-log "Installing and using LTS version of Node.js..."
-nvm install --lts
-nvm use --lts
+# # Install and use LTS version of Node.js
+# log "Installing and using LTS version of Node.js..."
+# nvm install --lts
+# nvm use --lts
 
 # # Install frontend dependencies and build
 # log "Installing frontend dependencies and building..."
