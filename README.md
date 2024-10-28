@@ -3,24 +3,27 @@
 </p>
 
 # PostgreSQL Application
-
-
-This application is designed to interact with a PostgreSQL database and perform actions on it. The application is built using the [Atlan Python Application SDK](https://github.com/atlanhq/application-sdk) and is intended to run on the Atlan Platform.
-
-**Overview:**
-- The application is a FastAPI application.
-- It also houses a workflow that extracts metadata from a Postgres database, transforms it and pushes it to an object store.
-
 [![Checked with pyright](https://microsoft.github.io/pyright/img/pyright_badge.svg)](https://microsoft.github.io/pyright/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Tests](https://github.com/atlanhq/phoenix-postgres-app/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/atlanhq/phoenix-postgres-app/actions/workflows/unit-tests.yml)
 
+PostgreSQL application is designed to interact with a PostgreSQL database and perform actions on it. The application is built using the [Atlan Python Application SDK](https://github.com/atlanhq/application-sdk) and is intended to run on the Atlan Platform.
+
+This application has two components:
+- FastAPI server that exposes REST API to interact with the application.
+- A workflow that runs on the Atlan platform that extracts metadata from a Postgres database, transforms it and pushes it to an object store.
+
+
 ## Table of contents
+- [Demo](#demo)
 - [Features](#features)
 - [Extending this application to other SQL sources](#extending-this-application-to-other-sql-sources)
-- [Demo](#demo)
 - [Development](#development)
 - [Architecture](./docs/ARCHITECTURE.md)
+
+## Demo
+
+https://github.com/user-attachments/assets/6f529307-3d2e-405b-ae66-311e712b920f
 
 ## Features
 1. Extract metadata from a Postgres database, transform and push to an object store
@@ -40,9 +43,6 @@ This application is designed to interact with a PostgreSQL database and perform 
 4. Run the application using the development guide
 5. Update the tests in the [`tests`](tests) directory
 
-## Demo
-
-https://github.com/user-attachments/assets/6f529307-3d2e-405b-ae66-311e712b920f
 
 ## Development
 - Setup the local development environment on [Mac](./docs/SETUP_MAC.md)
