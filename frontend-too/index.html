@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PostgreSQL Assets</title>
+    <link rel="icon" type="image/x-icon" href="https://www.postgresql.org/media/img/about/press/elephant.png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-container">
+                <img src="https://www.postgresql.org/media/img/about/press/elephant.png" alt="PostgreSQL Logo" class="logo" width="100" height="100">
+                <h1>PostgreSQL Assets</h1>
+            </div>
+            <div class="doc-icon">
+                <img src="/api/placeholder/24/24" alt="Doc Icon">
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="step-list">
+                    <div class="step active" data-step="1" onclick="goToPage(1)">
+                        <div class="step-indicator">1</div>
+                        <span>Credential</span>
+                    </div>
+                    <div class="step" data-step="2" onclick="goToPage(2)">
+                        <div class="step-indicator">2</div>
+                        <span>Connection</span>
+                    </div>
+                    <div class="step" data-step="3" onclick="goToPage(3)">
+                        <div class="step-indicator">3</div>
+                        <span>Metadata</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Container -->
+            <div class="form-container">
+                <!-- Page 1: Credentials -->
+                <div id="page1" class="page active">
+                    <div class="section">
+                        <h2>Extraction method</h2>
+                        <div class="button-group">
+                            <button class="btn btn-primary">Direct</button>
+                            <button class="btn btn-secondary">Offline</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group horizontal">
+                        <div class="input-wrapper flex-grow">
+                            <label>Host *</label>
+                            <input type="text" id="host" placeholder="[database-identifier].[unique-identifier].[aws-region].rds">
+                        </div>
+                        <div class="input-wrapper" style="width: 100px;">
+                            <label>Port *</label>
+                            <input type="text" id="port" value="5432">
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2>Authentication</h2>
+                        <div class="button-group">
+                            <button class="btn btn-primary">Basic</button>
+                            <button class="btn btn-secondary">IAM User</button>
+                            <button class="btn btn-secondary">IAM Role</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group horizontal">
+                        <div class="input-wrapper flex-half">
+                            <label>Username *</label>
+                            <input type="text" id="username" value="postgres">
+                        </div>
+                        <div class="input-wrapper flex-half">
+                            <label>Password *</label>
+                            <input type="password" id="password" placeholder="Password">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Database *</label>
+                        <input type="text" id="database" value="postgres">
+                    </div>
+
+                    <button class="btn btn-outline test-connection" onclick="testConnection()">Test Connection</button>
+                    <div class="error-message" id="connectionError"></div>
+
+                    <div class="navigation-buttons">
+                        <button onclick="nextPage()" class="btn btn-primary" id="nextButton" disabled>Next</button>
+                    </div>
+                </div>
+
+                <!-- Page 2: Connection -->
+                <div id="page2" class="page">
+                    <div class="form-group">
+                        <label>Connection Name *</label>
+                        <input type="text" id="connectionName" value="development">
+                    </div>
+
+                    <div class="navigation-buttons">
+                        <button onclick="previousPage()" class="btn btn-secondary">Previous</button>
+                        <button onclick="nextPage()" class="btn btn-primary">Next</button>
+                    </div>
+                </div>
+
+                <!-- Page 3: Metadata -->
+                <div id="page3" class="page">
+                    <div class="metadata-grid">
+                        <div class="form-group">
+                            <label>Exclude Metadata</label>
+                            <input type="text" placeholder="Select databases and schemas">
+                        </div>
+                        <div class="form-group">
+                            <label>Include Metadata</label>
+                            <input type="text" placeholder="Select databases and schemas">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Exclude regex for tables & views</label>
+                        <input type="text" value=".*_TMP|.*_TEMP|TMP:*|TEMP:*">
+                    </div>
+
+                    <div class="section">
+                        <h2>Advanced Config *</h2>
+                        <div class="button-group">
+                            <button class="btn btn-primary">Default</button>
+                            <button class="btn btn-secondary">Custom</button>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2>Enable Source Level Filtering</h2>
+                        <div class="button-group">
+                            <button class="btn btn-secondary">True</button>
+                            <button class="btn btn-primary">False</button>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2>Use JDBC Internal Methods</h2>
+                        <div class="button-group">
+                            <button class="btn btn-primary">True</button>
+                            <button class="btn btn-secondary">False</button>
+                        </div>
+                    </div>
+
+                    <div class="preflight-section">
+                        <h2>Preflight checks</h2>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="checkDatabases">
+                                <span>Databases and schemas</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="checkTables">
+                                <span>Tables</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="navigation-buttons">
+                        <button onclick="previousPage()" class="btn btn-secondary">Previous</button>
+                        <div class="action-buttons">
+                            <button onclick="handleRun()" class="btn btn-primary">Run</button>
+                            <button class="btn btn-secondary">Schedule & Run</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./script.js"></script>
+</body>
+</html>
