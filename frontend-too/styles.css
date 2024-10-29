@@ -641,3 +641,19 @@ input[type="password"] {
         transform: translateY(100vh) rotate(360deg);
     }
 }
+
+.doc-link-button {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.doc-link-button:visited {
+    color: inherit;
+}
+
+.doc-link-button:hover {
+    opacity: 0.8;
+}
