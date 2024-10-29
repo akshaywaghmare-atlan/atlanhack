@@ -86,5 +86,3 @@ fi
 # log "Installing frontend dependencies and building..."
 # npm install
 # npm run generate
-
-log "Setup complete! You can now start the platform with 'make start-all' and run the application with 'make run'."
