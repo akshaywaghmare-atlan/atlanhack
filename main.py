@@ -32,9 +32,7 @@ if __name__ == "__main__":
     atlan_app_builder.add_workflows_router()
 
     # always mount the frontend at the end
-    app.mount(
-        "/", StaticFiles(directory="frontend/.output/public", html=True), name="static"
-    )
+    app.mount("/", StaticFiles(directory="frontend-too", html=True), name="static")
 
     uvicorn.run(
         app,
