@@ -49,7 +49,7 @@ run-app:
 	poetry run ./.venv/bin/opentelemetry-instrument --traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-application python main.py
 
 run-dashboard:
-	PYTHONPATH=./.venv/src/application-sdk/ poetry run python .venv/src/application-sdk/ui/app.py
+	PYTHONPATH=./.venv/src/application-sdk/ poetry run python .venv/src/application-sdk/dashboard/app.py
 
 run:
 	@echo "Starting local dashboard..."
@@ -62,5 +62,5 @@ stop-all:
 	@pkill -f "temporal server start-dev" || true
 	@pkill -f "dapr run --app-id app" || true
 	@pkill -f "python main.py" || true        # For run-app
-	@pkill -f "python .venv/src/application-sdk/ui/app.py" || true  # For run-dashboard
+	@pkill -f "python .venv/src/application-sdk/dashboard/app.py" || true  # For run-dashboard
 	@echo "All detached processes stopped."
