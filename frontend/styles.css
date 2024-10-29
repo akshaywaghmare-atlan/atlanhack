@@ -1,6 +1,6 @@
 :root {
-    --primary-color: #0065FF;
-    --primary-hover: #0052CC;  /* A slightly darker shade for hover states */
+    --primary-color: #293c54;
+    --primary-hover: #36465a;  /* A slightly darker shade for hover states */
     --secondary-color: #6B7280;
     --border-color: #E5E7EB;
     --background-color: #F9FAFB;
@@ -247,6 +247,9 @@ input[type="password"] {
     border-radius: 0.5rem;
     background-color: white;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .preflight-header {
@@ -262,16 +265,14 @@ input[type="password"] {
     margin: 0;
 }
 
-/* Ensure the button stays on the right */
-#runPreflightChecks {
-    margin-left: auto;
-}
-
-.check-results {
+.preflight-content {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    padding: 0.5rem 0;
+    gap: 0.5rem;
+}
+
+.check-result {
+    margin-top: 0.5rem;
 }
 
 .check-item {
@@ -656,4 +657,31 @@ input[type="password"] {
 
 .doc-link-button:hover {
     opacity: 0.8;
+}
+
+.check-result {
+    margin: 10px 0;
+}
+
+.check-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.check-status svg {
+    width: 20px;
+    height: 20px;
+}
+
+.check-status.success {
+    background-color: var(--success-bg-color, #f0fdf4);
+    color: var(--success-color, #16a34a);
+}
+
+.check-status.error {
+    background-color: var(--error-bg-color, #fef2f2);
+    color: var(--error-color, #dc2626);
 }

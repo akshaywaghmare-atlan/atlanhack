@@ -151,47 +151,24 @@
 
                     <div class="form-group">
                         <label>Exclude regex for tables & views</label>
-                        <input type="text" value=".*_TMP|.*_TEMP|TMP:*|TEMP:*">
+                        <input type="text" id="temp-table-regex" placeholder=".*_TMP|.*_TEMP|TMP:*|TEMP:*" >
                     </div>
 
-                    <div class="section">
+                    <!-- <div class="section">
                         <h2>Advanced Config *</h2>
                         <div class="button-group">
                             <button class="btn btn-primary">Default</button>
                             <button class="btn btn-secondary">Custom</button>
                         </div>
-                    </div>
-
-                    <div class="section">
-                        <h2>Enable Source Level Filtering</h2>
-                        <div class="button-group">
-                            <button class="btn btn-secondary">True</button>
-                            <button class="btn btn-primary">False</button>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <h2>Use JDBC Internal Methods</h2>
-                        <div class="button-group">
-                            <button class="btn btn-primary">True</button>
-                            <button class="btn btn-secondary">False</button>
-                        </div>
-                    </div>
+                    </div> -->
 
                     <div class="preflight-section">
                         <div class="preflight-header">
-                            <h2>Preflight checks</h2>
-                            <button id="runPreflightChecks" class="btn btn-secondary">Check</button>
+                            <h2>Preflight Checks</h2>
+                            <button id="runPreflightChecks" class="btn btn-primary">Check</button>
                         </div>
-                        <div class="check-results">
-                            <div class="check-item" id="databaseSchemaCheck">
-                                <span class="check-label">Databases and schemas</span>
-                                <span class="check-status"></span>
-                            </div>
-                            <div class="check-item" id="tablesCheck">
-                                <span class="check-label">Tables</span>
-                                <span class="check-status"></span>
-                            </div>
+                        <div class="preflight-content">
+                            <!-- Results will be dynamically inserted here -->
                         </div>
                     </div>
 

@@ -313,7 +313,19 @@ async function fetchMetadata() {
 function toggleDropdown(id) {
     const dropdown = document.getElementById(id);
     const content = dropdown.querySelector('.dropdown-content');
+
+    // Close all other dropdowns first
+    document.querySelectorAll('.dropdown-content').forEach(otherContent => {
+        if (otherContent !== content) {
+            otherContent.classList.remove('show');
+        }
+    });
+
+    // Toggle the clicked dropdown
     content.classList.toggle('show');
+
+    // Prevent the click from bubbling up to the document
+    event.stopPropagation();
 }
 
 function updateDropdownHeader(type, tableCatalog, totalSchemas, selectedCount) {
@@ -561,11 +573,18 @@ async function runPreflightChecks() {
     checkButton.disabled = true;
     checkButton.textContent = 'Checking...';
 
-    // Reset previous results
-    document.querySelectorAll('.check-status').forEach(status => {
-        status.innerHTML = '';
-        status.className = 'check-status';
-    });
+    // Get or create the results container
+    let resultsContainer = document.querySelector('.preflight-content');
+    if (!resultsContainer) {
+        resultsContainer = document.createElement('div');
+        resultsContainer.className = 'preflight-content';
+        // Insert after the header section
+        const preflightSection = document.querySelector('.preflight-section');
+        preflightSection.appendChild(resultsContainer);
+    }
+
+    // Clear previous results
+    resultsContainer.innerHTML = '';
 
     try {
         const filters = formatFilters(metadataOptions);
@@ -594,48 +613,50 @@ async function runPreflightChecks() {
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-        // debugger
+
         const responseJson = await response.json();
-        console.log('Received response:', responseJson); // Debug log
 
-        // Update each check result
-        ['databaseSchemaCheck', 'tablesCheck'].forEach(checkType => {
-            const result = responseJson.data[checkType];
-            const statusElement = document.querySelector(`#${checkType} .check-status`);
+        // Create and append check results in sequence
+        Object.entries(responseJson.data).forEach(([checkType, result]) => {
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'check-result';
 
-            if (!statusElement) return;
+            const statusElement = document.createElement('div');
+            statusElement.className = 'check-status';
 
             if (result.success) {
                 statusElement.innerHTML = `
-                    <span>${result.successMessage}</span>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                         <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
                     </svg>
+                    <span>${result.successMessage}</span>
                 `;
                 statusElement.classList.add('success');
             } else {
                 statusElement.innerHTML = `
-                    <span>${result.failureMessage || 'Check failed'}</span>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                         <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd" />
                     </svg>
+                    <span>${result.failureMessage || 'Check failed'}</span>
                 `;
                 statusElement.classList.add('error');
             }
+
+            resultDiv.appendChild(statusElement);
+            resultsContainer.appendChild(resultDiv);
         });
 
     } catch (error) {
         console.error('Preflight check failed:', error);
-        // Show error state for all checks
-        document.querySelectorAll('.check-status').forEach(status => {
-            status.innerHTML = `
-                <span>Failed to perform check</span>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd" />
-                </svg>
-            `;
-            status.classList.add('error');
-        });
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'check-status error';
+        errorDiv.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd" />
+            </svg>
+            <span>Failed to perform check</span>
+        `;
+        resultsContainer.appendChild(errorDiv);
     } finally {
         checkButton.disabled = false;
         checkButton.textContent = 'Check';
@@ -710,7 +731,7 @@ async function handleRunWorkflow() {
                 connection,
                 metadata: {
                     ...filters,
-                    temp_table_regex: "",
+                    temp_table_regex: document.getElementById('temp-table-regex').value,
                     advanced_config_strategy: "default",
                     use_source_schema_filtering: "false",
                     use_jdbc_internal_methods: "true",
@@ -765,4 +786,24 @@ async function handleRunWorkflow() {
 document.addEventListener('DOMContentLoaded', () => {
     // ... existing code ...
     handleRunWorkflow();
+});
+
+// Add this new function
+function setupDropdownClickOutside() {
+    document.addEventListener('click', (event) => {
+        const dropdowns = document.querySelectorAll('.metadata-dropdown');
+        dropdowns.forEach(dropdown => {
+            const content = dropdown.querySelector('.dropdown-content');
+            // Check if click is outside the dropdown
+            if (!dropdown.contains(event.target)) {
+                content.classList.remove('show');
+            }
+        });
+    });
+}
+
+// Add this to your DOMContentLoaded event listener
+document.addEventListener('DOMContentLoaded', () => {
+    // ... existing code ...
+    setupDropdownClickOutside();
 });
