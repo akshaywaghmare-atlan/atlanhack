@@ -24,11 +24,11 @@ function updateSteps() {
 }
 
 function goToPage(pageNumber) {
-    // Get current page
-    const currentPageNum = parseInt(document.querySelector('.step.active').dataset.step);
+    // Validate page number
+    if (pageNumber < 1 || pageNumber > 3) return;
 
     // Prevent unauthorized navigation
-    if (pageNumber > currentPageNum) {
+    if (pageNumber > currentPage) {
         // Check if trying to go past page 1 without authentication
         if (pageNumber > 1 && !sessionStorage.getItem('authenticationComplete')) {
             return;
@@ -59,56 +59,59 @@ function goToPage(pageNumber) {
     // Show corresponding navigation buttons
     document.getElementById(`page${pageNumber}-nav`).style.display = 'flex';
 
-    // Update sidebar steps
-    document.querySelectorAll('.step').forEach(step => {
-        step.classList.remove('active');
-        if (parseInt(step.dataset.step) === pageNumber) {
-            step.classList.add('active');
-        }
-    });
+    // If navigating to page 3, populate metadata dropdowns
+    if (pageNumber === 3) {
+        populateMetadataDropdowns();
+    }
 
-    // Update current page
+    // Update current page and steps
     currentPage = pageNumber;
+    updateSteps();
 }
 
 async function nextPage() {
-    const currentPageNum = parseInt(document.querySelector('.step.active').dataset.step);
-
     // If on page 1, ensure authentication is complete
-    if (currentPageNum === 1) {
-        // Check if authentication is already complete
+    if (currentPage === 1) {
         if (!sessionStorage.getItem('authenticationComplete')) {
-            // If not authenticated, run test connection
             const success = await testConnection();
             if (!success) {
-                return; // Don't proceed if authentication fails
+                return;
             }
         }
-        // If authenticated (either previously or just now), proceed to next page
         goToPage(2);
-        updateSteps();
         return;
     }
 
-    // For other pages
-    const nextPageNum = currentPageNum + 1;
-    if (nextPageNum <= 3) {
-        // Add any additional validation for page 2 if needed
-        if (currentPageNum === 2) {
-            const connectionName = document.getElementById('connectionName').value.trim();
-            if (!connectionName) {
-                return; // Don't proceed if connection name is empty
-            }
+    // For page 2
+    if (currentPage === 2) {
+        const connectionNameInput = document.getElementById('connectionName');
+        const connectionName = connectionNameInput.value.trim();
+
+        if (!connectionName) {
+            connectionNameInput.style.border = '2px solid #DC2626';
+            connectionNameInput.style.animation = 'shake 0.5s';
+            connectionNameInput.addEventListener('animationend', () => {
+                connectionNameInput.style.animation = '';
+            });
+            connectionNameInput.addEventListener('input', () => {
+                connectionNameInput.style.border = '1px solid var(--border-color)';
+            }, { once: true });
+            return;
         }
 
+        goToPage(3);
+        return;
+    }
+
+    // For page 3 (if needed in the future)
+    const nextPageNum = currentPage + 1;
+    if (nextPageNum <= 3) {
         goToPage(nextPageNum);
-        updateSteps();
     }
 }
 
 function previousPage() {
-    const currentPage = document.querySelector('.step.active').dataset.step;
-    const prevPageNum = parseInt(currentPage) - 1;
+    const prevPageNum = currentPage - 1;
     if (prevPageNum >= 1) {
         goToPage(prevPageNum);
     }
@@ -194,20 +197,21 @@ async function performConnectionTest() {
         database: document.getElementById('database').value
     };
 
-    try {
-        const response = await fetch('/workflows/v1/auth', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload)
-        });
+    const response = await fetch('/workflows/v1/auth', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+    });
+    const data = await response.json();
 
-        const data = await response.json();
-        return data.success;
-    } catch (error) {
-        throw new Error('Connection failed');
+    if (!response.ok) {
+        throw new Error(data.message || 'Connection failed');
     }
+
+    return data.success;
+
 }
 
 // Initialize button states
@@ -225,21 +229,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Add validation for page 2
-    const connectionNameInput = document.getElementById('connectionName');
-    if (connectionNameInput) {
-        // Initial validation
-        validatePage2();
-
-        // Add input event listener
-        connectionNameInput.addEventListener('input', validatePage2);
-    }
-
     // Update step click handlers
     document.querySelectorAll('.step').forEach(step => {
-        step.addEventListener('click', (e) => {
+        step.addEventListener('click', () => {
             const targetPage = parseInt(step.dataset.step);
-            goToPage(targetPage);
+            if (targetPage <= currentPage) { // Only allow clicking on current or previous steps
+                goToPage(targetPage);
+            }
         });
     });
 
@@ -247,13 +243,6 @@ document.addEventListener('DOMContentLoaded', () => {
     sessionStorage.removeItem('authenticationComplete');
 });
 
-function validatePage2() {
-    const connectionName = document.getElementById('connectionName').value.trim();
-    const page2Next = document.getElementById('page2Next');
-
-    // Enable the next button if connectionName has a value
-    page2Next.disabled = !connectionName;
-}
 
 // Add these new functions
 
@@ -358,7 +347,7 @@ function updateDropdownHeader(type, tableCatalog, totalSchemas, selectedCount) {
 }
 
 async function populateMetadataDropdowns() {
-    // Show loading state
+    // Show loading state for both dropdowns
     ['include', 'exclude'].forEach(type => {
         const dropdown = document.getElementById(`${type}Metadata`);
         const header = dropdown.querySelector('.dropdown-header span');
@@ -371,95 +360,102 @@ async function populateMetadataDropdowns() {
     metadataOptions.include.clear();
     metadataOptions.exclude.clear();
 
+    // Make single API call
     const databases = await fetchMetadata();
 
+    // Populate both dropdowns with the same data
     ['include', 'exclude'].forEach(type => {
-        const dropdown = document.getElementById(`${type}Metadata`);
-        const content = dropdown.querySelector('.dropdown-content');
-        const header = dropdown.querySelector('.dropdown-header span');
+        populateDropdown(type, databases);
+    });
+}
 
-        // Reset content
-        content.innerHTML = '';
+// New helper function to populate a single dropdown
+function populateDropdown(type, databases) {
+    const dropdown = document.getElementById(`${type}Metadata`);
+    const content = dropdown.querySelector('.dropdown-content');
+    const header = dropdown.querySelector('.dropdown-header span');
 
-        // Update header text based on whether we got data
-        if (databases.size === 0) {
-            header.textContent = 'No databases available';
-            return;
-        }
+    // Reset content
+    content.innerHTML = '';
 
-        // Reset to default text
-        header.textContent = 'Select databases and schemas';
+    // Update header text based on whether we got data
+    if (databases.size === 0) {
+        header.textContent = 'No databases available';
+        return;
+    }
 
-        databases.forEach((schemas, tableCatalog) => {
-            // Create database container
-            const dbContainer = document.createElement('div');
-            dbContainer.className = 'database-container';
+    // Reset to default text
+    header.textContent = 'Select databases and schemas';
 
-            // Create database header
-            const dbDiv = document.createElement('div');
-            dbDiv.className = 'database-item';
+    databases.forEach((schemas, tableCatalog) => {
+        // Create database container
+        const dbContainer = document.createElement('div');
+        dbContainer.className = 'database-container';
 
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.id = `${type}-${tableCatalog}`;
+        // Create database header
+        const dbDiv = document.createElement('div');
+        dbDiv.className = 'database-item';
 
-            const label = document.createElement('label');
-            label.textContent = tableCatalog;
-            label.htmlFor = `${type}-${tableCatalog}`;
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `${type}-${tableCatalog}`;
 
-            const schemaCount = document.createElement('span');
-            schemaCount.className = 'selected-count';
-            schemaCount.textContent = `0/${schemas.size}`;
+        const label = document.createElement('label');
+        label.textContent = tableCatalog;
+        label.htmlFor = `${type}-${tableCatalog}`;
 
-            dbDiv.appendChild(checkbox);
-            dbDiv.appendChild(label);
-            dbDiv.appendChild(schemaCount);
+        const schemaCount = document.createElement('span');
+        schemaCount.className = 'selected-count';
+        schemaCount.textContent = `0/${schemas.size}`;
 
-            // Create schema list
-            const schemaList = document.createElement('div');
-            schemaList.className = 'schema-list';
+        dbDiv.appendChild(checkbox);
+        dbDiv.appendChild(label);
+        dbDiv.appendChild(schemaCount);
 
-            schemas.forEach(schemaName => {
-                const schemaDiv = document.createElement('div');
-                schemaDiv.className = 'schema-item';
+        // Create schema list
+        const schemaList = document.createElement('div');
+        schemaList.className = 'schema-list';
 
-                const schemaCheckbox = document.createElement('input');
-                schemaCheckbox.type = 'checkbox';
-                schemaCheckbox.id = `${type}-${tableCatalog}-${schemaName}`;
+        schemas.forEach(schemaName => {
+            const schemaDiv = document.createElement('div');
+            schemaDiv.className = 'schema-item';
 
-                const schemaLabel = document.createElement('label');
-                schemaLabel.textContent = schemaName;
-                schemaLabel.htmlFor = `${type}-${tableCatalog}-${schemaName}`;
+            const schemaCheckbox = document.createElement('input');
+            schemaCheckbox.type = 'checkbox';
+            schemaCheckbox.id = `${type}-${tableCatalog}-${schemaName}`;
 
-                schemaDiv.appendChild(schemaCheckbox);
-                schemaDiv.appendChild(schemaLabel);
-                schemaList.appendChild(schemaDiv);
+            const schemaLabel = document.createElement('label');
+            schemaLabel.textContent = schemaName;
+            schemaLabel.htmlFor = `${type}-${tableCatalog}-${schemaName}`;
 
-                schemaCheckbox.addEventListener('change', (e) => {
-                    handleSchemaSelection(type, tableCatalog, schemaName, e.target.checked);
-                    updateSelectionCount(type, tableCatalog, schemas.size);
-                });
-            });
+            schemaDiv.appendChild(schemaCheckbox);
+            schemaDiv.appendChild(schemaLabel);
+            schemaList.appendChild(schemaDiv);
 
-            // Add all elements to the container
-            dbContainer.appendChild(dbDiv);
-            dbContainer.appendChild(schemaList);
-            content.appendChild(dbContainer);
-
-            // Add database checkbox event listener
-            checkbox.addEventListener('change', (e) => {
-                handleDatabaseSelection(type, tableCatalog, Array.from(schemas), e.target.checked);
-                schemaList.querySelectorAll('input[type="checkbox"]')
-                    .forEach(cb => cb.checked = e.target.checked);
+            schemaCheckbox.addEventListener('change', (e) => {
+                handleSchemaSelection(type, tableCatalog, schemaName, e.target.checked);
                 updateSelectionCount(type, tableCatalog, schemas.size);
             });
+        });
 
-            // Add click event to toggle schema list
-            dbDiv.addEventListener('click', (e) => {
-                if (e.target.type !== 'checkbox') {
-                    schemaList.classList.toggle('show');
-                }
-            });
+        // Add all elements to the container
+        dbContainer.appendChild(dbDiv);
+        dbContainer.appendChild(schemaList);
+        content.appendChild(dbContainer);
+
+        // Add database checkbox event listener
+        checkbox.addEventListener('change', (e) => {
+            handleDatabaseSelection(type, tableCatalog, Array.from(schemas), e.target.checked);
+            schemaList.querySelectorAll('input[type="checkbox"]')
+                .forEach(cb => cb.checked = e.target.checked);
+            updateSelectionCount(type, tableCatalog, schemas.size);
+        });
+
+        // Add click event to toggle schema list
+        dbDiv.addEventListener('click', (e) => {
+            if (e.target.type !== 'checkbox') {
+                schemaList.classList.toggle('show');
+            }
         });
     });
 }
@@ -523,29 +519,6 @@ function updateSelectionCount(type, tableCatalog, totalSchemas) {
     });
     updateDropdownHeader(type, null, null, totalSelected);
 }
-
-// Update the page 3 initialization
-function initializePage3() {
-    // Initialize metadata dropdowns when page 3 is shown
-    const page3 = document.getElementById('page3');
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.target.classList.contains('active')) {
-                // Always fetch fresh metadata when page 3 is shown
-                populateMetadataDropdowns();
-            }
-        });
-    });
-
-    observer.observe(page3, { attributes: true, attributeFilter: ['class'] });
-}
-
-// Add this to your DOMContentLoaded event listener
-document.addEventListener('DOMContentLoaded', () => {
-    // ... existing code ...
-
-    initializePage3();
-});
 
 // Add these new functions for preflight checks
 function formatFilters(metadataOptions) {
@@ -675,30 +648,9 @@ function setupPreflightCheck() {
 
 // Update your DOMContentLoaded listener
 document.addEventListener('DOMContentLoaded', () => {
-    // ... existing code ...
     setupPreflightCheck();
 });
 
-function createConfetti() {
-    const colors = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6'];
-    const confettiCount = 100;
-
-    for (let i = 0; i < confettiCount; i++) {
-        const confetti = document.createElement('div');
-        confetti.classList.add('confetti');
-
-        // Random position and color
-        confetti.style.left = Math.random() * 100 + 'vw';
-        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-        confetti.style.animationDuration = `${Math.random() * 2 + 2}s`; // Random duration between 2-4s
-
-        document.body.appendChild(confetti);
-
-        // Remove confetti after animation
-        setTimeout(() => confetti.remove(), 4000);
-    }
-}
 
 async function handleRunWorkflow() {
     const runButton = document.querySelector('#runWorkflowButton');
@@ -757,10 +709,9 @@ async function handleRunWorkflow() {
             runButton.textContent = 'Started Successfully';
             runButton.classList.add('success');
 
-            // Show modal and create confetti
+            // Show modal
             const modal = document.getElementById('successModal');
             modal.classList.add('show');
-            createConfetti();
 
         } catch (error) {
             console.error('Failed to start workflow:', error);
@@ -784,7 +735,6 @@ async function handleRunWorkflow() {
 
 // Add to your DOMContentLoaded event listener
 document.addEventListener('DOMContentLoaded', () => {
-    // ... existing code ...
     handleRunWorkflow();
 });
 
@@ -804,6 +754,5 @@ function setupDropdownClickOutside() {
 
 // Add this to your DOMContentLoaded event listener
 document.addEventListener('DOMContentLoaded', () => {
-    // ... existing code ...
     setupDropdownClickOutside();
 });
