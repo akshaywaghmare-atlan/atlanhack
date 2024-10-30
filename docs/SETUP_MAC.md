@@ -132,29 +132,12 @@ These commands install the Dapr CLI and initialize it in slim mode.
 [Dapr documentation](https://docs.dapr.io/)
 
 
-### 6. Install Node.js
-
-Node.js is a JavaScript runtime, which is required for building the frontend.
-We recommend installing node via [NVM](https://github.com/nvm-sh/nvm#install--update-script)
-```bash
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-
-nvm install --lts
-
-nvm use --lts
-```
-
-This installs Node.js, which is needed for frontend development.
-
-[Node.js documentation](https://nodejs.org/en/docs/)
-
 ## Setting up the project
 
 ### 0. Repository Access
 
-Ensure you have access to the following SDK repositories:
+Ensure you have access to the following SDK repository:
 - [Python Application SDK](https://github.com/atlanhq/application-sdk): The SDK is used to develop applications on the Atlan platform.
-- [UI SDK](https://github.com/atlanhq/application-sdk): The SDK is used to develop the frontend of the application.
 
 If you don't have access, please reach out to the IT team.
 
@@ -164,13 +147,13 @@ You can choose to clone this repository using either SSH or HTTPS, including the
 
 For SSH:
 ```bash
-git clone --recurse-submodules git@github.com:atlanhq/application-sdk.git
+git clone git@github.com:atlanhq/phoenix-postgres-app.git
 cd phoenix-postgres-app
 ```
 
 For HTTPS:
 ```bash
-git clone --recurse-submodules https://github.com/atlanhq/phoenix-postgres-app.git
+git clone https://github.com/atlanhq/phoenix-postgres-app.git
 cd phoenix-postgres-app
 ```
 
@@ -182,18 +165,8 @@ make install
 ```
 This sets up a project-specific virtual environment and installs the required Python packages.
 
-### 3. Install frontend dependencies and build
 
-Install the frontend dependencies and build the frontend using the command:
-```bash
-cd frontend
-npm install
-npm run generate
-cd ..
-```
-These commands install node dependencies and generate necessary frontend static files.
-
-### 4. Start the platform
+### 3. Start the platform
 
 Open a new terminal window and start the platform by running:
 ```bash
@@ -202,7 +175,7 @@ make start-deps
 
 This will start the Temporal server and the DAPR system.
 
-### 5. Run the application
+### 4. Run the application
 
 Finally, open a new terminal window and start the application by running:
 ```bash
