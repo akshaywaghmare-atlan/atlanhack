@@ -86,11 +86,9 @@ _If you are using the Atlan CLI to create a new application, you can skip this s
 
 ## Working with the frontend (Optional)
 
-> While this repository already contains the compiled frontend, if you wish to work on the frontend, you can run the following commands to install the dependencies and build the frontend.
+- Feel free to work on the frontend in the `frontend` directory.
+- In case you need to update the frontend static files path, you can update it in the `main.py` file.
 
-1. Run `cd frontend` to navigate to the frontend directory
-2. Run `npm install` to install the dependencies
-3. Run `npm run generate` to build the frontend
 
 ## Using Intellij IDEA
 1. Open the project in Intellij IDEA PyCharm
