@@ -66,5 +66,3 @@ if ! command_exists poetry; then
 else
     log "Poetry is already installed."
 fi
-
-log "Setup complete! You can now start the platform with 'make start-all' and run the application with 'make run'."
