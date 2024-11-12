@@ -1,14 +1,12 @@
-from typing import Any, Dict
-from urllib.parse import quote_plus
-
-from application_sdk.workflows.sql import SQLWorkflowBuilderInterface
-from application_sdk.workflows.sql.metadata import SQLWorkflowMetadataInterface
-from application_sdk.workflows.sql.preflight_check import (
-    SQLWorkflowPreflightCheckInterface,
+from application_sdk.workflows.sql.builders.builder import SQLWorkflowBuilder
+from application_sdk.workflows.sql.controllers.metadata import (
+    SQLWorkflowMetadataController,
 )
-from application_sdk.workflows.sql.workflow import SQLWorkflowWorkerInterface
+from application_sdk.workflows.sql.controllers.preflight_check import (
+    SQLWorkflowPreflightCheckController,
+)
+from application_sdk.workflows.sql.workflows.workflow import SQLWorkflow
 from application_sdk.workflows.transformers.phoenix import PhoenixTransformer
-from temporalio import workflow
 
 from app.const import (
     COLUMN_EXTRACTION_SQL,
@@ -22,61 +20,31 @@ from app.const import (
 APPLICATION_NAME = "postgres-connector"
 
 
-class PostgresWorkflowMetadata(SQLWorkflowMetadataInterface):
+class PostgresWorkflowMetadata(SQLWorkflowMetadataController):
     METADATA_SQL = FILTER_METADATA_SQL
 
 
-class PostgresWorkflowPreflight(SQLWorkflowPreflightCheckInterface):
+class PostgresWorkflowPreflight(SQLWorkflowPreflightCheckController):
     METADATA_SQL = FILTER_METADATA_SQL
     TABLES_CHECK_SQL = TABLES_CHECK_SQL
 
 
-@workflow.defn
-class PostgresWorkflowWorker(SQLWorkflowWorkerInterface):
-    DATABASE_SQL = DATABASE_EXTRACTION_SQL
-    SCHEMA_SQL = SCHEMA_EXTRACTION_SQL
-    TABLE_SQL = TABLE_EXTRACTION_SQL
-    COLUMN_SQL = COLUMN_EXTRACTION_SQL
+class PostgresWorkflow(SQLWorkflow):
+    fetch_database_sql = DATABASE_EXTRACTION_SQL
+    fetch_schema_sql = SCHEMA_EXTRACTION_SQL
+    fetch_table_sql = TABLE_EXTRACTION_SQL
+    fetch_column_sql = COLUMN_EXTRACTION_SQL
 
-    def __init__(
-        self, application_name: str = APPLICATION_NAME, *args: Any, **kwargs: Any
-    ):
-        self.TEMPORAL_WORKFLOW_CLASS = PostgresWorkflowWorker
-        phoenix_transformer = PhoenixTransformer(
-            connector_name=application_name, connector_type="postgres"
-        )
-        super().__init__(
-            transformer=phoenix_transformer,
-            application_name=application_name,
-            *args,
-            **kwargs,
+
+class PostgresWorkflowBuilder(SQLWorkflowBuilder):
+    def __init__(self, application_name: str = APPLICATION_NAME):
+        self.set_transformer(
+            PhoenixTransformer(
+                connector_name=application_name, connector_type="postgres"
+            )
         )
 
-    @workflow.run
-    async def run(self, workflow_args: Dict[str, Any]):
-        await super().run(workflow_args)
+        super().__init__()
 
-
-class PostgresWorkflowBuilder(SQLWorkflowBuilderInterface):
-    def get_sqlalchemy_connect_args(
-        self, credentials: Dict[str, Any]
-    ) -> Dict[str, Any]:
-        return {}
-
-    def get_sqlalchemy_connection_string(self, credentials: Dict[str, Any]) -> str:
-        encoded_password = quote_plus(credentials["password"])
-        return f"postgresql+psycopg2://{credentials['user']}:{encoded_password}@{credentials['host']}:{credentials['port']}/{credentials['database']}"
-
-    def __init__(self, *args: Any, **kwargs: Any):
-        self.metadata_interface = PostgresWorkflowMetadata(self.get_sql_engine)
-        self.preflight_interface = PostgresWorkflowPreflight(self.get_sql_engine)
-        self.worker_interface = PostgresWorkflowWorker(
-            APPLICATION_NAME, get_sql_engine=self.get_sql_engine
-        )
-        super().__init__(
-            metadata_interface=self.metadata_interface,
-            preflight_check_interface=self.preflight_interface,
-            worker_interface=self.worker_interface,
-            *args,
-            **kwargs,
-        )
+    def build(self, workflow: SQLWorkflow | None = None) -> SQLWorkflow:
+        return super().build(workflow=workflow or PostgresWorkflow())

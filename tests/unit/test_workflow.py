@@ -1,9 +1,12 @@
+import asyncio
 import traceback
 from typing import Any, Dict
 from unittest.mock import MagicMock
 
 import pytest
-from temporalio import activity
+from application_sdk.workflows.sql.workflows.workflow import SQLWorkflow
+from temporalio import activity, workflow
+from temporalio.common import RetryPolicy
 from temporalio.testing import WorkflowEnvironment
 from temporalio.worker import Worker
 from temporalio.worker.workflow_sandbox import (
@@ -11,14 +14,39 @@ from temporalio.worker.workflow_sandbox import (
     SandboxRestrictions,
 )
 
-from app.workflow import PostgresWorkflowWorker
+
+@workflow.defn
+class MockSQLWorkflow(SQLWorkflow):
+    @workflow.run
+    async def run(self, workflow_args: Dict[str, Any]):
+        workflow_id = workflow_args["workflow_id"]
+        retry_policy = RetryPolicy(
+            maximum_attempts=6,
+            backoff_coefficient=2,
+        )
+
+        workflow_run_id = workflow.info().run_id
+        output_prefix = workflow_args["output_prefix"]
+        output_path = f"{output_prefix}/{workflow_id}/{workflow_run_id}"
+        workflow_args["output_path"] = output_path
+
+        fetch_and_transforms = [
+            self.fetch_and_transform(self.fetch_databases, workflow_args, retry_policy),  # type: ignore
+            self.fetch_and_transform(self.fetch_schemas, workflow_args, retry_policy),  # type: ignore
+            self.fetch_and_transform(self.fetch_tables, workflow_args, retry_policy),  # type: ignore
+            self.fetch_and_transform(self.fetch_columns, workflow_args, retry_policy),  # type: ignore
+        ]
+
+        await asyncio.gather(*fetch_and_transforms)
+
+        workflow.logger.info(f"Extraction workflow completed for {workflow_id}")
 
 
 @pytest.mark.asyncio
 async def test_extraction_workflow():
     workflow_config = {
         "workflow_id": "test_workflow",
-        "credentials_guid": "credential_1234",
+        "credential_guid": "credential_1234",
         "output_prefix": "/tmp/test_output",
         "connection": {"connection": "dev"},
         "metadata": {
@@ -81,7 +109,7 @@ async def test_extraction_workflow():
         async with Worker(
             env.client,
             task_queue="test_queue",
-            workflows=[PostgresWorkflowWorker],
+            workflows=[MockSQLWorkflow],
             activities=[
                 wrapped_mock_fetch_databases,
                 wrapped_mock_fetch_schemas,
@@ -96,8 +124,8 @@ async def test_extraction_workflow():
                 )
             ),
         ):
-            result = await env.client.execute_workflow(  # pyright: ignore[reportUnknownMemberType]
-                PostgresWorkflowWorker.run,
+            result: Any = await env.client.execute_workflow(  # pyright: ignore[reportUnknownMemberType]
+                MockSQLWorkflow.run,  # type: ignore
                 workflow_config,
                 id="test_workflow",
                 task_queue="test_queue",

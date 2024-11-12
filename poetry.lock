@@ -268,7 +268,7 @@ workflows = ["dapr (>=1.14.0,<2.0.0)", "temporalio (>=1.7.1,<2.0.0)"]
 type = "git"
 url = "git@github.com:atlanhq/application-sdk.git"
 reference = "main"
-resolved_reference = "890585dacd022fed5a02c41c31aee11e1b892527"
+resolved_reference = "613833037adfa4dc380a138cd993d5fee99c1e4b"
 
 [[package]]
 name = "arrow"
