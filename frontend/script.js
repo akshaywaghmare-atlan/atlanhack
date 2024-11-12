@@ -117,27 +117,6 @@ function previousPage() {
     }
 }
 
-async function handleRun() {
-    updateFormData();
-    try {
-        const response = await fetch('https://api.example.com/postgres-assets', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData)
-        });
-
-        if (response.ok) {
-            alert('Operation successful!');
-        } else {
-            alert('Operation failed. Please try again.');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again.');
-    }
-}
 
 async function testConnection() {
     const testButton = document.querySelector('.test-connection');
@@ -254,7 +233,6 @@ let metadataOptions = {
 function processMetadataResponse(data) {
     // Group by TABLE_CATALOG instead of database
     const databases = new Map();
-    console.log(data)
 
     data.forEach(item => {
         if (!databases.has(item.TABLE_CATALOG)) {
@@ -263,7 +241,6 @@ function processMetadataResponse(data) {
         databases.get(item.TABLE_CATALOG).add(item.TABLE_SCHEMA);
     });
 
-    console.log(databases);
     return databases;
 }
 
@@ -655,6 +632,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function handleRunWorkflow() {
     const runButton = document.querySelector('#runWorkflowButton');
     if (!runButton) return;
+    const modal = document.getElementById('successModal');
 
     runButton.addEventListener('click', async () => {
         try {
@@ -710,7 +688,6 @@ async function handleRunWorkflow() {
             runButton.classList.add('success');
 
             // Show modal
-            const modal = document.getElementById('successModal');
             modal.classList.add('show');
 
         } catch (error) {
@@ -728,6 +705,7 @@ async function handleRunWorkflow() {
                 runButton.disabled = false;
                 runButton.textContent = 'Run';
                 runButton.classList.remove('success', 'error');
+                modal.classList.remove('show');
             }, 3000);
         }
     });

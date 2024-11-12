@@ -268,7 +268,7 @@ workflows = ["dapr (>=1.14.0,<2.0.0)", "temporalio (>=1.7.1,<2.0.0)"]
 type = "git"
 url = "git@github.com:atlanhq/application-sdk.git"
 reference = "main"
-resolved_reference = "45fa32e239d4ca079228a0fabebb47f746179d74"
+resolved_reference = "890585dacd022fed5a02c41c31aee11e1b892527"
 
 [[package]]
 name = "arrow"
@@ -657,13 +657,13 @@ typing-extensions = ">=4.4.0"
 
 [[package]]
 name = "dash"
-version = "2.18.1"
+version = "2.18.2"
 description = "A Python framework for building reactive web-apps. Developed by Plotly."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "dash-2.18.1-py3-none-any.whl", hash = "sha256:07c4513bb5f79a4b936847a0b49afc21dbd4b001ff77ea78d4d836043e211a07"},
-    {file = "dash-2.18.1.tar.gz", hash = "sha256:ffdf89690d734f6851ef1cb344222826ffb11ad2214ab9172668bf8aadd75d12"},
+    {file = "dash-2.18.2-py3-none-any.whl", hash = "sha256:0ce0479d1bc958e934630e2de7023b8a4558f23ce1f9f5a4b34b65eb3903a869"},
+    {file = "dash-2.18.2.tar.gz", hash = "sha256:20e8404f73d0fe88ce2eae33c25bbc513cbe52f30d23a401fa5f24dbb44296c8"},
 ]
 
 [package.dependencies]
@@ -3478,17 +3478,17 @@ sqlcipher = ["sqlcipher3_binary"]
 
 [[package]]
 name = "sqlglot"
-version = "25.28.0"
+version = "25.29.0"
 description = "An easily customizable SQL parser and transpiler"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "sqlglot-25.28.0-py3-none-any.whl", hash = "sha256:01a6b76dd916c2ce39a5f808559e337600ea261873d25be0dc7f99da3d24860d"},
-    {file = "sqlglot-25.28.0.tar.gz", hash = "sha256:1bfcadada28bcab873382b271ed30138597cbf8893d90cc259563f9498bd1b49"},
+    {file = "sqlglot-25.29.0-py3-none-any.whl", hash = "sha256:ab79c50439d77860eb49a0e5d7e0d0b8d19024796f21dec3fd607a3d969c013b"},
+    {file = "sqlglot-25.29.0.tar.gz", hash = "sha256:fcb4e2f5cb9a17ca3f003f6c165afcbe0001c0a57d477252727fef56b8f8b352"},
 ]
 
 [package.extras]
-dev = ["duckdb (>=0.6)", "maturin (>=1.4,<2.0)", "mypy", "pandas", "pandas-stubs", "pdoc", "pre-commit", "python-dateutil", "pytz", "ruff (==0.4.3)", "types-python-dateutil", "types-pytz", "typing-extensions"]
+dev = ["duckdb (>=0.6)", "maturin (>=1.4,<2.0)", "mypy", "pandas", "pandas-stubs", "pdoc", "pre-commit", "python-dateutil", "pytz", "ruff (==0.7.2)", "types-python-dateutil", "types-pytz", "typing-extensions"]
 rs = ["sqlglotrs (==0.2.13)"]
 
 [[package]]
@@ -4202,4 +4202,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "dbe68bc0913ca211c68cc35cb2de36ea2a0bddbed2993c25783589b399343e26"
+content-hash = "407444efed217fc3b49fae49c72a02808a49e545b6b6f0d6aaeb0b116681298a"

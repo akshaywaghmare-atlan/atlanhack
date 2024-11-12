@@ -15,15 +15,16 @@ This application has two components:
 
 
 ## Table of contents
-- [Demo](#demo)
+- [Getting Started](#getting-started)
+- [Quick Start Guide](./docs/QUICK_START.md)
 - [Features](#features)
 - [Extending this application to other SQL sources](#extending-this-application-to-other-sql-sources)
 - [Development](#development)
 - [Architecture](./docs/ARCHITECTURE.md)
 
-## Demo
+## Getting Started
 
-https://github.com/user-attachments/assets/6f529307-3d2e-405b-ae66-311e712b920f
+https://github.com/user-attachments/assets/0ce63557-7c62-4491-96b9-1134a1ceadd6
 
 ## Features
 1. Extract metadata from a Postgres database, transform and push to an object store

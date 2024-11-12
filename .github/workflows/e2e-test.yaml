@@ -115,11 +115,33 @@ jobs:
         STATUS=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.status')
         DURATION=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.executionDuration | rtrimstr("s") | tonumber | (. * 100 | round | . / 100) | tostring + "s"')
 
+        # Convert status to a more readable format with emojis
+        case $STATUS in
+          "WORKFLOW_EXECUTION_STATUS_COMPLETED")
+            DISPLAY_STATUS="🟢 Completed"
+            EXIT_CODE=0
+            ;;
+          "WORKFLOW_EXECUTION_STATUS_FAILED")
+            DISPLAY_STATUS="🔴 Failed"
+            EXIT_CODE=1
+            ;;
+          "WORKFLOW_EXECUTION_STATUS_RUNNING")
+            DISPLAY_STATUS="🟠 Running"
+            EXIT_CODE=1
+            ;;
+          *)
+            DISPLAY_STATUS="❓ ${STATUS}"
+            EXIT_CODE=1
+            ;;
+        esac
+
         # Create metrics file if it doesn't exist
         echo "## 📦 Postgres App Test Metrics" > metrics.md
         echo "| Database Size | Status | Duration |" >> metrics.md
         echo "|--------------|--------|-----------|" >> metrics.md
-        echo "| 100k (assets_100k) | $STATUS | $DURATION |" >> metrics.md
+        echo "| 100k (assets_100k) | $DISPLAY_STATUS | $DURATION |" >> metrics.md
+
+        exit $EXIT_CODE
 
     - name: Comment workflow status on Pull Request
       if: ${{ github.event_name == 'pull_request' }}
