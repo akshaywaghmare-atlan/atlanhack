@@ -73,7 +73,7 @@ jobs:
               "port": 5432,
               "user": "postgres",
               "password": "${{ secrets.POSTGRES_DB_PASSWORD }}",
-              "database": "assets_100k"
+              "database": "postgres"
             },
             "connection": {
               "connection": "development"
@@ -139,7 +139,7 @@ jobs:
         echo "## 📦 Postgres App Test Metrics" > metrics.md
         echo "| Database Size | Status | Duration |" >> metrics.md
         echo "|--------------|--------|-----------|" >> metrics.md
-        echo "| 100k (assets_100k) | $DISPLAY_STATUS | $DURATION |" >> metrics.md
+        echo "| 100k (postgres) | $DISPLAY_STATUS | $DURATION |" >> metrics.md
 
         exit $EXIT_CODE
 
