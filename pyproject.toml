@@ -14,9 +14,9 @@ pytest-asyncio = "^0.24.0"
 # application-sdk = { path = "../application-sdk/", develop = true, extras = ["workflows", "dashboard"]}
 # use remote application-sdk repository
 application-sdk = {git = "git@github.com:atlanhq/application-sdk.git", rev = "main", extras = ["workflows", "dashboard"]}
+psycopg = {extras = ["binary"], version = "^3.2.3"}
 
 [tool.poetry.group.app.dependencies]
-psycopg2-binary = "^2.9.9"
 aiofiles = "^24.1.0"
 sqlalchemy = {extras = ["asyncio"], version = "^2.0.35"}
 
