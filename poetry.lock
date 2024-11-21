@@ -235,7 +235,7 @@ description = ""
 optional = false
 python-versions = "^3.11"
 files = []
-develop = true
+develop = false
 
 [package.dependencies]
 aiofiles = "^24.1.0"
