@@ -48,10 +48,15 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Postgres App", lifespan=lifespan)
 
-APPLICATION_NAME = "postgres-connector"
+APPLICATION_NAME = "postgres"
 
 if __name__ == "__main__":
-    sql_resource = SQLResource(SQLResourceConfig())
+    sql_resource = SQLResource(
+        SQLResourceConfig(
+            database_dialect="postgresql",
+            database_driver="psycopg2",
+        )
+    )
     temporal_resource = TemporalResource(
         TemporalConfig(
             application_name=APPLICATION_NAME,

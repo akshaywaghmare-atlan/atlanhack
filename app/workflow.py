@@ -6,7 +6,7 @@ from application_sdk.workflows.sql.controllers.preflight_check import (
     SQLWorkflowPreflightCheckController,
 )
 from application_sdk.workflows.sql.workflows.workflow import SQLWorkflow
-from application_sdk.workflows.transformers.phoenix import PhoenixTransformer
+from application_sdk.workflows.transformers.atlas import AtlasTransformer
 
 from app.const import (
     COLUMN_EXTRACTION_SQL,
@@ -17,7 +17,7 @@ from app.const import (
     TABLES_CHECK_SQL,
 )
 
-APPLICATION_NAME = "postgres-connector"
+APPLICATION_NAME = "postgres"
 
 
 class PostgresWorkflowMetadata(SQLWorkflowMetadataController):
@@ -39,9 +39,7 @@ class PostgresWorkflow(SQLWorkflow):
 class PostgresWorkflowBuilder(SQLWorkflowBuilder):
     def __init__(self, application_name: str = APPLICATION_NAME):
         self.set_transformer(
-            PhoenixTransformer(
-                connector_name=application_name, connector_type="postgres"
-            )
+            AtlasTransformer(connector_name=application_name, connector_type="postgres")
         )
 
         super().__init__()
