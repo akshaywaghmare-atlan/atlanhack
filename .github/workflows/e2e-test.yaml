@@ -139,7 +139,7 @@ jobs:
         echo "## 📦 Postgres App Test Metrics" > metrics.md
         echo "| Database Size | Status | Duration |" >> metrics.md
         echo "|--------------|--------|-----------|" >> metrics.md
-        echo "| postgres (postgres) | $DISPLAY_STATUS | $DURATION |" >> metrics.md
+        echo "| postgres | $DISPLAY_STATUS | $DURATION |" >> metrics.md
 
         exit $EXIT_CODE
 
