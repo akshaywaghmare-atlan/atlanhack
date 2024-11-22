@@ -10,10 +10,8 @@ from application_sdk.workflows.resources.temporal_resource import (
     TemporalResource,
 )
 from application_sdk.workflows.sql.controllers.auth import SQLWorkflowAuthController
-from application_sdk.workflows.sql.resources.sql_resource import (
-    SQLResource,
-    SQLResourceConfig,
-)
+from application_sdk.workflows.sql.resources.async_sql_resource import AsyncSQLResource
+from application_sdk.workflows.sql.resources.sql_resource import SQLResourceConfig
 from application_sdk.workflows.sql.workflows.workflow import SQLWorkflow
 from application_sdk.workflows.workers.worker import WorkflowWorker
 from fastapi import FastAPI
@@ -51,10 +49,10 @@ app = FastAPI(title="Postgres App", lifespan=lifespan)
 APPLICATION_NAME = "postgres"
 
 if __name__ == "__main__":
-    sql_resource = SQLResource(
+    sql_resource = AsyncSQLResource(
         SQLResourceConfig(
             database_dialect="postgresql",
-            database_driver="psycopg2",
+            database_driver="psycopg",
         )
     )
     temporal_resource = TemporalResource(
