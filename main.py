@@ -34,7 +34,7 @@ async def lifespan(app: FastAPI):
     worker: WorkflowWorker = WorkflowWorker(
         temporal_resource=temporal_resource,
         temporal_activities=postgres_workflow.get_activities(),
-        workflow_class=SQLWorkflow,
+        workflow_classes=[SQLWorkflow],
     )
 
     worker_thread = threading.Thread(
