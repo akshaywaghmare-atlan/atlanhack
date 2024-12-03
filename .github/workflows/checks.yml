@@ -12,6 +12,10 @@ on:
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
+    timeout-minutes: 10
     steps:
     - uses: actions/checkout@v4
     - name: Install poetry
