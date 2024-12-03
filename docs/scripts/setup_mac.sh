@@ -49,6 +49,7 @@ if ! pyenv versions | grep -q "$latest_version"; then
     pyenv global "$latest_version"
 else
     log "Python $latest_version is already installed."
+    pyenv global "$latest_version"
 fi
 
 # Verify Python version
