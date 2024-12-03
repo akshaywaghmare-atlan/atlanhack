@@ -42,21 +42,21 @@ else
 fi
 
 # Install Python 3.11.x (latest version) using pyenv
-latest_version=$(pyenv install --list | grep -E '^\s*3\.11\.[0-9]+' | tail -n 1 | tr -d '[:space:]')
-if ! pyenv versions | grep -q "$latest_version"; then
-    log "Installing Python $latest_version..."
-    pyenv install "$latest_version"
-    pyenv global "$latest_version"
+if ! pyenv versions | grep -q "3.11"; then
+    log "Installing Python 3.11.x..."
+    pyenv install 3.11
+    log "Setting Python 3.11 as global..."
+    pyenv global 3.11
 else
-    log "Python $latest_version is already installed."
+    log "Python 3.11.x is already installed."
 fi
 
 # Verify Python version
 python_version=$(python --version 2>&1)
-if [[ $python_version == *"$latest_version"* ]]; then
-    log "Python $latest_version is active: $python_version"
+if [[ $python_version =~ 3\.11\. ]]; then
+    log "Python 3.11.x is active: $python_version"
 else
-    log "Error: Python $latest_version is not active. Current version: $python_version"
+    log "Error: Python 3.11.x is not active. Current version: $python_version"
     exit 1
 fi
 
