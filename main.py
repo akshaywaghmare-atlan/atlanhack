@@ -3,8 +3,10 @@ import logging
 import threading
 from contextlib import asynccontextmanager
 
-import uvicorn
-from application_sdk.app.rest import FastAPIApplicationBuilder
+from application_sdk.app.rest.fastapi import (
+    FastAPIApplication,
+    FastAPIApplicationConfig,
+)
 from application_sdk.workflows.resources.temporal_resource import (
     TemporalConfig,
     TemporalResource,
@@ -29,12 +31,12 @@ logger.setLevel(logging.DEBUG)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    atlan_app_builder.on_api_service_start()
+    await fastapi_app.on_app_start()
 
     worker: WorkflowWorker = WorkflowWorker(
         temporal_resource=temporal_resource,
         temporal_activities=postgres_workflow.get_activities(),
-        workflow_class=SQLWorkflow,
+        workflow_classes=[SQLWorkflow],
     )
 
     worker_thread = threading.Thread(
@@ -44,11 +46,10 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="Postgres App", lifespan=lifespan)
-
 APPLICATION_NAME = "postgres"
 
 if __name__ == "__main__":
+    # Creating resources
     sql_resource = PostgreSQLResource(SQLResourceConfig())
     temporal_resource = TemporalResource(
         TemporalConfig(
@@ -57,6 +58,7 @@ if __name__ == "__main__":
     )
     asyncio.run(temporal_resource.load())
 
+    # Creating workflow
     postgres_workflow: SQLWorkflow = (
         PostgresWorkflowBuilder()
         .set_sql_resource(sql_resource=sql_resource)
@@ -64,24 +66,23 @@ if __name__ == "__main__":
         .build()
     )
 
-    atlan_app_builder = FastAPIApplicationBuilder(
-        app=app,
-        resource=sql_resource,
-        workflow=postgres_workflow,
-        preflight_check_controller=PostgresWorkflowPreflight(sql_resource=sql_resource),
-        metadata_controller=PostgresWorkflowMetadata(sql_resource=sql_resource),
+    # Creating FastAPI application
+    fastapi_app = FastAPIApplication(
         auth_controller=SQLWorkflowAuthController(sql_resource=sql_resource),
+        metadata_controller=PostgresWorkflowMetadata(sql_resource=sql_resource),
+        preflight_check_controller=PostgresWorkflowPreflight(sql_resource=sql_resource),
+        workflow=postgres_workflow,
+        config=FastAPIApplicationConfig(
+            host="0.0.0.0",
+            port=8000,
+            lifespan=lifespan,
+        ),
     )
-    atlan_app_builder.add_telemetry_routes()
-    atlan_app_builder.add_workflows_router()
-
-    # always mount the frontend at the end
-    app.mount("/", StaticFiles(directory="frontend", html=True), name="static")
-
-    uvicorn.run(
-        app,
-        host="0.0.0.0",
-        port=8000,
+    fastapi_app.app.mount(
+        "/", StaticFiles(directory="frontend", html=True), name="static"
     )
+
+    # Starting FastAPI application
+    asyncio.run(fastapi_app.start())
 
     # atlan_app_builder.configure_open_telemetry()
