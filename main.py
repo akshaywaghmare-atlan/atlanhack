@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 
 from application_sdk.app.rest.fastapi import (
     FastAPIApplication,
-    FastApiApplicationConfig,
+    FastAPIApplicationConfig,
 )
 from application_sdk.workflows.resources.temporal_resource import (
     TemporalConfig,
@@ -72,7 +72,7 @@ if __name__ == "__main__":
         metadata_controller=PostgresWorkflowMetadata(sql_resource=sql_resource),
         preflight_check_controller=PostgresWorkflowPreflight(sql_resource=sql_resource),
         workflow=postgres_workflow,
-        config=FastApiApplicationConfig(
+        config=FastAPIApplicationConfig(
             host="0.0.0.0",
             port=8000,
             lifespan=lifespan,
