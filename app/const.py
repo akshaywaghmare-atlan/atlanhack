@@ -70,7 +70,14 @@ TABLE_EXTRACTION_SQL = """
         P.partnatts AS NUMBER_COLUMNS_IN_PART_KEY,
         P.partattrs AS COLUMNS_PARTICIPATING_IN_PART_KEY,
         COALESCE(V.definition, MV.definition) AS VIEW_DEFINITION,
-        T.*,
+        T.self_referencing_column_name AS SELF_REFERENCING_COLUMN_NAME,
+        T.reference_generation AS REFERENCE_GENERATION,
+        T.user_defined_type_catalog AS USER_DEFINED_TYPE_CATALOG,
+        T.user_defined_type_schema AS USER_DEFINED_TYPE_SCHEMA,
+        T.user_defined_type_name AS USER_DEFINED_TYPE_NAME,
+        T.is_insertable_into AS IS_INSERTABLE_INTO,
+        T.is_typed AS IS_TYPED,
+        T.commit_action AS COMMIT_ACTION,
         CASE
             WHEN t.table_type = 'BASE TABLE' THEN 'TABLE'
             ELSE t.table_type
