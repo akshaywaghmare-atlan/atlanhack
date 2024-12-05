@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 import threading
 from contextlib import asynccontextmanager
 
@@ -73,8 +74,8 @@ if __name__ == "__main__":
         preflight_check_controller=PostgresWorkflowPreflight(sql_resource=sql_resource),
         workflow=postgres_workflow,
         config=FastAPIApplicationConfig(
-            host="0.0.0.0",
-            port=8000,
+            host=os.getenv("APP_HOST", "0.0.0.0"),
+            port=int(os.getenv("APP_PORT", 8000)),
             lifespan=lifespan,
         ),
     )
