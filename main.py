@@ -16,8 +16,9 @@ from application_sdk.workflows.sql.controllers.auth import SQLWorkflowAuthContro
 from application_sdk.workflows.sql.resources.sql_resource import SQLResourceConfig
 from application_sdk.workflows.sql.workflows.workflow import SQLWorkflow
 from application_sdk.workflows.workers.worker import WorkflowWorker
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 from app.workflow import (
     PostgreSQLResource,
@@ -48,6 +49,10 @@ async def lifespan(app: FastAPI):
 
 
 APPLICATION_NAME = "postgres"
+APP_HOST = os.getenv("ATLAN_APP_HTTP_HOST", "0.0.0.0")
+APP_PORT = int(os.getenv("ATLAN_APP_HTTP_PORT", 8000))
+APP_DASHBOARD_HOST = os.getenv("ATLAN_APP_DASHBOARD_HTTP_HOST", "0.0.0.0")
+APP_DASHBOARD_PORT = int(os.getenv("ATLAN_APP_DASHBOARD_HTTP_PORT", 8050))
 
 if __name__ == "__main__":
     # Creating resources
@@ -74,14 +79,30 @@ if __name__ == "__main__":
         preflight_check_controller=PostgresWorkflowPreflight(sql_resource=sql_resource),
         workflow=postgres_workflow,
         config=FastAPIApplicationConfig(
-            host=os.getenv("APP_HOST", "0.0.0.0"),
-            port=int(os.getenv("APP_PORT", 8000)),
+            host=APP_HOST,
+            port=APP_PORT,
             lifespan=lifespan,
         ),
     )
-    fastapi_app.app.mount(
-        "/", StaticFiles(directory="frontend", html=True), name="static"
-    )
+
+    # Set up templates and static files
+    templates = Jinja2Templates(directory="frontend/templates")
+
+    @fastapi_app.app.get("/")
+    async def home(request: Request):
+        return templates.TemplateResponse(
+            "index.html",
+            {
+                "request": request,
+                "app_dashboard_http_port": APP_DASHBOARD_PORT,
+                "app_dashboard_http_host": APP_DASHBOARD_HOST,
+                "app_http_port": APP_PORT,
+                "app_http_host": APP_HOST,
+            },
+        )
+
+    # Mount static files first
+    fastapi_app.app.mount("/", StaticFiles(directory="frontend/static"), name="static")
 
     # Starting FastAPI application
     asyncio.run(fastapi_app.start())

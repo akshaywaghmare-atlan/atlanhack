@@ -176,7 +176,7 @@ async function performConnectionTest() {
         database: document.getElementById('database').value
     };
 
-    const response = await fetch('/workflows/v1/auth', {
+    const response = await fetch(`/workflows/v1/auth`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -255,7 +255,7 @@ async function fetchMetadata() {
             database: document.getElementById('database').value
         };
 
-        const response = await fetch('/workflows/v1/metadata', {
+        const response = await fetch(`/workflows/v1/metadata`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -552,7 +552,7 @@ async function runPreflightChecks() {
             }
         };
 
-        const response = await fetch('/workflows/v1/check', {
+        const response = await fetch(`/workflows/v1/check`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -669,7 +669,7 @@ async function handleRunWorkflow() {
                 }
             };
 
-            const response = await fetch('/workflows/v1/start', {
+            const response = await fetch(`/workflows/v1/start`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

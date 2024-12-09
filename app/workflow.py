@@ -1,3 +1,4 @@
+import os
 from urllib.parse import quote_plus
 
 from application_sdk.workflows.sql.builders.builder import SQLWorkflowBuilder
@@ -25,6 +26,7 @@ from app.const import (
 )
 
 APPLICATION_NAME = "postgres"
+TENANT_ID = os.getenv("ATLAN_TENANT_ID", "development")
 
 
 class PostgreSQLResource(AsyncSQLResource):
@@ -54,7 +56,11 @@ class PostgresWorkflow(SQLWorkflow):
 class PostgresWorkflowBuilder(SQLWorkflowBuilder):
     def __init__(self, application_name: str = APPLICATION_NAME):
         self.set_transformer(
-            AtlasTransformer(connector_name=application_name, connector_type="postgres")
+            AtlasTransformer(
+                connector_name=application_name,
+                connector_type="postgres",
+                tenant_id=TENANT_ID,
+            )
         )
 
         super().__init__()
