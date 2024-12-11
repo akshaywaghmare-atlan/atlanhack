@@ -19,7 +19,7 @@ WHERE schema_name NOT LIKE 'pg_%' AND schema_name != 'information_schema'
 ### Extraction Queries
 
 DATABASE_EXTRACTION_SQL = """
-SELECT * FROM pg_database WHERE datname = current_database();
+SELECT d.*, d.datname as database_name FROM pg_database d WHERE datname = current_database();
 """
 
 SCHEMA_EXTRACTION_SQL = """
