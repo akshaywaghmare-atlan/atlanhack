@@ -24,7 +24,7 @@ ATLAN_TEMPORAL_UI_PORT ?= 8233
 ATLAN_TEMPORAL_METRICS_PORT ?= 8234
 ATLAN_TENANT_ID ?= "development"
 
-# Run Temporal locally
+# Start Temporal locally
 start-temporal-dev:
 	@if [ "$(ATLAN_TEMPORAL_UI_ENABLED)" = true ]; then \
 		temporal server start-dev --db-filename /tmp/temporal.db --ip $(ATLAN_TEMPORAL_HOST) --port $(ATLAN_TEMPORAL_PORT) --ui-ip $(ATLAN_TEMPORAL_UI_HOST) --ui-port $(ATLAN_TEMPORAL_UI_PORT) --metrics-port $(ATLAN_TEMPORAL_METRICS_PORT); \
@@ -32,15 +32,18 @@ start-temporal-dev:
 		temporal server start-dev --db-filename /tmp/temporal.db --ip $(ATLAN_TEMPORAL_HOST) --port $(ATLAN_TEMPORAL_PORT) --metrics-port $(ATLAN_TEMPORAL_METRICS_PORT) --headless; \
 	fi
 
+# Start Dapr
 start-dapr:
 	dapr run --app-id app --app-port $(ATLAN_DAPR_APP_PORT) --dapr-http-port $(ATLAN_DAPR_HTTP_PORT) --dapr-grpc-port $(ATLAN_DAPR_GRPC_PORT) --dapr-http-max-request-size 1024 --resources-path .venv/src/application-sdk/components
 
+# Start all services in detached mode
 start-deps:
 	@echo "Starting all services in detached mode..."
 	make start-dapr &
 	make start-temporal-dev &
 	@echo "Services started. Proceeding..."
 
+# Install dependencies
 install:
 	# Setup Mac dependencies
 	./docs/scripts/setup_mac.sh
@@ -77,19 +80,36 @@ run-app:
 	OTEL_PYTHON_EXCLUDED_URLS="/telemetry/.*,/system/.*" \
 	poetry run ./.venv/bin/opentelemetry-instrument --traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-application python main.py
 
+# Run the application with profiling
+run-with-profile:
+	ATLAN_APP_HTTP_HOST=$(ATLAN_APP_HTTP_HOST) \
+	ATLAN_APP_HTTP_PORT=$(ATLAN_APP_HTTP_PORT) \
+	ATLAN_APP_DASHBOARD_HTTP_HOST=$(ATLAN_APP_DASHBOARD_HTTP_HOST) \
+	ATLAN_APP_DASHBOARD_HTTP_PORT=$(ATLAN_APP_DASHBOARD_HTTP_PORT) \
+	ATLAN_TENANT_ID=$(ATLAN_TENANT_ID) \
+	OTEL_EXPORTER_OTLP_ENDPOINT="http://$(ATLAN_APP_HTTP_HOST):$(ATLAN_APP_HTTP_PORT)/telemetry" \
+	OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf" \
+	OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true \
+	OTEL_PYTHON_EXCLUDED_URLS="/telemetry/.*,/system/.*" \
+	poetry run ./.venv/bin/opentelemetry-instrument --traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-application scalene --profile-all --cli --outfile scalene.json --json main.py
+
+# Run the dashboard
 run-dashboard:
 	PYTHONPATH=./.venv/src/application-sdk/ poetry run python .venv/src/application-sdk/dashboard/app.py
 
+# Run the application and dashboard
 run:
 	@echo "Starting local dashboard..."
 	$(MAKE) run-dashboard &
 	@echo "Starting local application..."
 	$(MAKE) run-app
 
+# Stop all services
 stop-all:
 	@echo "Stopping all detached processes..."
 	@pkill -f "temporal server start-dev" || true
 	@pkill -f "dapr run --app-id app" || true
-	@pkill -f "python main.py" || true        # For run-app
-	@pkill -f "python .venv/src/application-sdk/dashboard/app.py" || true  # For run-dashboard
+	@pkill -f "python main.py" || true
+	@pkill -f "python .venv/src/application-sdk/dashboard/app.py" || true
+	@python .github/scripts/cleanup_scalene.py || true
 	@echo "All detached processes stopped."

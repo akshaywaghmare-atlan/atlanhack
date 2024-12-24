@@ -1,0 +1,470 @@
+{
+  "max_footprint_mb": 635.217845916748,
+  "files": {
+    "/Users/mustafa.trunkwala/.pyenv/versions/3.11.10/lib/python3.11/concurrent/futures/thread.py": {
+      "functions": [
+        {
+          "line": "_WorkItem.run",
+          "n_cpu_percent_c": 0.0038519500170156053,
+          "n_cpu_percent_python": 0.0007411214858670406,
+          "n_sys_percent": 0.0007452219177915604,
+          "n_malloc_mb": 10.003030776977539
+        },
+        {
+          "line": "_worker",
+          "n_cpu_percent_c": 33.036767672461565,
+          "n_cpu_percent_python": 0.0011777292688738136,
+          "n_sys_percent": 17.7907225613125,
+          "n_malloc_mb": 0.0
+        }
+      ]
+    },
+    "/Users/mustafa.trunkwala/.pyenv/versions/3.11.10/lib/python3.11/copy.py": {
+      "functions": [
+        {
+          "line": "deepcopy",
+          "n_cpu_percent_c": 0.028801990534021053,
+          "n_cpu_percent_python": 0.09278472909387536,
+          "n_sys_percent": 0.01822082106296103,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "_deepcopy_atomic",
+          "n_cpu_percent_c": 0.004487679479666969,
+          "n_cpu_percent_python": 0.018679506030888894,
+          "n_sys_percent": 0.015776441647170923,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "_deepcopy_tuple",
+          "n_cpu_percent_c": 0.0017861317762969486,
+          "n_cpu_percent_python": 0.009043705196439933,
+          "n_sys_percent": 0.0007398250103380275,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "_deepcopy_dict",
+          "n_cpu_percent_c": 0.006257808658282975,
+          "n_cpu_percent_python": 0.030369419312849606,
+          "n_sys_percent": 0.009982085248323485,
+          "n_malloc_mb": 10.02159595489502
+        },
+        {
+          "line": "_keep_alive",
+          "n_cpu_percent_c": 0.0012458132604948758,
+          "n_cpu_percent_python": 0.0062176672458567304,
+          "n_sys_percent": 0.001234538234201855,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "_reconstruct",
+          "n_cpu_percent_c": 0.018495078817203758,
+          "n_cpu_percent_python": 0.016870838810703257,
+          "n_sys_percent": 0.005140459279934737,
+          "n_malloc_mb": 0.0
+        }
+      ]
+    },
+    "/Users/mustafa.trunkwala/.pyenv/versions/3.11.10/lib/python3.11/inspect.py": {
+      "functions": [
+        {
+          "line": "isfunction",
+          "n_cpu_percent_c": 0.000596706759521678,
+          "n_cpu_percent_python": 0.0023887380285096175,
+          "n_sys_percent": 3.329499202023259e-05,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "unwrap",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.0,
+          "n_sys_percent": 0.0,
+          "n_malloc_mb": 10.000033378601074
+        },
+        {
+          "line": "Parameter.__init__",
+          "n_cpu_percent_c": 0.000902398597866351,
+          "n_cpu_percent_python": 0.00424258861244171,
+          "n_sys_percent": 0.00071327128108019,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "signature",
+          "n_cpu_percent_c": 0.00035445077843433096,
+          "n_cpu_percent_python": 0.002017363565364041,
+          "n_sys_percent": 0.00046794590536662633,
+          "n_malloc_mb": 0.0
+        }
+      ]
+    },
+    "/Users/mustafa.trunkwala/.pyenv/versions/3.11.10/lib/python3.11/selectors.py": {
+      "functions": [
+        {
+          "line": "KqueueSelector.register",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.0006110663739811884,
+          "n_sys_percent": 0.0019141018326113463,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "KqueueSelector.unregister",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 7.244177933023867e-05,
+          "n_sys_percent": 0.0011352473629531478,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "KqueueSelector.select",
+          "n_cpu_percent_c": 0.763111209100022,
+          "n_cpu_percent_python": 5.094768363630196,
+          "n_sys_percent": 12.045683200602864,
+          "n_malloc_mb": 0.0
+        }
+      ]
+    },
+    "/Users/mustafa.trunkwala/.pyenv/versions/3.11.10/lib/python3.11/ssl.py": {
+      "functions": [
+        {
+          "line": "SSLContext.__new__",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.0,
+          "n_sys_percent": 0.0,
+          "n_malloc_mb": 10.000033378601074
+        }
+      ]
+    },
+    "/Users/mustafa.trunkwala/.pyenv/versions/3.11.10/lib/python3.11/threading.py": {
+      "functions": [
+        {
+          "line": "Condition.__enter__",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.00018732750367133995,
+          "n_sys_percent": 0.0010203616386120467,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "Condition.wait",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.0002496656020374636,
+          "n_sys_percent": 0.0019931856622031107,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "Thread.run",
+          "n_cpu_percent_c": 11.976122147856385,
+          "n_cpu_percent_python": 0.0,
+          "n_sys_percent": 12.991686600054317,
+          "n_malloc_mb": 0.0
+        }
+      ]
+    },
+    "/Users/mustafa.trunkwala/.pyenv/versions/3.11.10/lib/python3.11/typing.py": {
+      "functions": [
+        {
+          "line": "_should_unflatten_callable_args",
+          "n_cpu_percent_c": 0.0005963783251413103,
+          "n_cpu_percent_python": 0.0023922114927448436,
+          "n_sys_percent": 2.8942273023136605e-05,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "_tp_cache.<locals>.decorator.<locals>.inner",
+          "n_cpu_percent_c": 0.000343746287212033,
+          "n_cpu_percent_python": 0.0013733371442751624,
+          "n_sys_percent": 0.0013028640377065704,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "_SpecialForm.__getattr__",
+          "n_cpu_percent_c": 0.0005932008028347411,
+          "n_cpu_percent_python": 0.0023880869679340122,
+          "n_sys_percent": 3.4070479684337625e-05,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "ForwardRef.__init__",
+          "n_cpu_percent_c": 0.0010084849708944476,
+          "n_cpu_percent_python": 0.00632014813595777,
+          "n_sys_percent": 0.001073743331670351,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "_BaseGenericAlias.__getattr__",
+          "n_cpu_percent_c": 0.0005254031518448219,
+          "n_cpu_percent_python": 0.002071778989924112,
+          "n_sys_percent": 0.0004307360757640507,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "_BaseGenericAlias.__instancecheck__",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.002256543794249529,
+          "n_sys_percent": 1.1496414958697113e-05,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "_SpecialGenericAlias.__subclasscheck__",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.005473191516481704,
+          "n_sys_percent": 0.00010119415251787292,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "_UnionGenericAlias.__eq__",
+          "n_cpu_percent_c": 0.0005718674828571504,
+          "n_cpu_percent_python": 0.00229389283135632,
+          "n_sys_percent": 0.00015177177669582057,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "_LiteralGenericAlias.__eq__",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.0021468675436236984,
+          "n_sys_percent": 1.51814748611951e-05,
+          "n_malloc_mb": 0.0
+        }
+      ]
+    },
+    "/Users/mustafa.trunkwala/phoenix-postgres-app/.venv/lib/python3.11/site-packages/application_sdk/inputs/objectstore.py": {
+      "functions": [
+        {
+          "line": "ObjectStore.push_file_to_object_store",
+          "n_cpu_percent_c": 0.00025194371636509086,
+          "n_cpu_percent_python": 0.0009051536761918285,
+          "n_sys_percent": 0.0023487143975694925,
+          "n_malloc_mb": 162.72943782806396
+        }
+      ]
+    },
+    "/Users/mustafa.trunkwala/phoenix-postgres-app/.venv/lib/python3.11/site-packages/application_sdk/outputs/json.py": {
+      "functions": [
+        {
+          "line": "JSONChunkedObjectStoreWriter.write",
+          "n_cpu_percent_c": 0.001085926005521375,
+          "n_cpu_percent_python": 0.026903353895807943,
+          "n_sys_percent": 0.0003906683708621804,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "JSONChunkedObjectStoreWriter._flush_buffer",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.001126975350704845,
+          "n_sys_percent": 2.6214074284778744e-05,
+          "n_malloc_mb": 225.29426288604736
+        }
+      ]
+    },
+    "/Users/mustafa.trunkwala/phoenix-postgres-app/.venv/lib/python3.11/site-packages/application_sdk/paas/readers/json.py": {
+      "functions": [
+        {
+          "line": "JSONChunkedObjectStoreReader.read_chunk",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.008234536334530708,
+          "n_sys_percent": 0.004077305521438333,
+          "n_malloc_mb": 40.000911712646484
+        }
+      ]
+    },
+    "/Users/mustafa.trunkwala/phoenix-postgres-app/.venv/lib/python3.11/site-packages/grpc/_channel.py": {
+      "functions": [
+        {
+          "line": "_UnaryUnaryMultiCallable._blocking",
+          "n_cpu_percent_c": 0.0025280139281115975,
+          "n_cpu_percent_python": 0.0003742380891699421,
+          "n_sys_percent": 0.015445751919726655,
+          "n_malloc_mb": 228.25823974609375
+        }
+      ]
+    },
+    "/Users/mustafa.trunkwala/phoenix-postgres-app/.venv/lib/python3.11/site-packages/grpc/_common.py": {
+      "functions": [
+        {
+          "line": "_transform",
+          "n_cpu_percent_c": 0.0006945312122723047,
+          "n_cpu_percent_python": 0.0004226533581443748,
+          "n_sys_percent": 0.00306679956806326,
+          "n_malloc_mb": 484.8482446670532
+        }
+      ]
+    },
+    "/Users/mustafa.trunkwala/phoenix-postgres-app/.venv/lib/python3.11/site-packages/pandas/core/internals/managers.py": {
+      "functions": [
+        {
+          "line": "_stack_arrays",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.0016753995722830338,
+          "n_sys_percent": 0.0003715017759809562,
+          "n_malloc_mb": 0.0
+        }
+      ]
+    },
+    "/Users/mustafa.trunkwala/phoenix-postgres-app/.venv/lib/python3.11/site-packages/pandas/io/json/_json.py": {
+      "functions": [
+        {
+          "line": "to_json",
+          "n_cpu_percent_c": 0.00013658301651314905,
+          "n_cpu_percent_python": 0.0,
+          "n_sys_percent": 0.0007355881240594874,
+          "n_malloc_mb": 53.040645599365234
+        }
+      ]
+    },
+    "/Users/mustafa.trunkwala/phoenix-postgres-app/.venv/lib/python3.11/site-packages/pandas/io/json/_normalize.py": {
+      "functions": [
+        {
+          "line": "convert_to_line_delimits",
+          "n_cpu_percent_c": 0.0008089934065949487,
+          "n_cpu_percent_python": 0.016999564488464288,
+          "n_sys_percent": 0.002578376641873355,
+          "n_malloc_mb": 265.1855745315552
+        }
+      ]
+    },
+    "/Users/mustafa.trunkwala/phoenix-postgres-app/.venv/lib/python3.11/site-packages/pandas/io/sql.py": {
+      "functions": [
+        {
+          "line": "_convert_arrays_to_dataframe",
+          "n_cpu_percent_c": 0.007264182561944199,
+          "n_cpu_percent_python": 0.0006073140358902903,
+          "n_sys_percent": 0.0077815599971601665,
+          "n_malloc_mb": 28.12316131591797
+        }
+      ]
+    },
+    "/Users/mustafa.trunkwala/phoenix-postgres-app/.venv/lib/python3.11/site-packages/psycopg/_cursor_base.py": {
+      "functions": [
+        {
+          "line": "BaseCursor._maybe_prepare_gen",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.01425699971821379,
+          "n_sys_percent": 0.0437120791113888,
+          "n_malloc_mb": 50.003456115722656
+        }
+      ]
+    },
+    "/Users/mustafa.trunkwala/phoenix-postgres-app/.venv/lib/python3.11/site-packages/pyatlan/model/core.py": {
+      "functions": [
+        {
+          "line": "AtlanObject._populate_extra_fields",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 1.7529416749533357,
+          "n_sys_percent": 0.02171705106682889,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "AtlanObject.build_extra",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.1694511001013102,
+          "n_sys_percent": 0.0021061489804909735,
+          "n_malloc_mb": 0.0
+        }
+      ]
+    },
+    "/Users/mustafa.trunkwala/phoenix-postgres-app/.venv/lib/python3.11/site-packages/pydantic/_internal/_model_construction.py": {
+      "functions": [
+        {
+          "line": "ModelMetaclass.__getattr__",
+          "n_cpu_percent_c": 0.00031922252114897524,
+          "n_cpu_percent_python": 0.001997637804436923,
+          "n_sys_percent": 0.000484495408854591,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "complete_model_class",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.0,
+          "n_sys_percent": 0.0,
+          "n_malloc_mb": 10.000130653381348
+        }
+      ]
+    },
+    "/Users/mustafa.trunkwala/phoenix-postgres-app/.venv/lib/python3.11/site-packages/pydantic/v1/main.py": {
+      "functions": [
+        {
+          "line": "ModelMetaclass.__new__",
+          "n_cpu_percent_c": 0.0010715733648149638,
+          "n_cpu_percent_python": 0.0061561089514460205,
+          "n_sys_percent": 0.0012797630776400152,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "ModelMetaclass.__instancecheck__",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.025269464357414485,
+          "n_sys_percent": 0.0008324308646773667,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "BaseModel.__init__",
+          "n_cpu_percent_c": 0.011383015724290818,
+          "n_cpu_percent_python": 0.01747162684760717,
+          "n_sys_percent": 0.0001760086101544343,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "BaseModel.__setattr__",
+          "n_cpu_percent_c": 0.11618875831228057,
+          "n_cpu_percent_python": 1.1666221876767495,
+          "n_sys_percent": 0.011874413028504213,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "BaseModel._init_private_attributes",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.005710069412453773,
+          "n_sys_percent": 0.0008028224680054546,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "BaseModel.dict",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.019566828219543402,
+          "n_sys_percent": 0.0010106137900883123,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "BaseModel._copy_and_set_values",
+          "n_cpu_percent_c": 0.005625467233181645,
+          "n_cpu_percent_python": 0.0062015061924206956,
+          "n_sys_percent": 0.0005185958944123907,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "BaseModel.validate",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.0030660507969573455,
+          "n_sys_percent": 0.00022073009872786072,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "BaseModel._get_value",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.11000826532118028,
+          "n_sys_percent": 0.0014799091764675341,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "BaseModel._iter",
+          "n_cpu_percent_c": 0.003377201882175997,
+          "n_cpu_percent_python": 0.17224114952939065,
+          "n_sys_percent": 0.0015050490950760157,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "BaseModel._calculate_keys",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.01281641239561828,
+          "n_sys_percent": 8.684581231947134e-05,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "validate_model",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.6088622869896384,
+          "n_sys_percent": 0.008264800666641873,
+          "n_malloc_mb": 0.0
+        }
+      ]
+    }
+  }
+}
