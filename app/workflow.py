@@ -1,6 +1,10 @@
 import os
+from typing import cast
 from urllib.parse import quote_plus
 
+from application_sdk.workflows.controllers import (
+    WorkflowPreflightCheckControllerInterface,
+)
 from application_sdk.workflows.sql.builders.builder import SQLWorkflowBuilder
 from application_sdk.workflows.sql.controllers.metadata import (
     SQLWorkflowMetadataController,
@@ -54,6 +58,8 @@ class PostgresWorkflow(SQLWorkflow):
 
 
 class PostgresWorkflowBuilder(SQLWorkflowBuilder):
+    preflight_check_controller: WorkflowPreflightCheckControllerInterface
+
     def __init__(self, application_name: str = APPLICATION_NAME):
         self.set_transformer(
             AtlasTransformer(
@@ -66,4 +72,14 @@ class PostgresWorkflowBuilder(SQLWorkflowBuilder):
         super().__init__()
 
     def build(self, workflow: SQLWorkflow | None = None) -> SQLWorkflow:
-        return super().build(workflow=workflow or PostgresWorkflow())
+        workflow = workflow or PostgresWorkflow()
+        workflow = (  # type: ignore
+            workflow.set_sql_resource(self.sql_resource)
+            .set_transformer(self.transformer)
+            .set_temporal_resource(self.temporal_resource)
+            .set_preflight_check_controller(
+                PostgresWorkflowPreflight(sql_resource=self.sql_resource)
+            )
+        )
+
+        return cast(SQLWorkflow, workflow)
