@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 from application_sdk.app.rest.fastapi import (
     FastAPIApplication,
     FastAPIApplicationConfig,
+    HttpWorkflowTrigger,
 )
 from application_sdk.workflows.resources.temporal_resource import (
     TemporalConfig,
@@ -64,25 +65,41 @@ if __name__ == "__main__":
     )
     asyncio.run(temporal_resource.load())
 
+    # Creating controllers
+    metadata_controller = PostgresWorkflowMetadata(sql_resource=sql_resource)
+    preflight_check_controller = PostgresWorkflowPreflight(sql_resource=sql_resource)
+    auth_controller = SQLWorkflowAuthController(sql_resource=sql_resource)
+
     # Creating workflow
-    postgres_workflow: SQLWorkflow = (
+    postgres_workflow: SQLWorkflow = (  # type: ignore
         PostgresWorkflowBuilder()
         .set_sql_resource(sql_resource=sql_resource)
         .set_temporal_resource(temporal_resource=temporal_resource)
+        .set_preflight_check_controller(
+            preflight_check_controller=preflight_check_controller
+        )
         .build()
     )
 
     # Creating FastAPI application
     fastapi_app = FastAPIApplication(
-        auth_controller=SQLWorkflowAuthController(sql_resource=sql_resource),
-        metadata_controller=PostgresWorkflowMetadata(sql_resource=sql_resource),
-        preflight_check_controller=PostgresWorkflowPreflight(sql_resource=sql_resource),
-        workflow=postgres_workflow,
+        auth_controller=auth_controller,
+        metadata_controller=metadata_controller,
+        preflight_check_controller=preflight_check_controller,
         config=FastAPIApplicationConfig(
-            host=APP_HOST,
-            port=APP_PORT,
+            host=os.getenv("APP_HOST", "0.0.0.0"),
+            port=int(os.getenv("APP_PORT", 8000)),
             lifespan=lifespan,
         ),
+    )
+    fastapi_app.register_workflow(
+        postgres_workflow,
+        triggers=[
+            HttpWorkflowTrigger(
+                endpoint="/start",
+                methods=["POST"],
+            )
+        ],
     )
 
     # Set up templates and static files
