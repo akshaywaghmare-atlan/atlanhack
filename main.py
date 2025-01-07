@@ -9,6 +9,7 @@ from application_sdk.app.rest.fastapi import (
     FastAPIApplicationConfig,
     HttpWorkflowTrigger,
 )
+from application_sdk.common.logger_adaptors import AtlanLoggerAdapter
 from application_sdk.workflows.resources.temporal_resource import (
     TemporalConfig,
     TemporalResource,
@@ -28,8 +29,7 @@ from app.workflow import (
     PostgresWorkflowPreflight,
 )
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger = AtlanLoggerAdapter(logging.getLogger(__name__))
 
 
 @asynccontextmanager
