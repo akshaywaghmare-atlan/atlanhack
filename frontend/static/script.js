@@ -505,26 +505,8 @@ function formatFilters(metadataOptions) {
             if (schemas.size > 0) {
                 // Add ^ to start and $ to end of database name
                 const dbPattern = `^${database}$`;
-
-                // Find the database container
-                let totalSchemas = 0;
-                document.querySelectorAll(`#includeMetadata .database-container, #excludeMetadata .database-container`).forEach(container => {
-                    const label = container.querySelector('label');
-                    if (label && label.textContent === database) {
-                        totalSchemas = container.querySelector('.schema-list').querySelectorAll('.schema-item').length;
-                    }
-                });
-
-                // Check if all schemas for this database are selected
-                const allSchemasSelected = schemas.size === totalSchemas;
-
-                if (allSchemasSelected) {
-                    // If all schemas are selected, use "*" instead of individual schema patterns
-                    filter[dbPattern] = "*";
-                } else {
-                    // Otherwise, add ^ to start and $ to end of each schema name
-                    filter[dbPattern] = Array.from(schemas).map(schema => `^${schema}$`);
-                }
+                // Add ^ to start and $ to end of each schema name
+                filter[dbPattern] = Array.from(schemas).map(schema => `^${schema}$`);
             }
         });
         return JSON.stringify(filter);
