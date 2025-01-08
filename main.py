@@ -87,8 +87,8 @@ if __name__ == "__main__":
         metadata_controller=metadata_controller,
         preflight_check_controller=preflight_check_controller,
         config=FastAPIApplicationConfig(
-            host=os.getenv("APP_HOST", "0.0.0.0"),
-            port=int(os.getenv("APP_PORT", 8000)),
+            host=APP_HOST,
+            port=APP_PORT,
             lifespan=lifespan,
         ),
     )

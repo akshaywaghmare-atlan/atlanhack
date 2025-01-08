@@ -78,9 +78,17 @@ async def test_extraction_workflow():
     mock_fetch_columns.return_value = [{"typename": "column", "chunk_count": 1}]
 
     mock_transform_data = MagicMock()
-    mock_transform_data.return_value = 1
+    mock_transform_data.return_value = [
+        {
+            "total_record_count": 1,
+            "chunk_count": 1,
+        }
+    ]
     mock_write_type_metadata = MagicMock()
     mock_write_type_metadata.return_value = None
+
+    mock_write_raw_type_metadata = MagicMock()
+    mock_write_raw_type_metadata.return_value = None
 
     @activity.defn(name="fetch_databases")
     async def wrapped_mock_fetch_databases(workflow_config: Dict[str, Any]):
@@ -108,6 +116,12 @@ async def test_extraction_workflow():
     ):
         mock_write_type_metadata(workflow_args)
 
+    @activity.defn(name="write_raw_type_metadata")
+    async def wrapped_mock_write_raw_type_metadata(
+        workflow_args: Dict[str, Any],
+    ):
+        mock_write_raw_type_metadata(workflow_args)
+
     try:
         env = await WorkflowEnvironment.start_local()
         async with Worker(
@@ -121,6 +135,7 @@ async def test_extraction_workflow():
                 wrapped_mock_fetch_columns,
                 wrapped_mock_transform_data,
                 wrapped_mock_write_type_metadata,
+                wrapped_mock_write_raw_type_metadata,
             ],
             workflow_runner=SandboxedWorkflowRunner(
                 restrictions=SandboxRestrictions.default.with_passthrough_modules(
