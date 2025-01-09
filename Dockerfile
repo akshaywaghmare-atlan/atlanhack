@@ -35,6 +35,9 @@ WORKDIR /app
 # Install Python dependencies
 COPY ./pyproject.toml ./poetry.lock ./
 
+# NOTE(inishchith):patch connectorx to use a compatible version
+RUN poetry add connectorx@0.2.3
+
 # the cache directory makes rebuilding a docker image if pyproject.toml changes near instant
 RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root --without dev,test --no-interaction --no-ansi
 
