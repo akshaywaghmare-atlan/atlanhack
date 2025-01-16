@@ -149,13 +149,12 @@ jobs:
             --run-id=${{ steps.workflow_info.outputs.run_id }} \
             --output=json)
           STATUS=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.status')
-          make stop-all || true
-          sleep 4
           echo "status=$STATUS" >> $GITHUB_OUTPUT
 
       - name: Get scalene metrics and output
         run: |
           export PATH="$HOME/.temporalio/bin:$PATH"
+          kill $(lsof -t -i :8000) & sleep 2
 
           # First calculate metrics from current run's scalene.json
           if [ -f scalene.json ]; then
