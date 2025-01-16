@@ -154,7 +154,8 @@ jobs:
       - name: Get scalene metrics and output
         run: |
           export PATH="$HOME/.temporalio/bin:$PATH"
-          kill $(lsof -t -i :8000) & sleep 2
+          kill $(lsof -t -i :8000)
+          sleep 10
 
           # First calculate metrics from current run's scalene.json
           if [ -f scalene.json ]; then
