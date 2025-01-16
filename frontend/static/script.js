@@ -252,7 +252,8 @@ async function fetchMetadata() {
             port: document.getElementById('port').value,
             user: document.getElementById('user').value,
             password: document.getElementById('password').value,
-            database: document.getElementById('database').value
+            database: document.getElementById('database').value,
+            type: "all"
         };
 
         const response = await fetch(`/workflows/v1/metadata`, {
