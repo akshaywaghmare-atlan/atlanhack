@@ -78,7 +78,7 @@ jobs:
       - name: Start the application
         id: start_app
         run: |
-          make run-app &
+          make run-with-profile &
           sleep 20
 
       - name: Start the workflow
@@ -125,6 +125,7 @@ jobs:
           echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
 
       - name: Check workflow status and collect performance metrics
+        id: workflow_status
         run: |
           export PATH="$HOME/.temporalio/bin:$PATH"
           # Poll workflow status with timeout
@@ -143,6 +144,13 @@ jobs:
             sleep 1
             ATTEMPT=$((ATTEMPT+1))
           done
+          WORKFLOW_DETAILS=$(temporal workflow describe \
+            --workflow-id=${{ steps.workflow_info.outputs.workflow_id }} \
+            --run-id=${{ steps.workflow_info.outputs.run_id }} \
+            --output=json)
+          STATUS=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.status')
+          make stop-all
+          echo "status=$STATUS" >> $GITHUB_OUTPUT
 
       - name: Get scalene metrics and output
         run: |
@@ -216,11 +224,7 @@ jobs:
           fi
 
           # Get final workflow details and status
-          WORKFLOW_DETAILS=$(temporal workflow describe \
-            --workflow-id=${{ steps.workflow_info.outputs.workflow_id }} \
-            --run-id=${{ steps.workflow_info.outputs.run_id }} \
-            --output=json)
-          STATUS=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.status')
+          STATUS=${{ steps.workflow_status.outputs.status }}
           DURATION=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.executionDuration | rtrimstr("s") | tonumber | (. * 100 | round | . / 100) | tostring + "s"')
           case $STATUS in
             "WORKFLOW_EXECUTION_STATUS_COMPLETED")
