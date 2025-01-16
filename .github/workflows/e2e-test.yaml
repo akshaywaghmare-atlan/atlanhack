@@ -149,7 +149,7 @@ jobs:
             --run-id=${{ steps.workflow_info.outputs.run_id }} \
             --output=json)
           STATUS=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.status')
-          make stop-all
+          make stop-all || true
           echo "status=$STATUS" >> $GITHUB_OUTPUT
 
       - name: Get scalene metrics and output
