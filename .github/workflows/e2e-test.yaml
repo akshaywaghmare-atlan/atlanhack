@@ -93,7 +93,7 @@ jobs:
                 "port": 5432,
                 "user": "postgres",
                 "password": "${{ secrets.POSTGRES_DB_PASSWORD }}",
-                "database": "wwi"
+                "database": "assets_100k"
               },
               "connection": {
                 "connection": "development"
@@ -149,6 +149,7 @@ jobs:
             --run-id=${{ steps.workflow_info.outputs.run_id }} \
             --output=json)
           STATUS=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.status')
+          sleep 4
           make stop-all || true
           echo "status=$STATUS" >> $GITHUB_OUTPUT
 
