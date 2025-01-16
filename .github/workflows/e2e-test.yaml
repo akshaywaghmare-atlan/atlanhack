@@ -246,10 +246,6 @@ jobs:
               ;;
           esac
 
-          kill $(lsof -t -i :8000)
-
-          sleep 10
-
           # Check if scalene.json exists
           if [ -f scalene.json ]; then
             echo "scalene.json exists"
