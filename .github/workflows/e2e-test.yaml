@@ -203,7 +203,7 @@ jobs:
                 (.n_cpu_percent_c + .n_cpu_percent_python + .n_sys_percent)
               ] |
               add / length
-            ' main_scalene.json)
+            ' main_scalene.json | awk '{printf "%.2f\n", $1}')
 
             MAIN_MAX_CPU=$(jq -r '
               .files |
@@ -211,11 +211,11 @@ jobs:
               .value.functions[] |
               select(.n_cpu_percent_c != null and .n_cpu_percent_python != null and .n_sys_percent != null) |
               (.n_cpu_percent_c + .n_cpu_percent_python + .n_sys_percent)
-            ' main_scalene.json | sort -rn | head -n1)
+            ' main_scalene.json | sort -rn | head -n1 | awk '{printf "%.2f\n", $1}')
 
             MAIN_MEMORY_USAGE=$(jq -r '
               .max_footprint_mb
-            ' main_scalene.json)
+            ' main_scalene.json | awk '{printf "%.2f\n", $1}')
           else
             echo "scalene.json does not exist in the main branch"
             MAIN_AVG_CPU="N/A"
