@@ -14,7 +14,7 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
     timeout-minutes: 10
-    if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test') }}
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || contains(github.event.pull_request.labels.*.name, 'e2e-test') }}
 
     steps:
       - uses: actions/checkout@v3
