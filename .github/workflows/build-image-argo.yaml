@@ -1,24 +1,24 @@
-name: Publish App Docker Image
+name: Publish Argo Docker Image
 
 on:
-  push:
+  workflow_run:
+    workflows:
+      - "Publish App Docker Image"
     branches:
       - main
       - develop
-    paths:
-      - '**'
-      - '!kurl-installer.yaml'
-      - '!**.md'
-      - '!images/**'
-      - '!**.png'
+    types:
+      - completed
 
 jobs:
   build:
+    name: publish-agent-docker-image
     runs-on: [self-hosted, phoenix]
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
     timeout-minutes: 10
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -55,15 +55,16 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./Dockerfile
+          file: ./Dockerfile.Argo
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ghcr.io/atlanhq/${{ github.event.repository.name }}-${{ steps.get_lowercase_branch.outputs.lowercase_branch }}:latest
-            ghcr.io/atlanhq/${{ github.event.repository.name }}-${{ steps.get_lowercase_branch.outputs.lowercase_branch }}:${{ steps.get_version.outputs.version }}
+            ghcr.io/atlanhq/${{ github.event.repository.name }}-argo-${{ steps.get_lowercase_branch.outputs.lowercase_branch }}:latest
+            ghcr.io/atlanhq/${{ github.event.repository.name }}-argo-${{ steps.get_lowercase_branch.outputs.lowercase_branch }}:${{ steps.get_version.outputs.version }}
           secrets: |
             PRIVATE_REPO_ACCESS_TOKEN=${{ secrets.ORG_PAT_GITHUB }}
           build-args: |
+            BASE_IMAGE=ghcr.io/atlanhq/${{ github.event.repository.name }}-${{ steps.get_lowercase_branch.outputs.lowercase_branch }}:latest
             ACCESS_TOKEN_USR=$GITHUB_ACTOR
             ACCESS_TOKEN_PWD=${{ secrets.ORG_PAT_GITHUB }}
         env:
@@ -80,12 +81,13 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./Dockerfile
+          file: ./Dockerfile.Argo
           push: true
           platforms: linux/amd64,linux/arm64
+          build-args: |
+            BASE_IMAGE=harbor-phoenix.atlan.dev/applications/${{ github.event.repository.name }}:main-latest
           tags: |
-            ${{ secrets.HARBOR_URL }}/applications/${{ github.event.repository.name }}:${{ steps.get_branch.outputs.branch }}-${{ steps.get_version.outputs.version }}
-            ${{ secrets.HARBOR_URL }}/applications/${{ github.event.repository.name }}:${{ steps.get_branch.outputs.branch }}-latest
+            ${{ secrets.HARBOR_URL }}/applications/${{ github.event.repository.name }}:${{ steps.get_branch.outputs.branch }}-agent-latest
           secrets: |
             PRIVATE_REPO_ACCESS_TOKEN=${{ secrets.ORG_PAT_GITHUB }}
         env:
