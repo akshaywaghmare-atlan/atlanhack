@@ -93,7 +93,7 @@ jobs:
                 "port": 5432,
                 "user": "postgres",
                 "password": "${{ secrets.POSTGRES_DB_PASSWORD }}",
-                "database": "wwi"
+                "database": "assets_100k"
               },
               "connection": {
                 "connection": "development"
@@ -149,7 +149,9 @@ jobs:
             --run-id=${{ steps.workflow_info.outputs.run_id }} \
             --output=json)
           STATUS=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.status')
+          DURATION=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.executionDuration | rtrimstr("s") | tonumber | (. * 100 | round | . / 100) | tostring + "s"')
           echo "status=$STATUS" >> $GITHUB_OUTPUT
+          echo "duration=$DURATION" >> $GITHUB_OUTPUT
 
       - name: Get scalene metrics and output
         run: |
@@ -226,7 +228,7 @@ jobs:
 
           # Get final workflow details and status
           STATUS=${{ steps.workflow_status.outputs.status }}
-          DURATION=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.executionDuration | rtrimstr("s") | tonumber | (. * 100 | round | . / 100) | tostring + "s"')
+          DURATION=${{ steps.workflow_status.outputs.duration }}
           case $STATUS in
             "WORKFLOW_EXECUTION_STATUS_COMPLETED")
               DISPLAY_STATUS="🟢 Completed"
