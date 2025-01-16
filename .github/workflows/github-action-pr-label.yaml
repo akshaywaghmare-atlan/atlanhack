@@ -14,7 +14,7 @@ jobs:
         with:
           script: |
             const labels = context.payload.pull_request.labels.map(label => label.name);
-            const requiredLabels = ['e2e-test','scale-test']; // customize these labels
+            const requiredLabels = ['e2e-test']; // customize these labels
             const missingLabels = requiredLabels.filter(label => !labels.includes(label));
 
             if (missingLabels.length > 0) {
