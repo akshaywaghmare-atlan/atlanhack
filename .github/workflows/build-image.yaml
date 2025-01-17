@@ -70,24 +70,24 @@ jobs:
           DOCKER_CLIENT_TIMEOUT: 300
           COMPOSE_HTTP_TIMEOUT: 300
 
-      - name: Login to Harbor Registry
-        run: |
-          bash ./.github/scripts/registry-login.sh "${{ secrets.HARBOR_URL }}" '${{ secrets.HARBOR_USERNAME }}' "${{ secrets.HARBOR_PASSWORD }}"
-        shell: bash
+      # - name: Login to Harbor Registry
+      #   run: |
+      #     bash ./.github/scripts/registry-login.sh "${{ secrets.HARBOR_URL }}" '${{ secrets.HARBOR_USERNAME }}' "${{ secrets.HARBOR_PASSWORD }}"
+      #   shell: bash
 
-      - name: Build and push core docker image
-        id: harbor_docker_build
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          platforms: linux/amd64,linux/arm64
-          tags: |
-            ${{ secrets.HARBOR_URL }}/applications/${{ github.event.repository.name }}:${{ steps.get_branch.outputs.branch }}-${{ steps.get_version.outputs.version }}
-            ${{ secrets.HARBOR_URL }}/applications/${{ github.event.repository.name }}:${{ steps.get_branch.outputs.branch }}-latest
-          secrets: |
-            PRIVATE_REPO_ACCESS_TOKEN=${{ secrets.ORG_PAT_GITHUB }}
-        env:
-          DOCKER_CLIENT_TIMEOUT: 300
-          COMPOSE_HTTP_TIMEOUT: 300
+      # - name: Build and push core docker image
+      #   id: harbor_docker_build
+      #   uses: docker/build-push-action@v6
+      #   with:
+      #     context: .
+      #     file: ./Dockerfile
+      #     push: true
+      #     platforms: linux/amd64,linux/arm64
+      #     tags: |
+      #       ${{ secrets.HARBOR_URL }}/applications/${{ github.event.repository.name }}:${{ steps.get_branch.outputs.branch }}-${{ steps.get_version.outputs.version }}
+      #       ${{ secrets.HARBOR_URL }}/applications/${{ github.event.repository.name }}:${{ steps.get_branch.outputs.branch }}-latest
+      #     secrets: |
+      #       PRIVATE_REPO_ACCESS_TOKEN=${{ secrets.ORG_PAT_GITHUB }}
+      #   env:
+      #     DOCKER_CLIENT_TIMEOUT: 300
+      #     COMPOSE_HTTP_TIMEOUT: 300
