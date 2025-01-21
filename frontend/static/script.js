@@ -348,96 +348,113 @@ async function populateMetadataDropdowns() {
 }
 
 // New helper function to populate a single dropdown
+// New helper function to populate a single dropdown
 function populateDropdown(type, databases) {
-    const dropdown = document.getElementById(`${type}Metadata`);
-    const content = dropdown.querySelector('.dropdown-content');
-    const header = dropdown.querySelector('.dropdown-header span');
+  const dropdown = document.getElementById(`${type}Metadata`);
+  const content = dropdown.querySelector(".dropdown-content");
+  const header = dropdown.querySelector(".dropdown-header span");
 
-    // Reset content
-    content.innerHTML = '';
+  // Reset content
+  content.innerHTML = "";
 
-    // Update header text based on whether we got data
-    if (databases.size === 0) {
-        header.textContent = 'No databases available';
-        return;
-    }
+  // Update header text based on whether we got data
+  if (databases.size === 0) {
+    header.textContent = "No databases available";
+    return;
+  }
 
-    // Reset to default text
-    header.textContent = 'Select databases and schemas';
+  // Reset to default text
+  header.textContent = "Select databases and schemas";
 
-    databases.forEach((schemas, tableCatalog) => {
-        // Create database container
-        const dbContainer = document.createElement('div');
-        dbContainer.className = 'database-container';
+  databases.forEach((schemas, tableCatalog) => {
+    // Create database container
+    const dbContainer = document.createElement("div");
+    dbContainer.className = "database-container";
 
-        // Create database header
-        const dbDiv = document.createElement('div');
-        dbDiv.className = 'database-item';
+    // Create database header
+    const dbDiv = document.createElement("div");
+    dbDiv.className = "database-item";
 
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = `${type}-${tableCatalog}`;
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = `${type}-${tableCatalog}`;
 
-        const label = document.createElement('label');
-        label.textContent = tableCatalog;
-        label.htmlFor = `${type}-${tableCatalog}`;
+    const label = document.createElement("label");
+    label.textContent = tableCatalog;
+    label.htmlFor = `${type}-${tableCatalog}`;
 
-        const schemaCount = document.createElement('span');
-        schemaCount.className = 'selected-count';
-        schemaCount.textContent = `0/${schemas.size}`;
+    const schemaCount = document.createElement("span");
+    schemaCount.className = "selected-count";
+    schemaCount.textContent = `0/${schemas.size}`;
 
-        dbDiv.appendChild(checkbox);
-        dbDiv.appendChild(label);
-        dbDiv.appendChild(schemaCount);
+    dbDiv.appendChild(checkbox);
+    dbDiv.appendChild(label);
+    dbDiv.appendChild(schemaCount);
 
-        // Create schema list
-        const schemaList = document.createElement('div');
-        schemaList.className = 'schema-list';
+    // Create schema list
+    const schemaList = document.createElement("div");
+    schemaList.className = "schema-list";
 
-        schemas.forEach(schemaName => {
-            const schemaDiv = document.createElement('div');
-            schemaDiv.className = 'schema-item';
+    schemas.forEach((schemaName) => {
+      const schemaDiv = document.createElement("div");
+      schemaDiv.className = "schema-item";
 
-            const schemaCheckbox = document.createElement('input');
-            schemaCheckbox.type = 'checkbox';
-            schemaCheckbox.id = `${type}-${tableCatalog}-${schemaName}`;
+      const schemaCheckbox = document.createElement("input");
+      schemaCheckbox.type = "checkbox";
+      schemaCheckbox.id = `${type}-${tableCatalog}-${schemaName}`;
 
-            const schemaLabel = document.createElement('label');
-            schemaLabel.textContent = schemaName;
-            schemaLabel.htmlFor = `${type}-${tableCatalog}-${schemaName}`;
+      const schemaLabel = document.createElement("label");
+      schemaLabel.textContent = schemaName;
+      schemaLabel.htmlFor = `${type}-${tableCatalog}-${schemaName}`;
 
-            schemaDiv.appendChild(schemaCheckbox);
-            schemaDiv.appendChild(schemaLabel);
-            schemaList.appendChild(schemaDiv);
+      schemaDiv.appendChild(schemaCheckbox);
+      schemaDiv.appendChild(schemaLabel);
+      schemaList.appendChild(schemaDiv);
 
-            schemaCheckbox.addEventListener('change', (e) => {
-                handleSchemaSelection(type, tableCatalog, schemaName, e.target.checked);
-                updateSelectionCount(type, tableCatalog, schemas.size);
-            });
-        });
+      schemaCheckbox.addEventListener("change", (e) => {
+        handleSchemaSelection(type, tableCatalog, schemaName, e.target.checked);
+        updateSelectionCount(type, tableCatalog, schemas.size);
 
-        // Add all elements to the container
-        dbContainer.appendChild(dbDiv);
-        dbContainer.appendChild(schemaList);
-        content.appendChild(dbContainer);
-
-        // Add database checkbox event listener
-        checkbox.addEventListener('change', (e) => {
-            handleDatabaseSelection(type, tableCatalog, Array.from(schemas), e.target.checked);
+        // Uncheck main checkbox if any sub-option is unchecked
+        if (!e.target.checked) {
+          checkbox.checked = false;
+        } else {
+          // Check if all sub-options are selected
+          const allChecked = Array.from(
             schemaList.querySelectorAll('input[type="checkbox"]')
-                .forEach(cb => cb.checked = e.target.checked);
-            updateSelectionCount(type, tableCatalog, schemas.size);
-        });
-
-        // Add click event to toggle schema list
-        dbDiv.addEventListener('click', (e) => {
-            if (e.target.type !== 'checkbox') {
-                schemaList.classList.toggle('show');
-            }
-        });
+          ).every((cb) => cb.checked);
+          checkbox.checked = allChecked;
+        }
+      });
     });
-}
 
+    // Add all elements to the container
+    dbContainer.appendChild(dbDiv);
+    dbContainer.appendChild(schemaList);
+    content.appendChild(dbContainer);
+
+    // Add database checkbox event listener
+    checkbox.addEventListener("change", (e) => {
+      handleDatabaseSelection(
+        type,
+        tableCatalog,
+        Array.from(schemas),
+        e.target.checked
+      );
+      schemaList
+        .querySelectorAll('input[type="checkbox"]')
+        .forEach((cb) => (cb.checked = e.target.checked));
+      updateSelectionCount(type, tableCatalog, schemas.size);
+    });
+
+    // Add click event to toggle schema list
+    dbDiv.addEventListener("click", (e) => {
+      if (e.target.type !== "checkbox") {
+        schemaList.classList.toggle("show");
+      }
+    });
+  });
+}
 function handleDatabaseSelection(type, tableCatalog, schemas, isSelected) {
     if (!metadataOptions[type].has(tableCatalog)) {
         metadataOptions[type].set(tableCatalog, new Set());
@@ -567,7 +584,7 @@ async function runPreflightChecks() {
             },
             form_data: {
                 ...filters,
-                temp_table_regex: ""
+                temp_table_regex: document.getElementById('temp-table-regex').value
             }
         };
 
