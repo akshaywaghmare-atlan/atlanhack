@@ -1,5 +1,4 @@
 import os
-import time
 from typing import cast
 from urllib.parse import quote_plus
 
@@ -30,7 +29,7 @@ from app.const import (
     TABLES_CHECK_SQL,
 )
 
-APPLICATION_NAME = "postgres"
+APPLICATION_NAME = os.getenv("ATLAN_APPLICATION_NAME", "postgres")
 TENANT_ID = os.getenv("ATLAN_TENANT_ID", "development")
 
 
@@ -67,7 +66,6 @@ class PostgresWorkflowBuilder(SQLWorkflowBuilder):
                 connector_name=application_name,
                 connector_type="postgres",
                 tenant_id=TENANT_ID,
-                current_epoch=int(time.time()),
             )
         )
 

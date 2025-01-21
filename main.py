@@ -49,7 +49,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-APPLICATION_NAME = "postgres"
+APPLICATION_NAME = os.getenv("ATLAN_APPLICATION_NAME", "postgres")
 APP_HOST = os.getenv("ATLAN_APP_HTTP_HOST", "0.0.0.0")
 APP_PORT = int(os.getenv("ATLAN_APP_HTTP_PORT", 8000))
 APP_DASHBOARD_HOST = os.getenv("ATLAN_APP_DASHBOARD_HTTP_HOST", "0.0.0.0")

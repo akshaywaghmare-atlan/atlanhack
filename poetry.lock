@@ -257,8 +257,8 @@ workflows = ["dapr (>=1.14.0,<2.0.0)", "temporalio (>=1.7.1,<2.0.0)"]
 [package.source]
 type = "git"
 url = "git@github.com:atlanhq/application-sdk.git"
-reference = "1169ab1e4b4a8e205894833e4fe51f77fe175cb4"
-resolved_reference = "1169ab1e4b4a8e205894833e4fe51f77fe175cb4"
+reference = "75a454335359637ac0fe877d8c833a1c52070a80"
+resolved_reference = "75a454335359637ac0fe877d8c833a1c52070a80"
 
 [[package]]
 name = "arrow"
@@ -1002,18 +1002,18 @@ starlette = ">=0.12.9"
 
 [[package]]
 name = "filelock"
-version = "3.16.1"
+version = "3.17.0"
 description = "A platform independent file lock."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 files = [
-    {file = "filelock-3.16.1-py3-none-any.whl", hash = "sha256:2082e5703d51fbf98ea75855d9d5527e33d8ff23099bec374a134febee6946b0"},
-    {file = "filelock-3.16.1.tar.gz", hash = "sha256:c249fbfcd5db47e5e2d6d62198e565475ee65e4831e2561c8e313fa7eb961435"},
+    {file = "filelock-3.17.0-py3-none-any.whl", hash = "sha256:533dc2f7ba78dc2f0f531fc6c4940addf7b70a481e269a5a3b93be94ffbe8338"},
+    {file = "filelock-3.17.0.tar.gz", hash = "sha256:ee4e77401ef576ebb38cd7f13b9b28893194acc20a8e68e18730ba9c0e54660e"},
 ]
 
 [package.extras]
-docs = ["furo (>=2024.8.6)", "sphinx (>=8.0.2)", "sphinx-autodoc-typehints (>=2.4.1)"]
-testing = ["covdefaults (>=2.3)", "coverage (>=7.6.1)", "diff-cover (>=9.2)", "pytest (>=8.3.3)", "pytest-asyncio (>=0.24)", "pytest-cov (>=5)", "pytest-mock (>=3.14)", "pytest-timeout (>=2.3.1)", "virtualenv (>=20.26.4)"]
+docs = ["furo (>=2024.8.6)", "sphinx (>=8.1.3)", "sphinx-autodoc-typehints (>=3)"]
+testing = ["covdefaults (>=2.3)", "coverage (>=7.6.10)", "diff-cover (>=9.2.1)", "pytest (>=8.3.4)", "pytest-asyncio (>=0.25.2)", "pytest-cov (>=6)", "pytest-mock (>=3.14)", "pytest-timeout (>=2.3.1)", "virtualenv (>=20.28.1)"]
 typing = ["typing-extensions (>=4.12.2)"]
 
 [[package]]
@@ -1530,13 +1530,13 @@ zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
 name = "identify"
-version = "2.6.5"
+version = "2.6.6"
 description = "File identification library for Python"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "identify-2.6.5-py2.py3-none-any.whl", hash = "sha256:14181a47091eb75b337af4c23078c9d09225cd4c48929f521f3bf16b09d02566"},
-    {file = "identify-2.6.5.tar.gz", hash = "sha256:c10b33f250e5bba374fae86fb57f3adcebf1161bce7cdf92031915fd480c13bc"},
+    {file = "identify-2.6.6-py2.py3-none-any.whl", hash = "sha256:cbd1810bce79f8b671ecb20f53ee0ae8e86ae84b557de31d89709dc2a48ba881"},
+    {file = "identify-2.6.6.tar.gz", hash = "sha256:7bec12768ed44ea4761efb47806f0a41f86e7c0a5fdf5950d4648c90eca7e251"},
 ]
 
 [package.extras]
@@ -2622,13 +2622,13 @@ virtualenv = ">=20.10.0"
 
 [[package]]
 name = "prompt-toolkit"
-version = "3.0.49"
+version = "3.0.50"
 description = "Library for building powerful interactive command lines in Python"
 optional = false
 python-versions = ">=3.8.0"
 files = [
-    {file = "prompt_toolkit-3.0.49-py3-none-any.whl", hash = "sha256:03b25a442496d1aeabcb4b8b8e94563ac6a8eff56467837367206a733c61c2de"},
-    {file = "prompt_toolkit-3.0.49.tar.gz", hash = "sha256:372cfcbff483cd5fac6f7870d21face30f1e2f217c6906721616fb1be778774d"},
+    {file = "prompt_toolkit-3.0.50-py3-none-any.whl", hash = "sha256:9b6427eb19e479d98acff65196a307c555eb567989e6d88ebbb1b509d9779198"},
+    {file = "prompt_toolkit-3.0.50.tar.gz", hash = "sha256:544748f3860a2623ca5cd6d2795e7a14f3d0e1c3c9728359013f79877fc89bab"},
 ]
 
 [package.dependencies]
@@ -3460,31 +3460,31 @@ typing-extensions = ">=4.12.2"
 
 [[package]]
 name = "scalene"
-version = "1.5.49"
+version = "1.5.50"
 description = "Scalene: A high-resolution, low-overhead CPU, GPU, and memory profiler for Python with AI-powered optimization suggestions"
 optional = false
 python-versions = "!=3.11.0,>=3.8"
 files = [
-    {file = "scalene-1.5.49-cp310-cp310-macosx_13_0_universal2.whl", hash = "sha256:dc2f0e512514af5ff32f0bcd6b6fd55be85eddd3f7f35b50284c4d98f176e03a"},
-    {file = "scalene-1.5.49-cp310-cp310-macosx_14_0_universal2.whl", hash = "sha256:7d79f4ae0a742e835f93367dba25bd508a00e9f75a48297ec431570afc69215d"},
-    {file = "scalene-1.5.49-cp310-cp310-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:62fa95fe2c29aa6ffbbf9fe3ca4217c1f83c1cf0c08aaab84bf6b3843c953a49"},
-    {file = "scalene-1.5.49-cp310-cp310-win_amd64.whl", hash = "sha256:061f604f1cab69357ecf4fbd4c5c6c534a2261ecc463db54ae3c5db42951faaa"},
-    {file = "scalene-1.5.49-cp311-cp311-macosx_13_0_universal2.whl", hash = "sha256:bf0d827a63c939bfd096df6d33321e7bdb9b65d62d724a0722d884bc5d6bb7e9"},
-    {file = "scalene-1.5.49-cp311-cp311-macosx_14_0_universal2.whl", hash = "sha256:46285389a7418e22dd833174151d6d3181ae100a880f5282d8ff8c28b1fcfddf"},
-    {file = "scalene-1.5.49-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:84a76331c744d5eb8336f87524d2236a9b7cf11ee4503d507a09b2943304435e"},
-    {file = "scalene-1.5.49-cp312-cp312-macosx_13_0_universal2.whl", hash = "sha256:ecdf0c3ada6b6e0313326867ea6f69c80461e23021366c6ff31fc44a4b2e48ab"},
-    {file = "scalene-1.5.49-cp312-cp312-macosx_14_0_universal2.whl", hash = "sha256:b08e507ce5741f025af104cf406d5f1ba02f1b9f6e756cad0428711a1cfbf11b"},
-    {file = "scalene-1.5.49-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:fd796cbfd36da62d656b9f6924622d4a955ef018f20f334570a51a6a24ae59d8"},
-    {file = "scalene-1.5.49-cp312-cp312-win_amd64.whl", hash = "sha256:9cac1c5cc5402c74d91299ae3d69e8b649db495b2b7a61abdec5527cc2ef32d8"},
-    {file = "scalene-1.5.49-cp38-cp38-macosx_13_0_universal2.whl", hash = "sha256:b49ba640b60be6c7ce2a82288158f2e41330c631aec803c303cd0d7eed16ec5b"},
-    {file = "scalene-1.5.49-cp38-cp38-macosx_14_0_universal2.whl", hash = "sha256:83eb923b23f846a6285547dd2085672e3d90642334ec2aa3656459171d614edb"},
-    {file = "scalene-1.5.49-cp38-cp38-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:e189de000440722eefb978c4cab885d2ba85c071ada379a8b5cce26bd8ed3cea"},
-    {file = "scalene-1.5.49-cp38-cp38-win_amd64.whl", hash = "sha256:cd5384b204b212fab3c442c9a42ecda8fb50b779061ab7ff5310dedb9ec4c746"},
-    {file = "scalene-1.5.49-cp39-cp39-macosx_13_0_universal2.whl", hash = "sha256:016f50f5a42ed5161261f6ebf61fa753cfc0cec07454cf9fb58963b55ce82503"},
-    {file = "scalene-1.5.49-cp39-cp39-macosx_14_0_universal2.whl", hash = "sha256:b4cd8ba25dcc0f6f3ad48804ee14fc429ed9fb6a5accf30adabe75caef1d25bb"},
-    {file = "scalene-1.5.49-cp39-cp39-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:c4f0d200c5609062a463d8cec64fcc94dc5f527a64b6d50d5c21cb70d58ec109"},
-    {file = "scalene-1.5.49-cp39-cp39-win_amd64.whl", hash = "sha256:d86e28bf09b5fe984bdaa47aeef0ea71697dc5e15f472ddc3f74b6acfae3030a"},
-    {file = "scalene-1.5.49.tar.gz", hash = "sha256:a2e22608b8d280c3cef6d16b66a2427643e850cbdd72bb12674e8f808383b5f9"},
+    {file = "scalene-1.5.50-cp310-cp310-macosx_13_0_universal2.whl", hash = "sha256:fb443e5e37236a5633a0709bc484336a272fb6b5234a54e7d3f523cc63c042e3"},
+    {file = "scalene-1.5.50-cp310-cp310-macosx_14_0_universal2.whl", hash = "sha256:aa6775ec8b27c1619400d38c8f3c84de1cb6c72304c3add773b50918d3bd0c53"},
+    {file = "scalene-1.5.50-cp310-cp310-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:507c355414705679acb3bbf119bc21aea4cb1d9f922a1e35ad85e654f18ed73b"},
+    {file = "scalene-1.5.50-cp310-cp310-win_amd64.whl", hash = "sha256:f73314ec256c7ff81b773d520465307f0ef26929c7ad62e9636eed0874d6105f"},
+    {file = "scalene-1.5.50-cp311-cp311-macosx_13_0_universal2.whl", hash = "sha256:f7501bfcf36423d8aa5205112aeb60ea4301ea201e35531c2fa2aa1b4ef1fc13"},
+    {file = "scalene-1.5.50-cp311-cp311-macosx_14_0_universal2.whl", hash = "sha256:db4bfb5d6857099c080615acb4644e388dac7fd368294ddf53e0bb4e03426a78"},
+    {file = "scalene-1.5.50-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:9d903a88a5f6c21fb54ce0ee56164e980e7cea3e67f3edf3e7b7cf3ce1c8ea9a"},
+    {file = "scalene-1.5.50-cp312-cp312-macosx_13_0_universal2.whl", hash = "sha256:c0a9a18a2a3ca1580281560430f834dc895d6e7e313d0464371b9a503594fccf"},
+    {file = "scalene-1.5.50-cp312-cp312-macosx_14_0_universal2.whl", hash = "sha256:ee32fff516e8e7dea7dd44c23d8fed1fa5c46ca2c674842d0edf71a8831c1296"},
+    {file = "scalene-1.5.50-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:d5258a28021872632cf604f0f70a424489f1854b8275ad79b327ade2b946e118"},
+    {file = "scalene-1.5.50-cp312-cp312-win_amd64.whl", hash = "sha256:1024863a4bdfe446af6a2a4d17a538249a34a9d33869ca457ec873719ea5297b"},
+    {file = "scalene-1.5.50-cp38-cp38-macosx_13_0_universal2.whl", hash = "sha256:a2a56a08e9a1315b3a8e4feeb29278a2868ce5b4a4154aeb73a958527a428add"},
+    {file = "scalene-1.5.50-cp38-cp38-macosx_14_0_universal2.whl", hash = "sha256:14d68e860303bb390d372d51284dac6d219343c9fb0d5ad965ec547a3800cb5a"},
+    {file = "scalene-1.5.50-cp38-cp38-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:9ff75ee02bd46368d19bfdd5fac3f487eb879ba887011f8bcc0fd923896a2d71"},
+    {file = "scalene-1.5.50-cp38-cp38-win_amd64.whl", hash = "sha256:5efe834e041aea89bbbad0b12851af0c03f801ebf660de8797c9148d179a1cce"},
+    {file = "scalene-1.5.50-cp39-cp39-macosx_13_0_universal2.whl", hash = "sha256:c17a201b0b858df4f03c5bb73d5b1034afaf7f4a10c5cac7ab60dce2b216c056"},
+    {file = "scalene-1.5.50-cp39-cp39-macosx_14_0_universal2.whl", hash = "sha256:872c2891f715992af6f7e8ce696dd319b2993926260d0b83b9d80f1854be3d19"},
+    {file = "scalene-1.5.50-cp39-cp39-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:e8c8d440a0a2837e13ed48ab467c1a8ced6bfe9eb5a293ff44a7d3b78cb208de"},
+    {file = "scalene-1.5.50-cp39-cp39-win_amd64.whl", hash = "sha256:86e345f30ff59e7afe32163dbf28702f71d80638c76a7e5f548bdb63e71f9086"},
+    {file = "scalene-1.5.50.tar.gz", hash = "sha256:fa217bace3cbccf8d32a8affd63489404171a017169af91c85f5d145ad2cd64c"},
 ]
 
 [package.dependencies]
@@ -3804,13 +3804,13 @@ files = [
 
 [[package]]
 name = "tzdata"
-version = "2024.2"
+version = "2025.1"
 description = "Provider of IANA time zone data"
 optional = false
 python-versions = ">=2"
 files = [
-    {file = "tzdata-2024.2-py2.py3-none-any.whl", hash = "sha256:a48093786cdcde33cad18c2555e8532f34422074448fbc874186f0abd79565cd"},
-    {file = "tzdata-2024.2.tar.gz", hash = "sha256:7d85cc416e9382e69095b7bdf4afd9e3880418a2413feec7069d533d6b4e31cc"},
+    {file = "tzdata-2025.1-py2.py3-none-any.whl", hash = "sha256:7e127113816800496f027041c570f50bcd464a020098a3b6b199517772303639"},
+    {file = "tzdata-2025.1.tar.gz", hash = "sha256:24894909e88cdb28bd1636c6887801df64cb485bd593f2fd83ef29075a81d694"},
 ]
 
 [[package]]
@@ -4368,4 +4368,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11.10"
-content-hash = "12ce8ea350f565e057f9768bc2f0ea1d3d0853df003d366e4a7ce85b72e146a5"
+content-hash = "d1e413b8fb0cda4fa8da7eb0f13dff00da03b95eb0d8118d67af23469fc95ae6"
