@@ -232,6 +232,8 @@ WHERE
     AND concat(current_database(), concat('.', n.nspname)) !~ '{normalized_exclude_regex}'
     AND concat(current_database(), concat('.', n.nspname)) ~ '{normalized_include_regex}'
     AND c.relname !~ '{exclude_table}'
+    -- ignore relational views (src: https://www.postgresql.org/docs/current/catalog-pg-class.html)
+    AND c.reltype != 0
 ORDER BY
     n.nspname, c.relname, a.attnum;
 """
