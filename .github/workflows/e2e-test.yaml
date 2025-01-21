@@ -5,7 +5,9 @@ on:
       - main
       - develop
   pull_request:
-    types: [labeled, reopened, synchronize, opened]
+    branches:
+      - main
+      - develop
 
 jobs:
   test:
@@ -14,7 +16,6 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
     timeout-minutes: 10
-    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || contains(github.event.pull_request.labels.*.name, 'e2e-test') }}
 
     steps:
       - uses: actions/checkout@v3
