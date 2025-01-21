@@ -1,4 +1,5 @@
 import os
+import time
 from typing import cast
 from urllib.parse import quote_plus
 
@@ -66,6 +67,7 @@ class PostgresWorkflowBuilder(SQLWorkflowBuilder):
                 connector_name=application_name,
                 connector_type="postgres",
                 tenant_id=TENANT_ID,
+                current_epoch=int(time.time()),
             )
         )
 
