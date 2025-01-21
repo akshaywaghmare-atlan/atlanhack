@@ -193,12 +193,12 @@ jobs:
           MEMORY_USAGE="N/A"
         fi
 
-        # Now fetch main branch and calculate its metrics
-        git fetch origin main
-        if git cat-file -e origin/main:scalene.json 2>/dev/null && \
-            git show origin/main:scalene.json > main_scalene.json; then
-          # Calculate metrics for the main branch
-          MAIN_AVG_CPU=$(jq -r '
+        # Now fetch develop branch and calculate its metrics
+        git fetch origin develop
+        if git cat-file -e origin/develop:scalene.json 2>/dev/null && \
+            git show origin/develop:scalene.json > develop_scalene.json; then
+          # Calculate metrics for the develop branch
+          DEVELOP_AVG_CPU=$(jq -r '
             [
               .files |
               to_entries[] |
@@ -207,24 +207,24 @@ jobs:
               (.n_cpu_percent_c + .n_cpu_percent_python + .n_sys_percent)
             ] |
             add / length
-          ' main_scalene.json | awk '{printf "%.2f\n", $1}')
+          ' develop_scalene.json | awk '{printf "%.2f\n", $1}')
 
-          MAIN_MAX_CPU=$(jq -r '
+          DEVELOP_MAX_CPU=$(jq -r '
             .files |
             to_entries[] |
             .value.functions[] |
             select(.n_cpu_percent_c != null and .n_cpu_percent_python != null and .n_sys_percent != null) |
             (.n_cpu_percent_c + .n_cpu_percent_python + .n_sys_percent)
-          ' main_scalene.json | sort -rn | head -n1 | awk '{printf "%.2f\n", $1}')
+          ' develop_scalene.json | sort -rn | head -n1 | awk '{printf "%.2f\n", $1}')
 
-          MAIN_MEMORY_USAGE=$(jq -r '
+          DEVELOP_MEMORY_USAGE=$(jq -r '
             .max_footprint_mb
-          ' main_scalene.json | awk '{printf "%.2f\n", $1}')
+          ' develop_scalene.json | awk '{printf "%.2f\n", $1}')
         else
-          echo "scalene.json does not exist in the main branch"
-          MAIN_AVG_CPU="N/A"
-          MAIN_MAX_CPU="N/A"
-          MAIN_MEMORY_USAGE="N/A"
+          echo "scalene.json does not exist in the develop branch"
+          DEVELOP_AVG_CPU="N/A"
+          DEVELOP_MAX_CPU="N/A"
+          DEVELOP_MEMORY_USAGE="N/A"
         fi
 
         # Get final workflow details and status
@@ -248,14 +248,6 @@ jobs:
             EXIT_CODE=1
             ;;
         esac
-
-        # Check if scalene.json exists
-        if [ -f scalene.json ]; then
-          echo "scalene.json exists"
-        else
-          echo "scalene.json does not exist"
-        fi
-
         echo "Finished Calculating Metrics"
 
 
@@ -272,13 +264,13 @@ jobs:
         echo "| Status | $DISPLAY_STATUS |" >> metrics.md
         echo "| Workflow Duration | $DURATION |" >> metrics.md
 
-        # Update metrics report to include both current and main branch summaries
+        # Update metrics report to include both current and develop branch summaries
         echo "## 📊 Usage Summary" >> metrics.md
-        echo "| Metric | Current Branch | Main Branch |" >> metrics.md
+        echo "| Metric | Current Branch | Develop Branch |" >> metrics.md
         echo "|--------|----------------|-------------|" >> metrics.md
-        echo "| Average CPU Usage | $AVG_CPU% | $MAIN_AVG_CPU% |" >> metrics.md
-        echo "| Max CPU Usage | $MAX_CPU% | $MAIN_MAX_CPU% |" >> metrics.md
-        echo "| Memory Usage | $MEMORY_USAGE MB | $MAIN_MEMORY_USAGE MB |" >> metrics.md
+        echo "| Average CPU Usage | $AVG_CPU% | $DEVELOP_AVG_CPU% |" >> metrics.md
+        echo "| Max CPU Usage | $MAX_CPU% | $DEVELOP_MAX_CPU% |" >> metrics.md
+        echo "| Memory Usage | $MEMORY_USAGE MB | $DEVELOP_MEMORY_USAGE MB |" >> metrics.md
 
         echo "---" >> metrics.md
 
