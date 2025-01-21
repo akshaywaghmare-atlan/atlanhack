@@ -79,7 +79,7 @@ jobs:
     - name: Start the application
       id: start_app
       run: |
-        make run-app &
+        make run-with-profile &
         sleep 20
 
     - name: Start the workflow
