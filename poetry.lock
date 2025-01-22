@@ -257,8 +257,8 @@ workflows = ["dapr (>=1.14.0,<2.0.0)", "temporalio (>=1.7.1,<2.0.0)"]
 [package.source]
 type = "git"
 url = "git@github.com:atlanhq/application-sdk.git"
-reference = "75a454335359637ac0fe877d8c833a1c52070a80"
-resolved_reference = "75a454335359637ac0fe877d8c833a1c52070a80"
+reference = "e535cefe5441aa1a9a558ea238475cb9459add58"
+resolved_reference = "e535cefe5441aa1a9a558ea238475cb9459add58"
 
 [[package]]
 name = "arrow"
@@ -362,13 +362,13 @@ files = [
 
 [[package]]
 name = "cachetools"
-version = "5.5.0"
+version = "5.5.1"
 description = "Extensible memoizing collections and decorators"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "cachetools-5.5.0-py3-none-any.whl", hash = "sha256:02134e8439cdc2ffb62023ce1debca2944c3f289d66bb17ead3ab3dede74b292"},
-    {file = "cachetools-5.5.0.tar.gz", hash = "sha256:2cc24fb4cbe39633fb7badd9db9ca6295d766d9c2995f245725a46715d050f2a"},
+    {file = "cachetools-5.5.1-py3-none-any.whl", hash = "sha256:b76651fdc3b24ead3c648bbdeeb940c1b04d365b38b4af66788f9ec4a81d42bb"},
+    {file = "cachetools-5.5.1.tar.gz", hash = "sha256:70f238fbba50383ef62e55c6aff6d9673175fe59f7c6782c7a0b9e38f4a9df95"},
 ]
 
 [[package]]
@@ -4368,4 +4368,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11.10"
-content-hash = "d1e413b8fb0cda4fa8da7eb0f13dff00da03b95eb0d8118d67af23469fc95ae6"
+content-hash = "b7247eb6f6356b026a79b7e5fe2eb20214ccb9a8c3dd06e3c75a48f390b35efd"
