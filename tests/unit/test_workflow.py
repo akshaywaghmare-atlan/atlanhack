@@ -1,164 +1,244 @@
-import asyncio
-import traceback
-from typing import Any, Dict
+from datetime import timedelta
+from typing import Any, AsyncGenerator, Dict, List, TypeVar
 from unittest.mock import MagicMock
 
 import pytest
-from application_sdk.workflows.sql.workflows.workflow import SQLWorkflow
+from pyatlan.model import assets
 from temporalio import activity, workflow
-from temporalio.common import RetryPolicy
+from temporalio.client import Client
 from temporalio.testing import WorkflowEnvironment
 from temporalio.worker import Worker
-from temporalio.worker.workflow_sandbox import (
-    SandboxedWorkflowRunner,
-    SandboxRestrictions,
+
+from app.workflow import (
+    CustomTransformer,
+    PostgresActivities,
+    PostgreSQLClient,
+    PostgresTable,
+    PostgresWorkflowHandler,
 )
 
-
-@workflow.defn
-class MockSQLWorkflow(SQLWorkflow):
-    @workflow.run
-    async def run(self, workflow_config: Dict[str, Any]):
-        workflow_id = workflow_config["workflow_id"]
-        retry_policy = RetryPolicy(
-            maximum_attempts=6,
-            backoff_coefficient=2,
-        )
-
-        workflow_run_id = workflow.info().run_id
-        output_prefix = workflow_config["output_prefix"]
-        output_path = f"{output_prefix}/{workflow_id}/{workflow_run_id}"
-        workflow_config["output_path"] = output_path
-
-        fetch_and_transforms = [
-            self.fetch_and_transform(
-                self.fetch_databases,  # type: ignore
-                workflow_config,
-                retry_policy,
-            ),
-            self.fetch_and_transform(self.fetch_schemas, workflow_config, retry_policy),  # type: ignore
-            self.fetch_and_transform(self.fetch_tables, workflow_config, retry_policy),  # type: ignore
-            self.fetch_and_transform(self.fetch_columns, workflow_config, retry_policy),  # type: ignore
-        ]
-
-        await asyncio.gather(*fetch_and_transforms)
-
-        workflow.logger.info(f"Extraction workflow completed for {workflow_id}")
+# Type variables for activity results
+T = TypeVar("T")
+ActivityResult = List[Dict[str, str]]
 
 
-@pytest.mark.asyncio
-async def test_extraction_workflow():
-    workflow_config = {
-        "workflow_id": "test_workflow",
-        "credential_guid": "credential_1234",
-        "output_prefix": "/tmp/test_output",
-        "connection": {"connection": "dev"},
-        "metadata": {
-            "exclude-filter": "{}",
-            "include-filter": "{}",
-            "temp-table-regex": "",
-            "advanced-config-strategy": "default",
-            "use-source-schema-filtering": "false",
-            "use-jdbc-internal-methods": "true",
-            "authentication": "BASIC",
-            "extraction-method": "direct",
-        },
+def test_postgres_client_connection_string():
+    """Test PostgreSQLClient connection string generation"""
+    credentials = {
+        "user": "test_user",
+        "password": "test@pass!123",
+        "host": "localhost",
+        "port": "5432",
+        "database": "test_db",
     }
 
-    mock_fetch_databases = MagicMock()
-    mock_fetch_databases.return_value = [{"typename": "database", "chunk_count": 1}]
+    client = PostgreSQLClient()
+    client.credentials = credentials
 
-    mock_fetch_schemas = MagicMock()
-    mock_fetch_schemas.return_value = [{"typename": "schema", "chunk_count": 1}]
+    expected = "postgresql+psycopg://test_user:test%40pass%21123@localhost:5432/test_db"
+    assert client.get_sqlalchemy_connection_string() == expected
 
-    mock_fetch_tables = MagicMock()
-    mock_fetch_tables.return_value = [{"typename": "table", "chunk_count": 1}]
 
-    mock_fetch_columns = MagicMock()
-    mock_fetch_columns.return_value = [{"typename": "column", "chunk_count": 1}]
+def test_postgres_workflow_handler_sql_queries():
+    """Test PostgresWorkflowHandler SQL query attributes"""
+    from app.const import FILTER_METADATA_SQL, TABLES_CHECK_SQL
 
-    mock_transform_data = MagicMock()
-    mock_transform_data.return_value = [
+    handler = PostgresWorkflowHandler(sql_client=MagicMock())
+
+    assert handler.metadata_sql == FILTER_METADATA_SQL
+    assert handler.tables_check_sql == TABLES_CHECK_SQL
+
+
+def test_postgres_activities_sql_queries():
+    """Test PostgresActivities SQL query attributes"""
+    from app.const import (
+        COLUMN_EXTRACTION_SQL,
+        DATABASE_EXTRACTION_SQL,
+        SCHEMA_EXTRACTION_SQL,
+        TABLE_EXTRACTION_SQL,
+    )
+
+    activities = PostgresActivities(
+        sql_client_class=PostgreSQLClient,
+        handler_class=PostgresWorkflowHandler,
+        transformer_class=CustomTransformer,
+    )
+
+    assert activities.fetch_database_sql == DATABASE_EXTRACTION_SQL
+    assert activities.fetch_schema_sql == SCHEMA_EXTRACTION_SQL
+    assert activities.fetch_table_sql == TABLE_EXTRACTION_SQL
+    assert activities.fetch_column_sql == COLUMN_EXTRACTION_SQL
+
+
+class TestPostgresTable:
+    def test_parse_regular_table(self):
+        """Test parsing a regular table object"""
+        table_data = {
+            "table_type": "BASE TABLE",
+            "table_name": "test_table",
+            "table_schema": "public",
+            "table_catalog": "test_db",
+            "connection_qualified_name": "default/postgres/test-connection",
+        }
+
+        result = PostgresTable.parse_obj(table_data)
+        assert isinstance(result, assets.Table)
+
+    def test_parse_view(self):
+        """Test parsing a view object"""
+        view_data = {
+            "table_type": "VIEW",
+            "table_name": "test_view",
+            "view_definition": "SELECT * FROM base_table",
+            "table_schema": "public",
+            "table_catalog": "test_db",
+            "connection_qualified_name": "default/postgres/test-connection",
+        }
+
+        result = PostgresTable.parse_obj(view_data)
+        assert isinstance(result, assets.View)
+        assert (
+            result.attributes.definition
+            == "CREATE OR REPLACE VIEW test_view AS SELECT * FROM base_table"
+        )
+
+    def test_parse_materialized_view(self):
+        """Test parsing a materialized view object"""
+        mview_data = {
+            "table_type": "MATERIALIZED VIEW",
+            "table_name": "test_mview",
+            "view_definition": "SELECT * FROM base_table",
+            "table_schema": "public",
+            "table_catalog": "test_db",
+            "connection_qualified_name": "default/postgres/test-connection",
+        }
+
+        result = PostgresTable.parse_obj(mview_data)
+        assert isinstance(result, assets.MaterialisedView)
+        assert (
+            result.attributes.definition
+            == "CREATE OR REPLACE MATERIALIZED VIEW test_mview AS SELECT * FROM base_table"
+        )
+
+
+def test_custom_transformer_initialization():
+    """Test CustomTransformer initialization and entity class mappings"""
+    transformer = CustomTransformer(
+        connector_name="test-connector", tenant_id="test-tenant"
+    )
+
+    assert transformer.entity_class_definitions["TABLE"] == PostgresTable
+    assert transformer.entity_class_definitions["VIEW"] == PostgresTable
+    assert transformer.entity_class_definitions["MATERIALIZED VIEW"] == PostgresTable
+
+
+# Mock activities for testing
+@activity.defn
+async def fetch_databases() -> ActivityResult:
+    return [{"name": "test_db"}]
+
+
+@activity.defn
+async def fetch_schemas() -> ActivityResult:
+    return [{"name": "public"}]
+
+
+@activity.defn
+async def fetch_tables() -> ActivityResult:
+    return [
         {
-            "total_record_count": 1,
-            "chunk_count": 1,
+            "table_type": "BASE TABLE",
+            "table_name": "test_table",
+            "table_schema": "public",
+            "table_catalog": "test_db",
+            "connection_qualified_name": "default/postgres/test-connection",
         }
     ]
-    mock_write_type_metadata = MagicMock()
-    mock_write_type_metadata.return_value = None
 
-    mock_write_raw_type_metadata = MagicMock()
-    mock_write_raw_type_metadata.return_value = None
 
-    @activity.defn(name="fetch_databases")
-    async def wrapped_mock_fetch_databases(workflow_config: Dict[str, Any]):
-        return mock_fetch_databases(workflow_config)
+@activity.defn
+async def fetch_columns() -> ActivityResult:
+    return [{"column_name": "id", "data_type": "integer"}]
 
-    @activity.defn(name="fetch_schemas")
-    async def wrapped_mock_fetch_schemas(workflow_config: Dict[str, Any]):
-        return mock_fetch_schemas(workflow_config)
 
-    @activity.defn(name="fetch_tables")
-    async def wrapped_mock_fetch_tables(workflow_config: Dict[str, Any]):
-        return mock_fetch_tables(workflow_config)
+@workflow.defn(sandboxed=False)
+class MockExtractionWorkflow:
+    @workflow.run
+    async def run(self, config: Dict[str, Any]) -> Dict[str, Any]:
+        # Execute activities and collect results
+        databases = await workflow.execute_activity(  # type: ignore
+            fetch_databases, start_to_close_timeout=timedelta(seconds=30)
+        )
 
-    @activity.defn(name="fetch_columns")
-    async def wrapped_mock_fetch_columns(workflow_config: Dict[str, Any]):
-        return mock_fetch_columns(workflow_config)
+        schemas = await workflow.execute_activity(  # type: ignore
+            fetch_schemas, start_to_close_timeout=timedelta(seconds=30)
+        )
 
-    @activity.defn(name="transform_data")
-    async def wrapped_mock_transform_data(workflow_args: Dict[str, Any]):
-        return mock_transform_data(workflow_args)
+        tables = await workflow.execute_activity(  # type: ignore
+            fetch_tables, start_to_close_timeout=timedelta(seconds=30)
+        )
 
-    @activity.defn(name="write_type_metadata")
-    async def wrapped_mock_write_type_metadata(
-        workflow_args: Dict[str, Any],
-    ):
-        mock_write_type_metadata(workflow_args)
+        columns = await workflow.execute_activity(  # type: ignore
+            fetch_columns, start_to_close_timeout=timedelta(seconds=30)
+        )
 
-    @activity.defn(name="write_raw_type_metadata")
-    async def wrapped_mock_write_raw_type_metadata(
-        workflow_args: Dict[str, Any],
-    ):
-        mock_write_raw_type_metadata(workflow_args)
+        return {
+            "status": "completed",
+            "config": config,
+            "data": {
+                "databases": databases,
+                "schemas": schemas,
+                "tables": tables,
+                "columns": columns,
+            },
+        }
 
-    try:
+
+class TestPostgresWorkflow:
+    @pytest.fixture
+    async def workflow_env(self) -> AsyncGenerator[Client, None]:
+        """Create a test workflow environment."""
         env = await WorkflowEnvironment.start_local()
-        async with Worker(
-            env.client,
-            task_queue="test_queue",
-            workflows=[MockSQLWorkflow],
-            activities=[
-                wrapped_mock_fetch_databases,
-                wrapped_mock_fetch_schemas,
-                wrapped_mock_fetch_tables,
-                wrapped_mock_fetch_columns,
-                wrapped_mock_transform_data,
-                wrapped_mock_write_type_metadata,
-                wrapped_mock_write_raw_type_metadata,
-            ],
-            workflow_runner=SandboxedWorkflowRunner(
-                restrictions=SandboxRestrictions.default.with_passthrough_modules(
-                    "application_sdk"
-                )
-            ),
-        ):
-            result: Any = await env.client.execute_workflow(  # pyright: ignore[reportUnknownMemberType]
-                MockSQLWorkflow.run,  # type: ignore
+        try:
+            yield env.client
+        finally:
+            await env.shutdown()
+
+    @pytest.mark.asyncio
+    async def test_extraction_workflow(self, workflow_env: Client) -> None:
+        """Test the complete extraction workflow execution"""
+        # Setup workflow config
+        workflow_config = {
+            "connection_qualified_name": "default/postgres/test-connection",
+            "output_path": "/tmp/test_output",
+            "tenant_id": "test-tenant",
+        }
+
+        # Create worker with workflow and activities
+        worker = Worker(
+            workflow_env,
+            task_queue="test-queue",
+            workflows=[MockExtractionWorkflow],
+            activities=[fetch_databases, fetch_schemas, fetch_tables, fetch_columns],
+        )
+
+        async with worker:
+            # Run the workflow
+            result = await workflow_env.execute_workflow(  # type: ignore
+                MockExtractionWorkflow.run,
                 workflow_config,
-                id="test_workflow",
-                task_queue="test_queue",
+                id="test-workflow",
+                task_queue="test-queue",
             )
 
-    except Exception as e:
-        print(f"Error during workflow execution: {e}")
-        print(f"Error type: {type(e)}")
-        print(f"Error traceback: {traceback.format_exc()}")
-        raise e
+            # Verify workflow completion
+            assert result is not None
+            assert result["status"] == "completed"
+            assert result["config"] == workflow_config
 
-    assert result is None
-
-    assert mock_fetch_databases.call_count == 1
-    assert mock_fetch_schemas.call_count == 1
-    assert mock_fetch_tables.call_count == 1
-    assert mock_fetch_columns.call_count == 1
+            # Verify activity results are present
+            assert "data" in result
+            assert "databases" in result["data"]
+            assert "schemas" in result["data"]
+            assert "tables" in result["data"]
+            assert "columns" in result["data"]

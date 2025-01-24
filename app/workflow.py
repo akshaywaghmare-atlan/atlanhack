@@ -1,25 +1,13 @@
-import os
-from typing import Any, Dict, Union, cast
+from typing import Any, Dict, Union
 from urllib.parse import quote_plus
 
-from application_sdk.workflows.controllers import (
-    WorkflowPreflightCheckControllerInterface,
+from application_sdk.activities.metadata_extraction.sql import (
+    SQLMetadataExtractionActivities,
 )
-from application_sdk.workflows.sql.builders.builder import SQLWorkflowBuilder
-from application_sdk.workflows.sql.controllers.metadata import (
-    SQLWorkflowMetadataController,
-)
-from application_sdk.workflows.sql.controllers.preflight_check import (
-    SQLWorkflowPreflightCheckController,
-)
-from application_sdk.workflows.sql.resources.async_sql_resource import AsyncSQLResource
-from application_sdk.workflows.sql.resources.sql_resource import (
-    SQLResource,
-    SQLResourceConfig,
-)
-from application_sdk.workflows.sql.workflows.workflow import SQLWorkflow
-from application_sdk.workflows.transformers.atlas import AtlasTransformer
-from application_sdk.workflows.transformers.atlas.sql import Table
+from application_sdk.clients.sql import AsyncSQLClient
+from application_sdk.handlers.sql import SQLHandler
+from application_sdk.transformers.atlas import AtlasTransformer
+from application_sdk.transformers.atlas.sql import Table
 from pyatlan.model import assets
 
 from app.const import (
@@ -31,32 +19,27 @@ from app.const import (
     TABLES_CHECK_SQL,
 )
 
-APPLICATION_NAME = os.getenv("ATLAN_APPLICATION_NAME", "postgres")
-TENANT_ID = os.getenv("ATLAN_TENANT_ID", "development")
 
-
-class PostgreSQLResource(AsyncSQLResource):
+class PostgreSQLClient(AsyncSQLClient):
     def get_sqlalchemy_connection_string(self) -> str:
-        encoded_password: str = quote_plus(self.config.credentials["password"])
-        return f"postgresql+psycopg://{self.config.credentials['user']}:{encoded_password}@{self.config.credentials['host']}:{self.config.credentials['port']}/{self.config.credentials['database']}"
+        encoded_password: str = quote_plus(self.credentials["password"])
+        return f"postgresql+psycopg://{self.credentials['user']}:{encoded_password}@{self.credentials['host']}:{self.credentials['port']}/{self.credentials['database']}"
 
 
-class PostgresWorkflowMetadata(SQLWorkflowMetadataController):
-    METADATA_SQL = FILTER_METADATA_SQL
+class PostgresWorkflowHandler(SQLHandler):
+    """
+    Handler class for Postgres SQL workflows
+    """
+
+    metadata_sql = FILTER_METADATA_SQL
+    tables_check_sql = TABLES_CHECK_SQL
 
 
-class PostgresWorkflowPreflight(SQLWorkflowPreflightCheckController):
-    METADATA_SQL = FILTER_METADATA_SQL
-    TABLES_CHECK_SQL = TABLES_CHECK_SQL
-
-
-class PostgresWorkflow(SQLWorkflow):
+class PostgresActivities(SQLMetadataExtractionActivities):
     fetch_database_sql = DATABASE_EXTRACTION_SQL
     fetch_schema_sql = SCHEMA_EXTRACTION_SQL
     fetch_table_sql = TABLE_EXTRACTION_SQL
     fetch_column_sql = COLUMN_EXTRACTION_SQL
-
-    sql_resource: SQLResource | None = PostgreSQLResource(SQLResourceConfig())
 
 
 class PostgresTable(Table):
@@ -95,31 +78,3 @@ class CustomTransformer(AtlasTransformer):
         self.entity_class_definitions["TABLE"] = PostgresTable
         self.entity_class_definitions["VIEW"] = PostgresTable
         self.entity_class_definitions["MATERIALIZED VIEW"] = PostgresTable
-
-
-class PostgresWorkflowBuilder(SQLWorkflowBuilder):
-    preflight_check_controller: WorkflowPreflightCheckControllerInterface
-
-    def __init__(self, application_name: str = APPLICATION_NAME):
-        self.set_transformer(
-            CustomTransformer(
-                connector_name=application_name,
-                connector_type="postgres",
-                tenant_id=TENANT_ID,
-            )
-        )
-
-        super().__init__()
-
-    def build(self, workflow: SQLWorkflow | None = None) -> SQLWorkflow:
-        workflow = workflow or PostgresWorkflow()
-        workflow = (  # type: ignore
-            workflow.set_sql_resource(self.sql_resource)
-            .set_transformer(self.transformer)
-            .set_temporal_resource(self.temporal_resource)
-            .set_preflight_check_controller(
-                PostgresWorkflowPreflight(sql_resource=self.sql_resource)
-            )
-        )
-
-        return cast(SQLWorkflow, workflow)
