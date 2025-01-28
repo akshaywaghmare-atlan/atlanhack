@@ -9,13 +9,10 @@ from temporalio.client import Client
 from temporalio.testing import WorkflowEnvironment
 from temporalio.worker import Worker
 
-from app.workflow import (
-    CustomTransformer,
-    PostgresActivities,
-    PostgreSQLClient,
-    PostgresTable,
-    PostgresWorkflowHandler,
-)
+from app.activities.metadata_extraction.postgres import PostgresActivities
+from app.clients import PostgreSQLClient
+from app.handlers import PostgresWorkflowHandler
+from app.transformers.atlas import CustomTransformer, PostgresTable
 
 # Type variables for activity results
 T = TypeVar("T")

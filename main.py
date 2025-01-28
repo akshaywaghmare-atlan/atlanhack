@@ -14,12 +14,10 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from app.workflow import (
-    CustomTransformer,
-    PostgresActivities,
-    PostgreSQLClient,
-    PostgresWorkflowHandler,
-)
+from app.activities.metadata_extraction.postgres import PostgresActivities
+from app.clients import PostgreSQLClient
+from app.handlers import PostgresWorkflowHandler
+from app.transformers.atlas import CustomTransformer
 
 logger = AtlanLoggerAdapter(logging.getLogger(__name__))
 

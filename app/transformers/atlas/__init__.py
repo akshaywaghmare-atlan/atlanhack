@@ -1,45 +1,8 @@
 from typing import Any, Dict, Union
-from urllib.parse import quote_plus
 
-from application_sdk.activities.metadata_extraction.sql import (
-    SQLMetadataExtractionActivities,
-)
-from application_sdk.clients.sql import AsyncSQLClient
-from application_sdk.handlers.sql import SQLHandler
 from application_sdk.transformers.atlas import AtlasTransformer
 from application_sdk.transformers.atlas.sql import Table
 from pyatlan.model import assets
-
-from app.const import (
-    COLUMN_EXTRACTION_SQL,
-    DATABASE_EXTRACTION_SQL,
-    FILTER_METADATA_SQL,
-    SCHEMA_EXTRACTION_SQL,
-    TABLE_EXTRACTION_SQL,
-    TABLES_CHECK_SQL,
-)
-
-
-class PostgreSQLClient(AsyncSQLClient):
-    def get_sqlalchemy_connection_string(self) -> str:
-        encoded_password: str = quote_plus(self.credentials["password"])
-        return f"postgresql+psycopg://{self.credentials['user']}:{encoded_password}@{self.credentials['host']}:{self.credentials['port']}/{self.credentials['database']}"
-
-
-class PostgresWorkflowHandler(SQLHandler):
-    """
-    Handler class for Postgres SQL workflows
-    """
-
-    metadata_sql = FILTER_METADATA_SQL
-    tables_check_sql = TABLES_CHECK_SQL
-
-
-class PostgresActivities(SQLMetadataExtractionActivities):
-    fetch_database_sql = DATABASE_EXTRACTION_SQL
-    fetch_schema_sql = SCHEMA_EXTRACTION_SQL
-    fetch_table_sql = TABLE_EXTRACTION_SQL
-    fetch_column_sql = COLUMN_EXTRACTION_SQL
 
 
 class PostgresTable(Table):
