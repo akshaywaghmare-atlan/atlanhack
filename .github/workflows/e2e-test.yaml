@@ -90,9 +90,10 @@ jobs:
           -H "Content-Type: application/json" \
           -d '{
             "credentials": {
+              "authType": "basic",
               "host": "${{ secrets.POSTGRES_DB_HOST }}",
               "port": 5432,
-              "user": "postgres",
+              "username": "postgres",
               "password": "${{ secrets.POSTGRES_DB_PASSWORD }}",
               "database": "assets_100k"
             },
@@ -104,9 +105,6 @@ jobs:
               "include_filter": "{}",
               "temp_table_regex": "",
               "advanced_config_strategy": "default",
-              "use_source_schema_filtering": "false",
-              "use_jdbc_internal_methods": "true",
-              "authentication": "BASIC",
               "extraction_method": "direct"
             }
           }' \
