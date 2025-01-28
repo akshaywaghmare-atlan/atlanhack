@@ -1,6 +1,7 @@
 from datetime import timedelta
 from typing import Any, AsyncGenerator, Dict, List, TypeVar
 from unittest.mock import MagicMock
+from urllib.parse import quote_plus
 
 import pytest
 from pyatlan.model import assets
@@ -20,20 +21,87 @@ ActivityResult = List[Dict[str, str]]
 
 
 def test_postgres_client_connection_string():
-    """Test PostgreSQLClient connection string generation"""
-    credentials = {
-        "user": "test_user",
+    """Test PostgreSQLClient connection string generation for different auth types"""
+    # Test basic auth
+    basic_credentials = {
+        "username": "test_user",
         "password": "test@pass!123",
         "host": "localhost",
         "port": "5432",
         "database": "test_db",
+        "authType": "basic",
     }
 
     client = PostgreSQLClient()
-    client.credentials = credentials
+    client.credentials = basic_credentials
+    expected = f"postgresql+psycopg://{basic_credentials['username']}:{quote_plus(basic_credentials['password'])}@{basic_credentials['host']}:{basic_credentials['port']}/{basic_credentials['database']}"
+    result = client.get_sqlalchemy_connection_string()
+    assert result == expected
 
-    expected = "postgresql+psycopg://test_user:test%40pass%21123@localhost:5432/test_db"
-    assert client.get_sqlalchemy_connection_string() == expected
+    # Test missing credentials
+    with pytest.raises(KeyError):
+        client.credentials = {}
+        client.get_sqlalchemy_connection_string()
+
+    # Test invalid auth type
+    invalid_credentials = {
+        "authType": "invalid",
+        "username": "test_user",
+        "password": "test_pass",
+        "host": "localhost",
+        "port": "5432",
+        "database": "test_db",
+    }
+    client.credentials = invalid_credentials
+    with pytest.raises(ValueError):
+        client.get_sqlalchemy_connection_string()
+
+    # Test missing required fields for IAM user auth
+    incomplete_iam_user = {
+        "username": "test_user",
+        "host": "localhost",
+        "port": "5432",
+        "database": "test_db",
+        "authType": "iam_user",
+    }
+    client.credentials = incomplete_iam_user
+    with pytest.raises(KeyError):
+        client.get_sqlalchemy_connection_string()
+
+    # Test missing required fields for IAM role auth
+    incomplete_iam_role = {
+        "username": "test_user",
+        "host": "localhost",
+        "port": "5432",
+        "database": "test_db",
+        "authType": "iam_role",
+    }
+    client.credentials = incomplete_iam_role
+    with pytest.raises(KeyError):
+        client.get_sqlalchemy_connection_string()
+
+
+def test_postgres_client_connection_string_errors():
+    """Test error cases for PostgreSQLClient connection string generation"""
+    client = PostgreSQLClient()
+
+    # Test missing credentials
+    with pytest.raises(KeyError):
+        client.credentials = {}
+        client.get_sqlalchemy_connection_string()
+
+    # Test invalid auth type
+    client.credentials = {
+        "authType": "invalid",
+        "username": "test_user",
+        "password": "test_pass",
+        "host": "localhost",
+        "port": "5432",
+        "database": "test_db",
+    }
+    # Should raise an error for invalid auth type
+    with pytest.raises(ValueError):
+        client.get_sqlalchemy_connection_string()
 
 
 def test_postgres_workflow_handler_sql_queries():
@@ -67,55 +135,50 @@ def test_postgres_activities_sql_queries():
     assert activities.fetch_column_sql == COLUMN_EXTRACTION_SQL
 
 
-class TestPostgresTable:
-    def test_parse_regular_table(self):
-        """Test parsing a regular table object"""
-        table_data = {
-            "table_type": "BASE TABLE",
-            "table_name": "test_table",
-            "table_schema": "public",
-            "table_catalog": "test_db",
-            "connection_qualified_name": "default/postgres/test-connection",
-        }
+def test_postgres_table():
+    """Test parsing different types of PostgreSQL tables"""
+    # Test regular table
+    table_data = {
+        "table_type": "BASE TABLE",
+        "table_name": "test_table",
+        "table_schema": "public",
+        "table_catalog": "test_db",
+        "connection_qualified_name": "default/postgres/test-connection",
+    }
+    result = PostgresTable.parse_obj(table_data)
+    assert isinstance(result, assets.Table)
 
-        result = PostgresTable.parse_obj(table_data)
-        assert isinstance(result, assets.Table)
+    # Test view with SQL definition
+    view_data = {
+        "table_type": "VIEW",
+        "table_name": "test_view",
+        "view_definition": "SELECT * FROM base_table",
+        "table_schema": "public",
+        "table_catalog": "test_db",
+        "connection_qualified_name": "default/postgres/test-connection",
+    }
+    result = PostgresTable.parse_obj(view_data)
+    assert isinstance(result, assets.View)
+    assert (
+        result.attributes.definition
+        == "CREATE OR REPLACE VIEW test_view AS SELECT * FROM base_table"
+    )
 
-    def test_parse_view(self):
-        """Test parsing a view object"""
-        view_data = {
-            "table_type": "VIEW",
-            "table_name": "test_view",
-            "view_definition": "SELECT * FROM base_table",
-            "table_schema": "public",
-            "table_catalog": "test_db",
-            "connection_qualified_name": "default/postgres/test-connection",
-        }
-
-        result = PostgresTable.parse_obj(view_data)
-        assert isinstance(result, assets.View)
-        assert (
-            result.attributes.definition
-            == "CREATE OR REPLACE VIEW test_view AS SELECT * FROM base_table"
-        )
-
-    def test_parse_materialized_view(self):
-        """Test parsing a materialized view object"""
-        mview_data = {
-            "table_type": "MATERIALIZED VIEW",
-            "table_name": "test_mview",
-            "view_definition": "SELECT * FROM base_table",
-            "table_schema": "public",
-            "table_catalog": "test_db",
-            "connection_qualified_name": "default/postgres/test-connection",
-        }
-
-        result = PostgresTable.parse_obj(mview_data)
-        assert isinstance(result, assets.MaterialisedView)
-        assert (
-            result.attributes.definition
-            == "CREATE OR REPLACE MATERIALIZED VIEW test_mview AS SELECT * FROM base_table"
-        )
+    # Test materialized view with SQL definition
+    mview_data = {
+        "table_type": "MATERIALIZED VIEW",
+        "table_name": "test_mview",
+        "view_definition": "SELECT * FROM base_table",
+        "table_schema": "public",
+        "table_catalog": "test_db",
+        "connection_qualified_name": "default/postgres/test-connection",
+    }
+    result = PostgresTable.parse_obj(mview_data)
+    assert isinstance(result, assets.MaterialisedView)
+    assert (
+        result.attributes.definition
+        == "CREATE OR REPLACE MATERIALIZED VIEW test_mview AS SELECT * FROM base_table"
+    )
 
 
 def test_custom_transformer_initialization():

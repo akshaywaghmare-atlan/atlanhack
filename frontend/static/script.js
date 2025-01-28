@@ -1,11 +1,24 @@
 let currentPage = 1;
 const formData = {};
+let currentAuthType = "basic";
 
 function updateFormData() {
-  const inputs = document.querySelectorAll(
-    'input[type="text"], input[type="password"]'
+  const activeSection = document.querySelector(".auth-section.active");
+  if (!activeSection) return;
+
+  // Get common inputs from page 1 only
+  const commonInputs = document.querySelectorAll(
+    "#page1 > .form-group input, #page1 .form-group.horizontal input"
   );
-  inputs.forEach((input) => {
+  commonInputs.forEach((input) => {
+    if (input.value) {
+      formData[input.id] = input.value;
+    }
+  });
+
+  // Get active authentication section inputs
+  const activeInputs = activeSection.querySelectorAll("input");
+  activeInputs.forEach((input) => {
     if (input.value) {
       formData[input.id] = input.value;
     }
@@ -177,13 +190,26 @@ async function testConnection() {
 
 // Add a helper function to perform the actual connection test
 async function performConnectionTest() {
-  const payload = {
+  const activeSection = document.querySelector(".auth-section.active");
+  if (!activeSection) return false;
+
+  const basePayload = {
     host: document.getElementById("host").value,
     port: document.getElementById("port").value,
-    user: document.getElementById("user").value,
-    password: document.getElementById("password").value,
     database: document.getElementById("database").value,
+    authType: currentAuthType,
   };
+
+  // Only get values from the active authentication section
+  const authDetails = {};
+  const activeInputs = activeSection.querySelectorAll("input");
+  activeInputs.forEach((input) => {
+    if (input.value) {
+      authDetails[input.id.replace(/-/g, "_")] = input.value;
+    }
+  });
+
+  const payload = { ...basePayload, ...authDetails };
 
   const response = await fetch(`/workflows/v1/auth`, {
     method: "POST",
@@ -254,14 +280,29 @@ function processMetadataResponse(data) {
 
 async function fetchMetadata() {
   try {
-    // Gather credentials from page 1
-    const payload = {
+    const activeSection = document.querySelector(".auth-section.active");
+    if (!activeSection) return false;
+
+    const basePayload = {
       host: document.getElementById("host").value,
       port: document.getElementById("port").value,
-      user: document.getElementById("user").value,
-      password: document.getElementById("password").value,
       database: document.getElementById("database").value,
+      authType: currentAuthType,
       type: "all",
+    };
+
+    // Only get values from the active authentication section
+    const authDetails = {};
+    const activeInputs = activeSection.querySelectorAll("input");
+    activeInputs.forEach((input) => {
+      if (input.value) {
+        authDetails[input.id.replace(/-/g, "_")] = input.value;
+      }
+    });
+
+    const payload = {
+      ...basePayload,
+      ...authDetails,
     };
 
     const response = await fetch(`/workflows/v1/metadata`, {
@@ -591,18 +632,37 @@ async function runPreflightChecks() {
   resultsContainer.innerHTML = "";
 
   try {
+    const activeSection = document.querySelector(".auth-section.active");
+    if (!activeSection) return false;
+
     const filters = formatFilters(metadataOptions);
+
+    const basePayload = {
+      host: document.getElementById("host").value,
+      port: document.getElementById("port").value,
+      database: document.getElementById("database").value,
+      authType: currentAuthType,
+      type: "all",
+    };
+
+    // Only get values from the active authentication section
+    const authDetails = {};
+    const activeInputs = activeSection.querySelectorAll("input");
+    activeInputs.forEach((input) => {
+      if (input.value) {
+        authDetails[input.id.replace(/-/g, "_")] = input.value;
+      }
+    });
+
     const payload = {
       credentials: {
-        host: document.getElementById("host").value,
-        port: parseInt(document.getElementById("port").value),
-        user: document.getElementById("user").value,
-        password: document.getElementById("password").value,
-        database: document.getElementById("database").value,
+        ...basePayload,
+        ...authDetails,
       },
       metadata: {
         ...filters,
-        temp_table_regex: document.getElementById("temp-table-regex").value,
+        temp_table_regex:
+          document.getElementById("temp-table-regex").value || "",
       },
     };
 
@@ -688,17 +748,33 @@ async function handleRunWorkflow() {
 
   runButton.addEventListener("click", async () => {
     try {
-      runButton.disabled = true;
-      runButton.textContent = "Starting...";
+      const activeSection = document.querySelector(".auth-section.active");
+      if (!activeSection) return false;
+
+      const basePayload = {
+        host: document.getElementById("host").value,
+        port: document.getElementById("port").value,
+        database: document.getElementById("database").value,
+        authType: currentAuthType,
+      };
+
+      // Only get values from the active authentication section
+      const authDetails = {};
+      const activeInputs = activeSection.querySelectorAll("input");
+      activeInputs.forEach((input) => {
+        if (input.value) {
+          authDetails[input.id.replace(/-/g, "_")] = input.value;
+        }
+      });
 
       // Get credentials from page 1
       const credentials = {
-        host: document.getElementById("host").value,
-        port: parseInt(document.getElementById("port").value),
-        user: document.getElementById("user").value,
-        password: document.getElementById("password").value,
-        database: document.getElementById("database").value,
+        ...basePayload,
+        ...authDetails,
       };
+
+      runButton.disabled = true;
+      runButton.textContent = "Starting...";
 
       const connectionName = document.getElementById("connectionName").value;
       const tenantId = window.env.TENANT_ID || "default";
@@ -720,9 +796,6 @@ async function handleRunWorkflow() {
           ...filters,
           temp_table_regex: document.getElementById("temp-table-regex").value,
           advanced_config_strategy: "default",
-          use_source_schema_filtering: "false",
-          use_jdbc_internal_methods: "true",
-          authentication: "BASIC",
         },
       };
 
@@ -790,4 +863,68 @@ function setupDropdownClickOutside() {
 // Add this to your DOMContentLoaded event listener
 document.addEventListener("DOMContentLoaded", () => {
   setupDropdownClickOutside();
+});
+
+// Add this new function to handle authentication type switching
+function setupAuthenticationTabs() {
+  const authButtons = document.querySelectorAll(
+    ".button-group [data-auth-type]"
+  );
+  const authSections = document.querySelectorAll(".auth-section");
+
+  function switchAuthType(type) {
+    // Update buttons
+    authButtons.forEach((button) => {
+      if (button.dataset.authType === type) {
+        button.classList.remove("btn-secondary");
+        button.classList.add("btn-primary");
+      } else {
+        button.classList.remove("btn-primary");
+        button.classList.add("btn-secondary");
+      }
+    });
+
+    // Update sections
+    authSections.forEach((section) => {
+      if (section.id === `${type}-auth`) {
+        section.classList.add("active");
+      } else {
+        section.classList.remove("active");
+      }
+    });
+
+    // Update current auth type
+    currentAuthType = type;
+
+    // Reset test connection button
+    const testButton = document.querySelector(".test-connection");
+    testButton.style.backgroundColor = "";
+    testButton.style.color = "";
+    testButton.style.borderColor = "";
+    testButton.textContent = "Test Connection";
+    testButton.classList.remove("success");
+
+    // Clear any existing error messages
+    const errorElement = document.getElementById("connectionError");
+    if (errorElement) {
+      errorElement.classList.remove("visible");
+    }
+
+    // Remove authentication state
+    sessionStorage.removeItem("authenticationComplete");
+  }
+
+  // Add click handlers to auth type buttons
+  authButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (!button.disabled) {
+        switchAuthType(button.dataset.authType);
+      }
+    });
+  });
+}
+
+// Update the DOMContentLoaded event listener
+document.addEventListener("DOMContentLoaded", () => {
+  setupAuthenticationTabs();
 });
