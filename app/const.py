@@ -131,7 +131,7 @@ TABLE_EXTRACTION_SQL = """
     AND C.relkind != 'i'
     AND C.relkind != 'I';
 """
-TABLE_EXTRACTION_TEMP_TABLE_REGEX_SQL = "AND TABLE_NAME !~ '{exclude_table_regex}'"
+TABLE_EXTRACTION_TEMP_TABLE_REGEX_SQL = "AND T.TABLE_NAME !~ '{exclude_table_regex}'"
 
 
 COLUMN_EXTRACTION_SQL = """
