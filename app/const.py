@@ -2,11 +2,12 @@
 TABLES_CHECK_SQL = """
     SELECT count(*)
     FROM INFORMATION_SCHEMA.TABLES
-    WHERE TABLE_NAME !~ '{exclude_table}'
-        AND concat(TABLE_CATALOG, concat('.', TABLE_SCHEMA)) !~ '{normalized_exclude_regex}'
+    WHERE concat(TABLE_CATALOG, concat('.', TABLE_SCHEMA)) !~ '{normalized_exclude_regex}'
         AND concat(TABLE_CATALOG, concat('.', TABLE_SCHEMA)) ~ '{normalized_include_regex}'
         AND TABLE_SCHEMA NOT IN ('performance_schema', 'information_schema', 'pg_catalog', 'pg_internal')
+        {temp_table_regex_sql}
 """
+TABLES_CHECK_TEMP_TABLE_REGEX_SQL = "AND TABLE_NAME !~ '{exclude_table_regex}'"
 
 TEST_AUTHENTICATION_SQL = "SELECT 1;"
 
@@ -126,10 +127,11 @@ TABLE_EXTRACTION_SQL = """
         AND concat(CATALOG_NAME, concat('.', SCHEMA_NAME)) !~ '{normalized_exclude_regex}'
         AND concat(CATALOG_NAME, concat('.', SCHEMA_NAME)) ~ '{normalized_include_regex}'
     )
-    AND T.table_name !~ '{exclude_table}'
+    {temp_table_regex_sql}
     AND C.relkind != 'i'
     AND C.relkind != 'I';
 """
+TABLE_EXTRACTION_TEMP_TABLE_REGEX_SQL = "AND TABLE_NAME !~ '{exclude_table_regex}'"
 
 
 COLUMN_EXTRACTION_SQL = """
@@ -231,12 +233,13 @@ WHERE
     AND n.nspname != 'information_schema'
     AND concat(current_database(), concat('.', n.nspname)) !~ '{normalized_exclude_regex}'
     AND concat(current_database(), concat('.', n.nspname)) ~ '{normalized_include_regex}'
-    AND c.relname !~ '{exclude_table}'
+    {temp_table_regex_sql}
     -- ignore relational views (src: https://www.postgresql.org/docs/current/catalog-pg-class.html)
     AND c.reltype != 0
 ORDER BY
     n.nspname, c.relname, a.attnum;
 """
+COLUMN_EXTRACTION_TEMP_TABLE_REGEX_SQL = "AND c.relname !~ '{exclude_table_regex}'"
 
 PROCEDURE_EXTRACTION_SQL = """
 SELECT
