@@ -638,8 +638,8 @@ function formatFilters(metadataOptions) {
   };
 
   return {
-    include_filter: formatFilter(metadataOptions.include),
-    exclude_filter: formatFilter(metadataOptions.exclude),
+    "include-filter": formatFilter(metadataOptions.include),
+    "exclude-filter": formatFilter(metadataOptions.exclude),
   };
 }
 
@@ -705,7 +705,7 @@ async function runPreflightChecks() {
       credentials,
       metadata: {
         ...filters,
-        temp_table_regex:
+        "temp-table-regex":
           document.getElementById("temp-table-regex").value || "",
       },
     };
@@ -854,8 +854,7 @@ async function handleRunWorkflow() {
         connection,
         metadata: {
           ...filters,
-          temp_table_regex: document.getElementById("temp-table-regex").value,
-          advanced_config_strategy: "default",
+          "temp-table-regex": document.getElementById("temp-table-regex").value,
         },
       };
 
