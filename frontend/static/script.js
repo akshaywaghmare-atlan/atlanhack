@@ -193,23 +193,39 @@ async function performConnectionTest() {
   const activeSection = document.querySelector(".auth-section.active");
   if (!activeSection) return false;
 
-  const basePayload = {
-    host: document.getElementById("host").value,
-    port: document.getElementById("port").value,
-    database: document.getElementById("database").value,
+  // Get common values
+  const host = document.getElementById("host").value;
+  const port = document.getElementById("port").value;
+  const database = document.getElementById("database").value;
+
+  let payload = {
+    host,
+    port,
+    extra: { database },
     authType: currentAuthType,
   };
 
-  // Only get values from the active authentication section
-  const authDetails = {};
-  const activeInputs = activeSection.querySelectorAll("input");
-  activeInputs.forEach((input) => {
-    if (input.value) {
-      authDetails[input.id.replace(/-/g, "_")] = input.value;
-    }
-  });
+  switch (currentAuthType) {
+    case "basic":
+      payload.username = document.getElementById("username").value;
+      payload.password = document.getElementById("password").value;
+      break;
 
-  const payload = { ...basePayload, ...authDetails };
+    case "iam_user":
+      payload.username = document.getElementById("access-key-id").value;
+      payload.password = document.getElementById("secret-access-key").value;
+      payload.extra.username = document.getElementById("username").value;
+      payload.region = document.getElementById("region").value;
+      break;
+
+    case "iam_role":
+      payload.username = document.getElementById("username").value;
+      payload.extra.aws_role_arn = document.getElementById("role-arn").value;
+      payload.extra.aws_external_id =
+        document.getElementById("external-id").value;
+      payload.region = document.getElementById("region").value;
+      break;
+  }
 
   const response = await fetch(`/workflows/v1/auth`, {
     method: "POST",
@@ -283,27 +299,41 @@ async function fetchMetadata() {
     const activeSection = document.querySelector(".auth-section.active");
     if (!activeSection) return false;
 
-    const basePayload = {
-      host: document.getElementById("host").value,
-      port: document.getElementById("port").value,
-      database: document.getElementById("database").value,
+    // Get common values
+    const host = document.getElementById("host").value;
+    const port = document.getElementById("port").value;
+    const database = document.getElementById("database").value;
+
+    let payload = {
+      host,
+      port,
+      database,
+      extra: {database},
       authType: currentAuthType,
       type: "all",
     };
 
-    // Only get values from the active authentication section
-    const authDetails = {};
-    const activeInputs = activeSection.querySelectorAll("input");
-    activeInputs.forEach((input) => {
-      if (input.value) {
-        authDetails[input.id.replace(/-/g, "_")] = input.value;
-      }
-    });
+    switch (currentAuthType) {
+      case "basic":
+        payload.username = document.getElementById("username").value;
+        payload.password = document.getElementById("password").value;
+        break;
 
-    const payload = {
-      ...basePayload,
-      ...authDetails,
-    };
+      case "iam_user":
+        payload.username = document.getElementById("access-key-id").value;
+        payload.password = document.getElementById("secret-access-key").value;
+        payload.extra.username = document.getElementById("username").value;
+        payload.region = document.getElementById("region").value;
+        break;
+
+      case "iam_role":
+        payload.username = document.getElementById("username").value;
+        payload.extra.aws_role_arn = document.getElementById("role-arn").value;
+        payload.extra.aws_external_id =
+          document.getElementById("external-id").value;
+        payload.region = document.getElementById("region").value;
+        break;
+    }
 
     const response = await fetch(`/workflows/v1/metadata`, {
       method: "POST",
@@ -637,28 +667,42 @@ async function runPreflightChecks() {
 
     const filters = formatFilters(metadataOptions);
 
-    const basePayload = {
-      host: document.getElementById("host").value,
-      port: document.getElementById("port").value,
-      database: document.getElementById("database").value,
+    // Get common values
+    const host = document.getElementById("host").value;
+    const port = document.getElementById("port").value;
+    const database = document.getElementById("database").value;
+
+    let credentials = {
+      host,
+      port,
+      extra: { database },
       authType: currentAuthType,
       type: "all",
     };
 
-    // Only get values from the active authentication section
-    const authDetails = {};
-    const activeInputs = activeSection.querySelectorAll("input");
-    activeInputs.forEach((input) => {
-      if (input.value) {
-        authDetails[input.id.replace(/-/g, "_")] = input.value;
-      }
-    });
+    switch (currentAuthType) {
+      case "basic":
+        credentials.username = document.getElementById("username").value;
+        credentials.password = document.getElementById("password").value;
+        break;
+
+      case "iam_user":
+        credentials.username = document.getElementById("access-key-id").value;
+        credentials.password = document.getElementById("secret-access-key").value;
+        credentials.extra.username = document.getElementById("username").value;
+        credentials.region = document.getElementById("region").value;
+        break;
+
+      case "iam_role":
+        credentials.username = document.getElementById("username").value;
+        credentials.extra.aws_role_arn = document.getElementById("role-arn").value;
+        credentials.extra.aws_external_id = document.getElementById("external-id").value;
+        credentials.region = document.getElementById("region").value;
+        break;
+    }
 
     const payload = {
-      credentials: {
-        ...basePayload,
-        ...authDetails,
-      },
+      credentials,
       metadata: {
         ...filters,
         temp_table_regex:
@@ -751,27 +795,43 @@ async function handleRunWorkflow() {
       const activeSection = document.querySelector(".auth-section.active");
       if (!activeSection) return false;
 
-      const basePayload = {
-        host: document.getElementById("host").value,
-        port: document.getElementById("port").value,
-        database: document.getElementById("database").value,
+      // Get common values
+      const host = document.getElementById("host").value;
+      const port = document.getElementById("port").value;
+      const database = document.getElementById("database").value;
+
+      let credentials = {
+        host,
+        port,
+        extra: { database },
         authType: currentAuthType,
+        type: "all",
       };
 
-      // Only get values from the active authentication section
-      const authDetails = {};
-      const activeInputs = activeSection.querySelectorAll("input");
-      activeInputs.forEach((input) => {
-        if (input.value) {
-          authDetails[input.id.replace(/-/g, "_")] = input.value;
-        }
-      });
+      switch (currentAuthType) {
+        case "basic":
+          credentials.username = document.getElementById("username").value;
+          credentials.password = document.getElementById("password").value;
+          break;
 
-      // Get credentials from page 1
-      const credentials = {
-        ...basePayload,
-        ...authDetails,
-      };
+        case "iam_user":
+          credentials.username = document.getElementById("access-key-id").value;
+          credentials.password =
+            document.getElementById("secret-access-key").value;
+          credentials.extra.username =
+            document.getElementById("username").value;
+          credentials.region = document.getElementById("region").value;
+          break;
+
+        case "iam_role":
+          credentials.username = document.getElementById("username").value;
+          credentials.extra.aws_role_arn =
+            document.getElementById("role-arn").value;
+          credentials.extra.aws_external_id =
+            document.getElementById("external-id").value;
+          credentials.region = document.getElementById("region").value;
+          break;
+      }
 
       runButton.disabled = true;
       runButton.textContent = "Starting...";
