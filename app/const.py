@@ -62,6 +62,12 @@ TABLE_EXTRACTION_SQL = """
         END * (pg_relation_size(c.oid) / pg_catalog.current_setting('block_size')::int))::bigint AS ROW_COUNT,
         C.relnatts AS COLUMN_COUNT,
         C.relkind AS TABLE_KIND,
+        CASE
+            WHEN C.relkind = 'r' THEN 'TABLE'
+            WHEN C.relkind = 'v' THEN 'VIEW'
+            WHEN C.relkind = 'm' THEN 'MATERIALIZED VIEW'
+            ELSE C.relkind::text
+        END AS TABLE_TYPE,
         C.relispartition AS IS_PARTITION,
         P.partstrat AS PARTITION_STRATEGY,
         PC.parition_count AS PARTITION_COUNT,
@@ -78,11 +84,7 @@ TABLE_EXTRACTION_SQL = """
         T.user_defined_type_name AS USER_DEFINED_TYPE_NAME,
         T.is_insertable_into AS IS_INSERTABLE_INTO,
         T.is_typed AS IS_TYPED,
-        T.commit_action AS COMMIT_ACTION,
-        CASE
-            WHEN t.table_type = 'BASE TABLE' THEN 'TABLE'
-            ELSE t.table_type
-        END AS TABLE_TYPE
+        T.commit_action AS COMMIT_ACTION
     FROM pg_class C
     LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
     LEFT JOIN pg_stat_user_tables PSUT ON (C.oid = PSUT.relid)
@@ -243,12 +245,11 @@ COLUMN_EXTRACTION_TEMP_TABLE_REGEX_SQL = "AND c.relname !~ '{exclude_table_regex
 
 PROCEDURE_EXTRACTION_SQL = """
 SELECT
-        current_database() AS TABLE_CAT,
-        N.nspname          AS TABLE_SCHEM,
-        N.nspname          AS PROCEDURE_SCHEM,
+        current_database() AS PROCEDURE_CATALOG,
+        N.nspname          AS PROCEDURE_SCHEMA,
         P.proname          AS PROCEDURE_NAME,
-        B.usename          AS PROC_OWNER,
-        P.prosrc           AS ROUTINE_DEFINITION
+        B.usename          AS SOURCE_OWNER,
+        P.prosrc           AS procedure_definition
     FROM  pg_catalog.pg_namespace N
         JOIN pg_catalog.pg_proc P ON pronamespace = N.oid
         JOIN pg_user B ON B.usesysid = P.proowner

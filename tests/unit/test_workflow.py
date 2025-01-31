@@ -10,10 +10,13 @@ from temporalio.client import Client
 from temporalio.testing import WorkflowEnvironment
 from temporalio.worker import Worker
 
-from app.activities.metadata_extraction.postgres import PostgresActivities
+from app.activities.metadata_extraction.postgres import (
+    PostgresMetadataExtractionActivities,
+)
 from app.clients import PostgreSQLClient
+from app.const import PROCEDURE_EXTRACTION_SQL
 from app.handlers import PostgresWorkflowHandler
-from app.transformers.atlas import CustomTransformer, PostgresTable
+from app.transformers.atlas import PostgresAtlasTransformer, PostgresTable
 
 # Type variables for activity results
 T = TypeVar("T")
@@ -130,16 +133,17 @@ def test_postgres_activities_sql_queries():
         TABLE_EXTRACTION_SQL,
     )
 
-    activities = PostgresActivities(
+    activities = PostgresMetadataExtractionActivities(
         sql_client_class=PostgreSQLClient,
         handler_class=PostgresWorkflowHandler,
-        transformer_class=CustomTransformer,
+        transformer_class=PostgresAtlasTransformer,
     )
 
     assert activities.fetch_database_sql == DATABASE_EXTRACTION_SQL
     assert activities.fetch_schema_sql == SCHEMA_EXTRACTION_SQL
     assert activities.fetch_table_sql == TABLE_EXTRACTION_SQL
     assert activities.fetch_column_sql == COLUMN_EXTRACTION_SQL
+    assert activities.fetch_procedure_sql == PROCEDURE_EXTRACTION_SQL
 
 
 def test_postgres_table():
@@ -189,8 +193,8 @@ def test_postgres_table():
 
 
 def test_custom_transformer_initialization():
-    """Test CustomTransformer initialization and entity class mappings"""
-    transformer = CustomTransformer(
+    """Test PostgresAtlasTransformer initialization and entity class mappings"""
+    transformer = PostgresAtlasTransformer(
         connector_name="test-connector", tenant_id="test-tenant"
     )
 

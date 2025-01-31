@@ -2,6 +2,7 @@ from typing import Any, Dict, Union
 
 from application_sdk.transformers.atlas import AtlasTransformer
 from application_sdk.transformers.atlas.sql import Table
+from application_sdk.transformers.common.utils import build_atlas_qualified_name
 from pyatlan.model import assets
 
 
@@ -34,10 +35,42 @@ class PostgresTable(Table):
         return super().parse_obj(obj)
 
 
-class CustomTransformer(AtlasTransformer):
+# TODO: move this to application_sdk
+class Procedure(assets.Procedure):
+    """Procedure entity transformer for Atlas.
+
+    This class handles the transformation of procedure metadata into Atlas Procedure entities.
+    """
+
+    @classmethod
+    def parse_obj(cls, obj: Dict[str, Any]) -> assets.Procedure:
+        try:
+            procedure = assets.Procedure.creator(
+                name=obj["procedure_name"],
+                definition=obj["procedure_definition"],
+                schema_qualified_name=build_atlas_qualified_name(
+                    obj["connection_qualified_name"],
+                    obj["procedure_catalog"],
+                    obj["procedure_schema"],
+                ),
+                schema_name=obj["procedure_schema"],
+                database_name=obj["procedure_catalog"],
+                database_qualified_name=build_atlas_qualified_name(
+                    obj["connection_qualified_name"],
+                    obj["procedure_catalog"],
+                ),
+                connection_qualified_name=obj["connection_qualified_name"],
+            )
+            return procedure
+        except AssertionError as e:
+            raise ValueError(f"Error creating Table Entity: {str(e)}")
+
+
+class PostgresAtlasTransformer(AtlasTransformer):
     def __init__(self, connector_name: str, tenant_id: str, **kwargs: Any):
         super().__init__(connector_name, tenant_id, **kwargs)
 
         self.entity_class_definitions["TABLE"] = PostgresTable
         self.entity_class_definitions["VIEW"] = PostgresTable
         self.entity_class_definitions["MATERIALIZED VIEW"] = PostgresTable
+        self.entity_class_definitions["PROCEDURE"] = Procedure
