@@ -1,7 +1,7 @@
 from typing import Any, Dict, Union
 
 from application_sdk.transformers.atlas import AtlasTransformer
-from application_sdk.transformers.atlas.sql import Column, Table
+from application_sdk.transformers.atlas.sql import Column, Procedure, Table
 from pyatlan.model import assets
 
 
@@ -110,3 +110,4 @@ class PostgresAtlasTransformer(AtlasTransformer):
 
         self.entity_class_definitions["TABLE"] = PostgresTable
         self.entity_class_definitions["COLUMN"] = PostgresColumn
+        self.entity_class_definitions["EXTRA-PROCEDURE"] = Procedure
