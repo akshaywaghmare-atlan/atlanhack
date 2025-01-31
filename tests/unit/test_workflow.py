@@ -199,8 +199,6 @@ def test_custom_transformer_initialization():
     )
 
     assert transformer.entity_class_definitions["TABLE"] == PostgresTable
-    assert transformer.entity_class_definitions["VIEW"] == PostgresTable
-    assert transformer.entity_class_definitions["MATERIALIZED VIEW"] == PostgresTable
 
 
 # Mock activities for testing

@@ -135,7 +135,6 @@ TABLE_EXTRACTION_SQL = """
 """
 TABLE_EXTRACTION_TEMP_TABLE_REGEX_SQL = "AND T.TABLE_NAME !~ '{exclude_table_regex}'"
 
-
 COLUMN_EXTRACTION_SQL = """
 SELECT
     current_database() AS TABLE_CATALOG,
@@ -161,21 +160,9 @@ SELECT
         WHEN t.typtype = 'b' AND t.typelem <> 0 THEN t.typlen
         ELSE NULL
     END AS CHARACTER_OCTET_LENGTH,
-    CASE
-        WHEN a.attgenerated = 's' THEN 'STORED'
-        WHEN a.attgenerated = 'v' THEN 'VIRTUAL'
-        ELSE 'NEVER'
-    END AS IS_GENERATEDCOLUMN,
-    CASE
-        WHEN a.attidentity = 'a' THEN 'YES'
-        WHEN a.attidentity = 'd' THEN 'YES'
-        ELSE 'NO'
-    END AS IS_IDENTITY,
-    CASE
-        WHEN a.attidentity = 'a' THEN 'YES'
-        WHEN a.attidentity = 'd' THEN 'NO'
-        ELSE NULL
-    END AS IDENTITY_CYCLE,
+    'NEVER' AS IS_GENERATEDCOLUMN,  -- Simplified for older versions
+    'NO' AS IS_IDENTITY,  -- Simplified for older versions
+    NULL AS IDENTITY_CYCLE,  -- Simplified for older versions
     CASE
         WHEN t.typelem <> 0 THEN t.typelem
         ELSE t.oid
@@ -195,8 +182,8 @@ SELECT
         WHEN c.relkind = 'm' THEN 'MATERIALIZED VIEW'
         ELSE c.relkind::text
     END AS TABLE_TYPE,
-    c.relispartition AS BELONGS_TO_PARTITION,
-    CASE WHEN c.relkind = 'p' THEN true ELSE false END AS PARTITIONED_TABLE,
+    false AS BELONGS_TO_PARTITION,  -- Simplified for older versions
+    false AS PARTITIONED_TABLE,  -- Simplified for older versions
     CASE
         WHEN con.contype = 'p' THEN 'PRIMARY KEY'
         WHEN con.contype = 'f' THEN 'FOREIGN KEY'
@@ -207,15 +194,7 @@ SELECT
         ELSE NULL
     END AS CONSTRAINT_TYPE,
     con.conname AS CONSTRAINT_NAME,
-    CASE
-        WHEN c.relispartition THEN (
-            SELECT a.attnum
-            FROM pg_attribute a
-            JOIN pg_partitioned_table pt ON pt.partrelid = c.oid
-            WHERE a.attrelid = c.oid AND a.attnum = ANY(pt.partattrs)
-        )
-        ELSE NULL
-    END AS PARTITION_ORDER
+    NULL AS PARTITION_ORDER  -- Simplified for older versions
 FROM
     pg_catalog.pg_attribute a
 JOIN

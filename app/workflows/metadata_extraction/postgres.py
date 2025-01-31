@@ -79,20 +79,6 @@ class PostgresMetadataExtractionWorkflow(SQLMetadataExtractionWorkflow):
                 retry_policy,
             ),
         ]
-
-        import_tags = workflow_args.get("metadata", {}).get("import_tags", False)
-        if import_tags:
-            fetch_and_transforms.append(
-                self.fetch_and_transform(
-                    self.activities_cls.fetch_tags, workflow_args, retry_policy
-                )
-            )
-            fetch_and_transforms.append(
-                self.fetch_and_transform(
-                    self.activities_cls.fetch_tag_refs, workflow_args, retry_policy
-                )
-            )
-
         await asyncio.gather(*fetch_and_transforms)
 
     @staticmethod
