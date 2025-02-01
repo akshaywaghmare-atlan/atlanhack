@@ -14,7 +14,7 @@ pytest-asyncio = "^0.24.0"
 # application-sdk = { path = "../application-sdk/", develop = true, extras = ["workflows", "dashboard", "daft"]}
 # use remote application-sdk repository
 
-application-sdk = {git = "git@github.com:atlanhq/application-sdk.git", rev = "dff15221234de9f86abde9e1c1ca91a54b47f586", extras = ["workflows", "dashboard", "daft"]}
+application-sdk = {git = "git@github.com:atlanhq/application-sdk.git", rev = "081e6b82ba04f06c468ed6fa455fd756622b2dbb", extras = ["workflows", "dashboard", "daft"]}
 psycopg = {extras = ["binary"], version = "^3.2.3"}
 jinja2 = "^3.1.2"
 

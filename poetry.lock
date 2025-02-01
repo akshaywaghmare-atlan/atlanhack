@@ -222,8 +222,8 @@ workflows = ["dapr (>=1.14.0,<2.0.0)", "pandas (>=2.2.3,<3.0.0)", "temporalio (>
 [package.source]
 type = "git"
 url = "git@github.com:atlanhq/application-sdk.git"
-reference = "dff15221234de9f86abde9e1c1ca91a54b47f586"
-resolved_reference = "dff15221234de9f86abde9e1c1ca91a54b47f586"
+reference = "081e6b82ba04f06c468ed6fa455fd756622b2dbb"
+resolved_reference = "081e6b82ba04f06c468ed6fa455fd756622b2dbb"
 
 [[package]]
 name = "asgiref"
@@ -260,17 +260,17 @@ tests-mypy = ["mypy (>=1.11.1)", "pytest-mypy-plugins"]
 
 [[package]]
 name = "boto3"
-version = "1.36.10"
+version = "1.36.11"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "boto3-1.36.10-py3-none-any.whl", hash = "sha256:5f8d5c2024a2d1411d3d67abb7357ec7d4c6162e3f1c396dc9b79d042cfd0a80"},
-    {file = "boto3-1.36.10.tar.gz", hash = "sha256:d2f1010db699326b26fbd465d91c4b49177c9d995d7e72c0f31335f139efa0d2"},
+    {file = "boto3-1.36.11-py3-none-any.whl", hash = "sha256:641dd772eac111d9443258f0f5491c57c2af47bddae94a8d32de19edb5bf7b1c"},
+    {file = "boto3-1.36.11.tar.gz", hash = "sha256:b40fbf2c0f22e55b67df95475a68bb72be5169097180a875726b6b884339ac8b"},
 ]
 
 [package.dependencies]
-botocore = ">=1.36.10,<1.37.0"
+botocore = ">=1.36.11,<1.37.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.11.0,<0.12.0"
 
@@ -279,13 +279,13 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "boto3-stubs"
-version = "1.36.10"
-description = "Type annotations for boto3 1.36.10 generated with mypy-boto3-builder 8.9.0"
+version = "1.36.11"
+description = "Type annotations for boto3 1.36.11 generated with mypy-boto3-builder 8.9.0"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "boto3_stubs-1.36.10-py3-none-any.whl", hash = "sha256:fda0b92e50e0b30ac54807b9e10e06e9224f699ccce80be8ac426cdc63f09ff1"},
-    {file = "boto3_stubs-1.36.10.tar.gz", hash = "sha256:fdf82fbe27c4b909df13080922fe27b2e565bf5b546bfec9805e66e983c1b5d9"},
+    {file = "boto3_stubs-1.36.11-py3-none-any.whl", hash = "sha256:4e1e714a29142befcf25c13069016cd3fd7693bd6614dbc34458203de773e507"},
+    {file = "boto3_stubs-1.36.11.tar.gz", hash = "sha256:b41cd3cef5c442f2f77d10a4609fffaa8c223232b361154af674f559651f7089"},
 ]
 
 [package.dependencies]
@@ -341,7 +341,7 @@ bedrock-data-automation-runtime = ["mypy-boto3-bedrock-data-automation-runtime (
 bedrock-runtime = ["mypy-boto3-bedrock-runtime (>=1.36.0,<1.37.0)"]
 billing = ["mypy-boto3-billing (>=1.36.0,<1.37.0)"]
 billingconductor = ["mypy-boto3-billingconductor (>=1.36.0,<1.37.0)"]
-boto3 = ["boto3 (==1.36.10)"]
+boto3 = ["boto3 (==1.36.11)"]
 braket = ["mypy-boto3-braket (>=1.36.0,<1.37.0)"]
 budgets = ["mypy-boto3-budgets (>=1.36.0,<1.37.0)"]
 ce = ["mypy-boto3-ce (>=1.36.0,<1.37.0)"]
@@ -704,13 +704,13 @@ xray = ["mypy-boto3-xray (>=1.36.0,<1.37.0)"]
 
 [[package]]
 name = "botocore"
-version = "1.36.10"
+version = "1.36.11"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "botocore-1.36.10-py3-none-any.whl", hash = "sha256:45c8a6e01dc18d44a13ba688f1d60ad562db8154b08c46b412387ea040a741c2"},
-    {file = "botocore-1.36.10.tar.gz", hash = "sha256:d27bb73f0ea81395527a6298ac0a7ea5b2958094169f7cf7d48e3f4e4bc21b65"},
+    {file = "botocore-1.36.11-py3-none-any.whl", hash = "sha256:82c5660027f696608d0e55feb08c146c11c7ebeba7615961c7765dcf6009a00d"},
+    {file = "botocore-1.36.11.tar.gz", hash = "sha256:c919be883f95b9e0c3021429a365d40cd7944b8345a07af30dc8d891ceefe07a"},
 ]
 
 [package.dependencies]
@@ -723,13 +723,13 @@ crt = ["awscrt (==0.23.8)"]
 
 [[package]]
 name = "botocore-stubs"
-version = "1.36.10"
+version = "1.36.11"
 description = "Type annotations and code completion for botocore"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "botocore_stubs-1.36.10-py3-none-any.whl", hash = "sha256:c9356eb41d1b75a1d55f4870f735017ffe41a25bca8c35dff9883b5ffe38862b"},
-    {file = "botocore_stubs-1.36.10.tar.gz", hash = "sha256:26e6f082be2626280e8021002b5bb58f80df7ce9ad5e017901a031bf41417b87"},
+    {file = "botocore_stubs-1.36.11-py3-none-any.whl", hash = "sha256:f9dfb3f078a83de4383806680890e24508eb0c84f6468b109272e934a21c2705"},
+    {file = "botocore_stubs-1.36.11.tar.gz", hash = "sha256:4c18f0994254456f834d0129ed1f49421c8cd80047c4e5db90070f69f0e6f3d2"},
 ]
 
 [package.dependencies]
@@ -4012,4 +4012,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11.10"
-content-hash = "4f931a07d0e6b7aa73c66f0aca04cac9e34c2099464c4ad213fda404123c5096"
+content-hash = "084f98e512136af9a8333766e81ec743daa4ec9aa35dc6cb728e73565c959733"
