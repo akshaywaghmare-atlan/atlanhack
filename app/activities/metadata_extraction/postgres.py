@@ -40,10 +40,10 @@ class PostgresMetadataExtractionActivities(SQLMetadataExtractionActivities):
     @auto_heartbeater
     @transform(
         batch_input=SQLQueryInput(query="fetch_procedure_sql"),
-        raw_output=JsonOutput(output_suffix="/raw/extra-procedure"),
+        raw_output=JsonOutput(output_suffix="/raw/extras-procedure"),
     )
     async def fetch_procedures(
         self, batch_input: pd.DataFrame, raw_output: JsonOutput, **kwargs
     ):
         await raw_output.write_batched_dataframe(batch_input)
-        return raw_output.get_metadata(typename="extra-procedure")
+        return raw_output.get_metadata(typename="extras-procedure")

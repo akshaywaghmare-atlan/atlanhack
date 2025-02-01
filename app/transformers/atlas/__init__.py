@@ -110,4 +110,4 @@ class PostgresAtlasTransformer(AtlasTransformer):
 
         self.entity_class_definitions["TABLE"] = PostgresTable
         self.entity_class_definitions["COLUMN"] = PostgresColumn
-        self.entity_class_definitions["EXTRA-PROCEDURE"] = Procedure
+        self.entity_class_definitions["EXTRAS-PROCEDURE"] = Procedure
