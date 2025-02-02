@@ -11,6 +11,11 @@ from utils.utils import parse_credentials_extra
 
 
 class PostgreSQLClient(AsyncSQLClient):
+    source_connection_params = {
+        "application_name": "Atlan",
+        "connect_timeout": 5,
+    }
+
     def get_iam_user_connection_string(self):
         extra = parse_credentials_extra(self.credentials)
         aws_access_key_id = self.credentials["username"]
@@ -82,12 +87,23 @@ class PostgreSQLClient(AsyncSQLClient):
     def get_sqlalchemy_connection_string(self) -> str:
         authType = self.credentials.get("authType", "basic")  # Default to basic auth
 
+        connection_string = ""
+
         match authType:
             case "iam_user":
-                return self.get_iam_user_connection_string()
+                connection_string = self.get_iam_user_connection_string()
             case "iam_role":
-                return self.get_iam_role_connection_string()
+                connection_string = self.get_iam_role_connection_string()
             case "basic":
-                return self.get_basic_connection_string()
+                connection_string = self.get_basic_connection_string()
             case _:
                 raise ValueError(f"Invalid auth type: {authType}")
+
+        for key, value in self.source_connection_params.items():
+            if "?" not in connection_string:
+                connection_string += "?"
+            else:
+                connection_string += "&"
+            connection_string += f"{key}={value}"
+
+        return connection_string
