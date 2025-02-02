@@ -63,7 +63,7 @@ TABLE_EXTRACTION_SQL = """
         C.relnatts AS COLUMN_COUNT,
         C.relkind AS TABLE_KIND,
         CASE
-            WHEN C.relkind = 'r' THEN 'TABLE'
+            WHEN C.relkind IN ('r', 'p', 'f') THEN 'TABLE'
             WHEN C.relkind = 'v' THEN 'VIEW'
             WHEN C.relkind = 'm' THEN 'MATERIALIZED VIEW'
             ELSE C.relkind::text
@@ -177,7 +177,7 @@ SELECT
         ELSE NULL
     END AS DECIMAL_DIGITS,
     CASE
-        WHEN c.relkind = 'r' THEN 'TABLE'
+        WHEN c.relkind IN ('r', 'p', 'f') THEN 'TABLE'
         WHEN c.relkind = 'v' THEN 'VIEW'
         WHEN c.relkind = 'm' THEN 'MATERIALIZED VIEW'
         ELSE c.relkind::text
