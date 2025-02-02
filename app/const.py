@@ -27,7 +27,7 @@ SCHEMA_EXTRACTION_SQL = """
 SELECT
     s.*,
     table_counts.table_count,
-    table_counts.view_count
+    table_counts.views_count
 FROM
     information_schema.schemata s
 LEFT JOIN (

@@ -67,9 +67,7 @@ class PostgresTable(Table):
                 query=obj.get("view_definition", ""),
             )
         elif obj.get("table_type") == "MATERIALIZED VIEW":
-            view_definition = (
-                "CREATE OR REPLACE MATERIALIZED VIEW {view_name} AS {query}"
-            )
+            view_definition = "CREATE MATERIALIZED VIEW {view_name} AS {query}"
             table.attributes.definition = view_definition.format(
                 view_name=obj.get("table_name", ""),
                 query=obj.get("view_definition", ""),
