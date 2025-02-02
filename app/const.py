@@ -27,20 +27,17 @@ SCHEMA_EXTRACTION_SQL = """
 SELECT
     s.*,
     table_counts.table_count,
-    table_counts.view_count,
-    table_counts.materialized_view_count
+    table_counts.view_count
 FROM
     information_schema.schemata s
 LEFT JOIN (
-    SELECT
-        table_schema,
-        SUM(CASE WHEN table_type = 'BASE TABLE' THEN 1 ELSE 0 END) as table_count,
-        SUM(CASE WHEN table_type = 'VIEW' THEN 1 ELSE 0 END) as view_count,
-        SUM(CASE WHEN table_type = 'MATERIALIZED VIEW' THEN 1 ELSE 0 END) as materialized_view_count
-    FROM
-        information_schema.tables
-    GROUP BY
-        table_schema
+    select
+	    N.nspname as table_schema,
+	    SUM(CASE WHEN C.relkind IN ('r', 'p', 'f') THEN 1 ELSE 0 END) as table_count,
+	    SUM(CASE WHEN C.relkind IN ('m', 'v') THEN 1 ELSE 0 END) as views_count
+    from pg_class as C
+    LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
+    LEFT JOIN information_schema.tables T ON (C.relname = T.table_name AND N.nspname = T.table_schema) group by N.nspname
 ) as table_counts
 ON s.schema_name = table_counts.table_schema
 WHERE
