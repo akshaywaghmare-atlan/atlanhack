@@ -57,26 +57,31 @@ class PostgresMetadataExtractionWorkflow(SQLMetadataExtractionWorkflow):
                 self.activities_cls.fetch_databases,
                 workflow_args,
                 retry_policy,
+                start_to_close_timeout_seconds=7200,  # 2 hours
             ),
             self.fetch_and_transform(
                 self.activities_cls.fetch_schemas,
                 workflow_args,
                 retry_policy,
+                start_to_close_timeout_seconds=7200,
             ),
             self.fetch_and_transform(
                 self.activities_cls.fetch_tables,
                 workflow_args,
                 retry_policy,
+                start_to_close_timeout_seconds=7200,
             ),
             self.fetch_and_transform(
                 self.activities_cls.fetch_columns,
                 workflow_args,
                 retry_policy,
+                start_to_close_timeout_seconds=7200,
             ),
             self.fetch_and_transform(
                 self.activities_cls.fetch_procedures,
                 workflow_args,
                 retry_policy,
+                start_to_close_timeout_seconds=7200,
             ),
         ]
         await asyncio.gather(*fetch_and_transforms)
