@@ -60,7 +60,9 @@ TABLE_EXTRACTION_SQL = """
         C.relnatts AS COLUMN_COUNT,
         C.relkind AS TABLE_KIND,
         CASE
-            WHEN C.relkind IN ('r', 'p', 'f') THEN 'TABLE'
+            WHEN C.relkind = 'r' THEN 'TABLE'
+            WHEN C.relkind = 'p' THEN 'PARTITIONED TABLE'
+            WHEN C.relkind = 'f' THEN 'FOREIGN TABLE'
             WHEN C.relkind = 'v' THEN 'VIEW'
             WHEN C.relkind = 'm' THEN 'MATERIALIZED VIEW'
             ELSE C.relkind::text
@@ -174,13 +176,21 @@ SELECT
         ELSE NULL
     END AS DECIMAL_DIGITS,
     CASE
-        WHEN c.relkind IN ('r', 'p', 'f') THEN 'TABLE'
+        WHEN c.relkind = 'r' THEN 'TABLE'
+        WHEN c.relkind = 'p' THEN 'PARTITIONED TABLE'
+        WHEN c.relkind = 'f' THEN 'FOREIGN TABLE'
         WHEN c.relkind = 'v' THEN 'VIEW'
         WHEN c.relkind = 'm' THEN 'MATERIALIZED VIEW'
         ELSE c.relkind::text
     END AS TABLE_TYPE,
-    false AS BELONGS_TO_PARTITION,  -- Simplified for older versions
-    false AS PARTITIONED_TABLE,  -- Simplified for older versions
+    CASE
+        WHEN C.relispartition THEN 'YES'
+        ELSE 'NO'
+    END AS BELONGS_TO_PARTITION,  -- Simplified for older versions
+    CASE
+        WHEN C.relispartition THEN 'YES'
+        ELSE 'NO'
+    END AS PARTITIONED_TABLE,  -- Simplified for older versions
     CASE
         WHEN con.contype = 'p' THEN 'PRIMARY KEY'
         WHEN con.contype = 'f' THEN 'FOREIGN KEY'
