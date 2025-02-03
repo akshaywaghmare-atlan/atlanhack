@@ -40,14 +40,6 @@ class PostgresTable(Table):
         elif hasattr(table, "is_partitioned"):
             table.is_partitioned = False
 
-        if obj.get("is_partition", False):
-            if obj.get("partitioned_parent_table", False):
-                table.parent_table_partition = obj.get("partitioned_parent_table", "")
-                pass
-            else:
-                table.parent_table = None
-                pass
-
         if not table.custom_attributes:
             table.custom_attributes = {}
 
