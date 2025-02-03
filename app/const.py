@@ -146,7 +146,7 @@ SELECT
         WHEN a.attnotnull THEN 'NO'
         ELSE 'YES'
     END AS IS_NULLABLE,
-    format_type(a.atttypid, a.atttypmod) AS DATA_TYPE,
+    t.typname AS DATA_TYPE,
     CASE
         WHEN pg_get_expr(d.adbin, d.adrelid) LIKE 'nextval%' THEN 'YES'
         ELSE 'NO'
