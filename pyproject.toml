@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "phoenix-postgres-app"
+name = "atlan-postgres-app"
 version = "0.1.0"
 description = ""
-authors = ["Amit Prabhu <amit.dp180@gmail.com>"]
+authors = ["Atlan Apps Team <apps@atlan.com>"]
 readme = "README.md"
 package-mode = false
 
