@@ -207,19 +207,24 @@ async function performConnectionTest() {
 
   switch (currentAuthType) {
     case "basic":
-      payload.username = document.getElementById("username").value;
+      // Get username from the active section instead of hardcoding
+      const basicUsername = activeSection.querySelector("#username").value;
+      payload.username = basicUsername;
       payload.password = document.getElementById("password").value;
       break;
 
     case "iam_user":
       payload.username = document.getElementById("access-key-id").value;
       payload.password = document.getElementById("secret-access-key").value;
-      payload.extra.username = document.getElementById("username").value;
+      // Get username from the active section for IAM user
+      payload.extra.username = activeSection.querySelector("#username").value;
       payload.region = document.getElementById("region").value;
       break;
 
     case "iam_role":
-      payload.username = document.getElementById("username").value;
+      // Get username from the active section for IAM role
+      const iamRoleUsername = activeSection.querySelector("#username").value;
+      payload.username = iamRoleUsername;
       payload.extra.aws_role_arn = document.getElementById("role-arn").value;
       payload.extra.aws_external_id =
         document.getElementById("external-id").value;
@@ -308,26 +313,26 @@ async function fetchMetadata() {
       host,
       port,
       database,
-      extra: {database},
+      extra: { database },
       authType: currentAuthType,
       type: "all",
     };
 
     switch (currentAuthType) {
       case "basic":
-        payload.username = document.getElementById("username").value;
+        payload.username = activeSection.querySelector("#username").value;
         payload.password = document.getElementById("password").value;
         break;
 
       case "iam_user":
         payload.username = document.getElementById("access-key-id").value;
         payload.password = document.getElementById("secret-access-key").value;
-        payload.extra.username = document.getElementById("username").value;
+        payload.extra.username = activeSection.querySelector("#username").value;
         payload.region = document.getElementById("region").value;
         break;
 
       case "iam_role":
-        payload.username = document.getElementById("username").value;
+        payload.username = activeSection.querySelector("#username").value;
         payload.extra.aws_role_arn = document.getElementById("role-arn").value;
         payload.extra.aws_external_id =
           document.getElementById("external-id").value;
@@ -682,21 +687,25 @@ async function runPreflightChecks() {
 
     switch (currentAuthType) {
       case "basic":
-        credentials.username = document.getElementById("username").value;
+        credentials.username = activeSection.querySelector("#username").value;
         credentials.password = document.getElementById("password").value;
         break;
 
       case "iam_user":
         credentials.username = document.getElementById("access-key-id").value;
-        credentials.password = document.getElementById("secret-access-key").value;
-        credentials.extra.username = document.getElementById("username").value;
+        credentials.password =
+          document.getElementById("secret-access-key").value;
+        credentials.extra.username =
+          activeSection.querySelector("#username").value;
         credentials.region = document.getElementById("region").value;
         break;
 
       case "iam_role":
-        credentials.username = document.getElementById("username").value;
-        credentials.extra.aws_role_arn = document.getElementById("role-arn").value;
-        credentials.extra.aws_external_id = document.getElementById("external-id").value;
+        credentials.username = activeSection.querySelector("#username").value;
+        credentials.extra.aws_role_arn =
+          document.getElementById("role-arn").value;
+        credentials.extra.aws_external_id =
+          document.getElementById("external-id").value;
         credentials.region = document.getElementById("region").value;
         break;
     }
@@ -810,7 +819,7 @@ async function handleRunWorkflow() {
 
       switch (currentAuthType) {
         case "basic":
-          credentials.username = document.getElementById("username").value;
+          credentials.username = activeSection.querySelector("#username").value;
           credentials.password = document.getElementById("password").value;
           break;
 
@@ -819,12 +828,12 @@ async function handleRunWorkflow() {
           credentials.password =
             document.getElementById("secret-access-key").value;
           credentials.extra.username =
-            document.getElementById("username").value;
+            activeSection.querySelector("#username").value;
           credentials.region = document.getElementById("region").value;
           break;
 
         case "iam_role":
-          credentials.username = document.getElementById("username").value;
+          credentials.username = activeSection.querySelector("#username").value;
           credentials.extra.aws_role_arn =
             document.getElementById("role-arn").value;
           credentials.extra.aws_external_id =
