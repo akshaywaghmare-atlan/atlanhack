@@ -13,7 +13,7 @@ on:
 jobs:
   build:
     name: publish-argo-docker-image
-    runs-on: [self-hosted, phoenix]
+    runs-on: ubuntu-latest
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
@@ -57,7 +57,7 @@ jobs:
           context: .
           file: ./Dockerfile.Argo
           push: true
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           tags: |
             ghcr.io/atlanhq/${{ github.event.repository.name }}-argo-${{ steps.get_lowercase_branch.outputs.lowercase_branch }}:latest
             ghcr.io/atlanhq/${{ github.event.repository.name }}-argo-${{ steps.get_lowercase_branch.outputs.lowercase_branch }}:${{ steps.get_version.outputs.version }}
@@ -83,7 +83,7 @@ jobs:
       #     context: .
       #     file: ./Dockerfile.Argo
       #     push: true
-      #     platforms: linux/amd64,linux/arm64
+      #     platforms: linux/amd64
       #     build-args: |
       #       BASE_IMAGE=harbor-phoenix.atlan.dev/applications/${{ github.event.repository.name }}:main-latest
       #     tags: |

@@ -6,18 +6,20 @@ from application_sdk.application.fastapi import FastAPIApplication, HttpWorkflow
 from application_sdk.clients.temporal import TemporalClient
 from application_sdk.common.logger_adaptors import AtlanLoggerAdapter
 from application_sdk.worker import Worker
-from application_sdk.workflows.metadata_extraction.sql import (
-    SQLMetadataExtractionWorkflow,
-)
 from fastapi import Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from app.activities.metadata_extraction.postgres import PostgresActivities
+from app.activities.metadata_extraction.postgres import (
+    PostgresMetadataExtractionActivities,
+)
 from app.clients import PostgreSQLClient
 from app.handlers import PostgresWorkflowHandler
-from app.transformers.atlas import CustomTransformer
+from app.transformers.atlas import PostgresAtlasTransformer
+from app.workflows.metadata_extraction.postgres import (
+    PostgresMetadataExtractionWorkflow,
+)
 
 logger = AtlanLoggerAdapter(logging.getLogger(__name__))
 
@@ -63,17 +65,20 @@ async def initialize_and_start():
     # Creating controllers
     handler = PostgresWorkflowHandler(sql_client=sql_client)
 
-    activities = PostgresActivities(
+    activities = PostgresMetadataExtractionActivities(
         sql_client_class=PostgreSQLClient,
         handler_class=PostgresWorkflowHandler,
-        transformer_class=CustomTransformer,
+        transformer_class=PostgresAtlasTransformer,
     )
 
     # Creating workflow
     worker: Worker = Worker(
         temporal_client=temporal_client,
-        workflow_classes=[SQLMetadataExtractionWorkflow],
-        temporal_activities=SQLMetadataExtractionWorkflow.get_activities(activities),
+        workflow_classes=[PostgresMetadataExtractionWorkflow],
+        temporal_activities=PostgresMetadataExtractionWorkflow.get_activities(
+            activities
+        ),
+        passthrough_modules=["application_sdk", "pandas", "os", "app"],
     )
 
     # Creating FastAPI application
@@ -82,14 +87,8 @@ async def initialize_and_start():
         temporal_client=temporal_client,
     )
     fast_api_app.register_workflow(
-        SQLMetadataExtractionWorkflow,
-        [
-            HttpWorkflowTrigger(
-                endpoint="/start",
-                methods=["POST"],
-                workflow_class=SQLMetadataExtractionWorkflow,
-            )
-        ],
+        PostgresMetadataExtractionWorkflow,
+        triggers=[HttpWorkflowTrigger(endpoint="/start", methods=["POST"])],
     )
     # Setup routes
     setup_routes(fast_api_app)

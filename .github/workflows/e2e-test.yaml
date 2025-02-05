@@ -92,20 +92,22 @@ jobs:
               "authType": "basic",
               "host": "${{ secrets.POSTGRES_DB_HOST }}",
               "port": 5432,
+              "extra": {
+                "database": "assets_100k"
+              },
               "username": "postgres",
               "password": "${{ secrets.POSTGRES_DB_PASSWORD }}",
-              "database": "assets_100k"
+              "region": "ap-south-1"
             },
             "connection": {
               "connection_name": "postgres",
               "connection_qualified_name": "default/postgres/0"
             },
             "metadata": {
-              "exclude_filter": "{}",
-              "include_filter": "{}",
-              "temp_table_regex": "",
-              "advanced_config_strategy": "default",
-              "extraction_method": "direct"
+              "exclude-filter": "{}",
+              "include-filter": "{}",
+              "temp-table-regex": "",
+              "extraction-method": "direct"
             }
           }' \
           http://0.0.0.0:8000/workflows/v1/start > response.json &

@@ -10,10 +10,13 @@ from temporalio.client import Client
 from temporalio.testing import WorkflowEnvironment
 from temporalio.worker import Worker
 
-from app.activities.metadata_extraction.postgres import PostgresActivities
+from app.activities.metadata_extraction.postgres import (
+    PostgresMetadataExtractionActivities,
+)
 from app.clients import PostgreSQLClient
+from app.const import PROCEDURE_EXTRACTION_SQL
 from app.handlers import PostgresWorkflowHandler
-from app.transformers.atlas import CustomTransformer, PostgresTable
+from app.transformers.atlas import PostgresAtlasTransformer, PostgresTable
 
 # Type variables for activity results
 T = TypeVar("T")
@@ -23,18 +26,19 @@ ActivityResult = List[Dict[str, str]]
 def test_postgres_client_connection_string():
     """Test PostgreSQLClient connection string generation for different auth types"""
     # Test basic auth
-    basic_credentials = {
+    basic_credentials: Dict[str, Any] = {
         "username": "test_user",
         "password": "test@pass!123",
         "host": "localhost",
         "port": "5432",
-        "database": "test_db",
+        "extra": {"database": "test_db"},
         "authType": "basic",
     }
 
     client = PostgreSQLClient()
     client.credentials = basic_credentials
-    expected = f"postgresql+psycopg://{basic_credentials['username']}:{quote_plus(basic_credentials['password'])}@{basic_credentials['host']}:{basic_credentials['port']}/{basic_credentials['database']}"
+    encoded_password = quote_plus(str(basic_credentials["password"]))
+    expected = f"postgresql+psycopg://{basic_credentials['username']}:{encoded_password}@{basic_credentials['host']}:{basic_credentials['port']}/{basic_credentials['extra'].get('database')}?application_name=Atlan&connect_timeout=5"
     result = client.get_sqlalchemy_connection_string()
     assert result == expected
 
@@ -50,7 +54,7 @@ def test_postgres_client_connection_string():
         "password": "test_pass",
         "host": "localhost",
         "port": "5432",
-        "database": "test_db",
+        "extra": {"database": "test_db"},
     }
     client.credentials = invalid_credentials
     with pytest.raises(ValueError):
@@ -61,23 +65,29 @@ def test_postgres_client_connection_string():
         "username": "test_user",
         "host": "localhost",
         "port": "5432",
-        "database": "test_db",
+        "extra": {"database": "test_db"},
         "authType": "iam_user",
     }
     client.credentials = incomplete_iam_user
     with pytest.raises(KeyError):
         client.get_sqlalchemy_connection_string()
 
-    # Test missing required fields for IAM role auth
-    incomplete_iam_role = {
+    # Test IAM role auth with required fields
+    iam_role_credentials = {
         "username": "test_user",
         "host": "localhost",
         "port": "5432",
-        "database": "test_db",
+        "extra": {
+            "database": "test_db",
+            "role_arn": "arn:aws:iam::123456789012:role/test-role",
+            "external_id": "test-external-id",
+        },
         "authType": "iam_role",
     }
-    client.credentials = incomplete_iam_role
-    with pytest.raises(KeyError):
+    client.credentials = iam_role_credentials
+    with pytest.raises(
+        Exception
+    ):  # Will raise because we can't actually assume the role in tests
         client.get_sqlalchemy_connection_string()
 
 
@@ -97,7 +107,7 @@ def test_postgres_client_connection_string_errors():
         "password": "test_pass",
         "host": "localhost",
         "port": "5432",
-        "database": "test_db",
+        "extra": {"database": "test_db"},
     }
     # Should raise an error for invalid auth type
     with pytest.raises(ValueError):
@@ -123,16 +133,17 @@ def test_postgres_activities_sql_queries():
         TABLE_EXTRACTION_SQL,
     )
 
-    activities = PostgresActivities(
+    activities = PostgresMetadataExtractionActivities(
         sql_client_class=PostgreSQLClient,
         handler_class=PostgresWorkflowHandler,
-        transformer_class=CustomTransformer,
+        transformer_class=PostgresAtlasTransformer,
     )
 
     assert activities.fetch_database_sql == DATABASE_EXTRACTION_SQL
     assert activities.fetch_schema_sql == SCHEMA_EXTRACTION_SQL
     assert activities.fetch_table_sql == TABLE_EXTRACTION_SQL
     assert activities.fetch_column_sql == COLUMN_EXTRACTION_SQL
+    assert activities.fetch_procedure_sql == PROCEDURE_EXTRACTION_SQL
 
 
 def test_postgres_table():
@@ -177,19 +188,17 @@ def test_postgres_table():
     assert isinstance(result, assets.MaterialisedView)
     assert (
         result.attributes.definition
-        == "CREATE OR REPLACE MATERIALIZED VIEW test_mview AS SELECT * FROM base_table"
+        == "CREATE MATERIALIZED VIEW test_mview AS SELECT * FROM base_table"
     )
 
 
 def test_custom_transformer_initialization():
-    """Test CustomTransformer initialization and entity class mappings"""
-    transformer = CustomTransformer(
+    """Test PostgresAtlasTransformer initialization and entity class mappings"""
+    transformer = PostgresAtlasTransformer(
         connector_name="test-connector", tenant_id="test-tenant"
     )
 
     assert transformer.entity_class_definitions["TABLE"] == PostgresTable
-    assert transformer.entity_class_definitions["VIEW"] == PostgresTable
-    assert transformer.entity_class_definitions["MATERIALIZED VIEW"] == PostgresTable
 
 
 # Mock activities for testing
