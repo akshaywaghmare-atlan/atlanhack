@@ -11,10 +11,10 @@ python = "^3.11.10"
 fastapi = {extras = ["standard"], version = "^0.115.0"}
 pytest-asyncio = "^0.24.0"
 # use local application-sdk repository for development
-# application-sdk = { path = "../application-sdk/", develop = true, extras = ["workflows", "dashboard", "daft"]}
+# application-sdk = { path = "../application-sdk/", develop = true, extras = ["workflows", "daft"]}
 # use remote application-sdk repository
 
-application-sdk = {git = "git@github.com:atlanhq/application-sdk.git", rev = "b5e68c129de729cfa9d5dc3ba1fee82f9d2bf692", extras = ["workflows", "dashboard", "daft"]}
+application-sdk = {git = "git@github.com:atlanhq/application-sdk.git", rev = "b5e68c129de729cfa9d5dc3ba1fee82f9d2bf692", extras = ["workflows", "daft"]}
 psycopg = {extras = ["binary"], version = "^3.2.3"}
 jinja2 = "^3.1.2"
 
