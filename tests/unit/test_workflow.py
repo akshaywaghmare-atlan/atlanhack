@@ -38,7 +38,7 @@ def test_postgres_client_connection_string():
     client = PostgreSQLClient()
     client.credentials = basic_credentials
     encoded_password = quote_plus(str(basic_credentials["password"]))
-    expected = f"postgresql+psycopg://{basic_credentials['username']}:{encoded_password}@{basic_credentials['host']}:{basic_credentials['port']}/{basic_credentials['extra'].get('database')}"
+    expected = f"postgresql+psycopg://{basic_credentials['username']}:{encoded_password}@{basic_credentials['host']}:{basic_credentials['port']}/{basic_credentials['extra'].get('database')}?application_name=Atlan&connect_timeout=5"
     result = client.get_sqlalchemy_connection_string()
     assert result == expected
 
@@ -188,7 +188,7 @@ def test_postgres_table():
     assert isinstance(result, assets.MaterialisedView)
     assert (
         result.attributes.definition
-        == "CREATE OR REPLACE MATERIALIZED VIEW test_mview AS SELECT * FROM base_table"
+        == "CREATE MATERIALIZED VIEW test_mview AS SELECT * FROM base_table"
     )
 
 
