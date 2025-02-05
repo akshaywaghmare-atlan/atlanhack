@@ -4,7 +4,7 @@ from datetime import timedelta
 from typing import Any, Callable, Dict, List
 
 from application_sdk.common.logger_adaptors import AtlanLoggerAdapter
-from application_sdk.inputs.statestore import StateStore
+from application_sdk.inputs.statestore import StateStoreInput
 from application_sdk.workflows.metadata_extraction.sql import (
     SQLMetadataExtractionWorkflow,
 )
@@ -30,7 +30,9 @@ class PostgresMetadataExtractionWorkflow(SQLMetadataExtractionWorkflow):
         :param workflow_args: The workflow arguments.
         """
         workflow_id = workflow_config["workflow_id"]
-        workflow_args: Dict[str, Any] = StateStore.extract_configuration(workflow_id)
+        workflow_args: Dict[str, Any] = StateStoreInput.extract_configuration(
+            workflow_id
+        )
 
         workflow_run_id = workflow.info().run_id
         workflow_args["workflow_run_id"] = workflow_run_id
