@@ -30,6 +30,8 @@ APP_DASHBOARD_HOST = os.getenv("ATLAN_APP_DASHBOARD_HTTP_HOST", "0.0.0.0")
 APP_DASHBOARD_PORT = int(os.getenv("ATLAN_APP_DASHBOARD_HTTP_PORT", 8050))
 TENANT_ID = os.getenv("ATLAN_TENANT_ID", "default")
 ATLAN_APPLICATION_NAME = os.getenv("ATLAN_APPLICATION_NAME", "postgres")
+TEMPORAL_UI_HOST = os.getenv("TEMPORAL_UI_HOST", "localhost")
+TEMPORAL_UI_PORT = int(os.getenv("TEMPORAL_UI_PORT", 8233))
 
 # Set up templates
 templates = Jinja2Templates(directory="frontend/templates")
@@ -46,6 +48,8 @@ async def home(request: Request) -> HTMLResponse:
             "app_http_host": APP_HOST,
             "tenant_id": TENANT_ID,
             "app_name": ATLAN_APPLICATION_NAME,
+            "temporal_ui_host": TEMPORAL_UI_HOST,
+            "temporal_ui_port": TEMPORAL_UI_PORT,
         },
     )
 
