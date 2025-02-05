@@ -222,8 +222,8 @@ workflows = ["dapr (>=1.14.0,<2.0.0)", "pandas (>=2.2.3,<3.0.0)", "temporalio (>
 [package.source]
 type = "git"
 url = "git@github.com:atlanhq/application-sdk.git"
-reference = "8fa5f68e19a6fa143f76ab44148ca7546c2e726a"
-resolved_reference = "8fa5f68e19a6fa143f76ab44148ca7546c2e726a"
+reference = "b5e68c129de729cfa9d5dc3ba1fee82f9d2bf692"
+resolved_reference = "b5e68c129de729cfa9d5dc3ba1fee82f9d2bf692"
 
 [[package]]
 name = "asgiref"
@@ -4012,4 +4012,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11.10"
-content-hash = "ff131cd57a6ef97734ed3b8980265cbde5f4dc03c375a5e11e2b92fcd0d4258a"
+content-hash = "a18226827da3f621d996712598bb7ba0ac75a5e7cb1fe646c3e1ff0df8d8e9b2"
