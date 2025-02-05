@@ -26,6 +26,6 @@ permissions:
 
 jobs:
   build:
-    uses: atlanhq/application-sdk/.github/workflows/trivy-container.yaml@develop
+    uses: atlanhq/application-sdk/.github/workflows/trivy-container.yaml@main
     secrets:
         ORG_PAT_GITHUB: ${{ secrets.ORG_PAT_GITHUB }}
