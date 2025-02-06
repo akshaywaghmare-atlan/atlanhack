@@ -10,8 +10,7 @@ ENV PIP_DEFAULT_TIMEOUT=100 \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \
     POETRY_VIRTUALENVS_CREATE=1 \
     POETRY_CACHE_DIR=/tmp/poetry_cache/$TARGETARCH \
-    POETRY_VERSION=1.8.5 \
-    PYTHON_VERSION=3.11.5
+    POETRY_VERSION=1.8.5
 
 # Install OS build dependencies
 RUN microdnf upgrade -y && \
@@ -21,7 +20,7 @@ RUN microdnf upgrade -y && \
     gcc \
     gcc-c++ \
     make \
-    python3.11-devel \
+    python3.12-devel \
     openssl-devel \
     bzip2-devel \
     libffi-devel \
@@ -30,13 +29,13 @@ RUN microdnf upgrade -y && \
     findutils \
     && microdnf clean all
 
-# Install Python 3.11 and pip 3.11
-RUN microdnf install -y python3.11 python3.11-pip && \
+# Install Python 3.12 and pip 3.12
+RUN microdnf install -y python3.12 python3.12-pip && \
     microdnf clean all
 
-# Create symlink for python3 to point to python3.11
-RUN ln -s /usr/bin/python3.11 /usr/local/bin/python && \
-    ln -s /usr/bin/pip3.11 /usr/local/bin/pip
+# Create symlink for python3 to point to python3.12
+RUN ln -s /usr/bin/python3.12 /usr/local/bin/python && \
+    ln -s /usr/bin/pip3.12 /usr/local/bin/pip
 
 # Upgrade pip and install Poetry
 RUN pip install --upgrade pip && \
@@ -53,9 +52,6 @@ WORKDIR /application
 
 # Install Python dependencies
 COPY ./pyproject.toml ./poetry.lock ./
-
-# NOTE(inishchith):patch connectorx to use a compatible version
-RUN poetry add connectorx@0.2.3
 
 # The cache directory makes rebuilding a docker image if pyproject.toml changes near instant
 RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root --without dev,test --no-interaction --no-ansi
@@ -75,11 +71,11 @@ COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 # Enable AppStream repository and install Python and other necessary runtime packages
 RUN microdnf upgrade -y && \
     microdnf install -y \
-    python3.11 \
+    python3.12 \
     && microdnf clean all
 
-# Create symlink for python3 to point to python3.11
-RUN ln -s /usr/bin/python3.11 /usr/local/bin/python
+# Create symlink for python3 to point to python3.12
+RUN ln -s /usr/bin/python3.12 /usr/local/bin/python
 
 # Copy the rest of the code
 COPY . /application
