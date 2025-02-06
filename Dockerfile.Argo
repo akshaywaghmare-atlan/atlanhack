@@ -13,7 +13,8 @@ RUN microdnf upgrade -y && \
     && microdnf clean all
 
 # Install Dapr CLI with the specified version
-RUN curl -fsSL https://raw.githubusercontent.com/dapr/cli/master/install/install.sh | DAPR_INSTALL_DIR="/usr/local/bin" /bin/bash -s 1.15.0-rc.5
+RUN curl -fsSL https://raw.githubusercontent.com/dapr/cli/master/install/install.sh | DAPR_INSTALL_DIR="/usr/local/bin" /bin/bash -s 1.14.1
+
 # Remove temporary tools
 RUN microdnf remove -y \
     tar \
