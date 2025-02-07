@@ -1,9 +1,8 @@
 import asyncio
-import logging
 from datetime import timedelta
 from typing import Any, Callable, Dict, List
 
-from application_sdk.common.logger_adaptors import AtlanLoggerAdapter
+from application_sdk.common.logger_adaptors import get_logger
 from application_sdk.inputs.statestore import StateStoreInput
 from application_sdk.workflows.metadata_extraction.sql import (
     SQLMetadataExtractionWorkflow,
@@ -15,7 +14,7 @@ from app.activities.metadata_extraction.postgres import (
     PostgresMetadataExtractionActivities,
 )
 
-logger = AtlanLoggerAdapter(logger=logging.getLogger(__name__))
+logger = get_logger(__name__)
 
 
 @workflow.defn

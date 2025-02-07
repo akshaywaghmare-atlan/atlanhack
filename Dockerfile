@@ -81,4 +81,4 @@ RUN ln -s /usr/bin/python3.12 /usr/local/bin/python
 COPY . /application
 
 # Set the entrypoint
-ENTRYPOINT ["/application/.venv/bin/opentelemetry-instrument", "--traces_exporter", "otlp", "--metrics_exporter", "otlp", "--logs_exporter", "otlp", "--service_name", "postgresql-application", "python", "/application/main.py"]
+ENTRYPOINT ["python", "/application/main.py"]

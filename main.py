@@ -1,10 +1,9 @@
 import asyncio
-import logging
 import os
 
 from application_sdk.application.fastapi import FastAPIApplication, HttpWorkflowTrigger
 from application_sdk.clients.temporal import TemporalClient
-from application_sdk.common.logger_adaptors import AtlanLoggerAdapter
+from application_sdk.common.logger_adaptors import get_logger
 from application_sdk.worker import Worker
 from fastapi import Request
 from fastapi.responses import HTMLResponse
@@ -21,7 +20,7 @@ from app.workflows.metadata_extraction.postgres import (
     PostgresMetadataExtractionWorkflow,
 )
 
-logger = AtlanLoggerAdapter(logging.getLogger(__name__))
+logger = get_logger(__name__)
 
 APPLICATION_NAME = os.getenv("ATLAN_APPLICATION_NAME", "postgres")
 APP_HOST = os.getenv("ATLAN_APP_HTTP_HOST", "0.0.0.0")
@@ -90,6 +89,7 @@ async def initialize_and_start():
         handler=handler,
         temporal_client=temporal_client,
     )
+
     fast_api_app.register_workflow(
         PostgresMetadataExtractionWorkflow,
         triggers=[HttpWorkflowTrigger(endpoint="/start", methods=["POST"])],
@@ -97,12 +97,15 @@ async def initialize_and_start():
     # Setup routes
     setup_routes(fast_api_app)
 
-    # Start worker in background
+    # Add more logging statements
+    logger.info("Created application")
+    logger.info(f"Starting worker on {APPLICATION_NAME}")
     await worker.start(daemon=True)
-    # Starting FastAPI application
+    logger.info("Worker started successfully")
+
+    logger.info(f"Starting application on {APP_HOST}:{APP_PORT}")
     await fast_api_app.start()
 
 
 if __name__ == "__main__":
     asyncio.run(initialize_and_start())
-    # atlan_app_builder.configure_open_telemetry()

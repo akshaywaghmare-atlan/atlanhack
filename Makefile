@@ -24,6 +24,7 @@ ATLAN_TEMPORAL_UI_PORT ?= 8233
 ATLAN_TEMPORAL_METRICS_PORT ?= 8234
 ATLAN_TENANT_ID ?= "default"
 ATLAN_APPLICATION_NAME ?= "postgres"
+ENABLE_OTLP_LOGS ?= false
 # Start Temporal locally
 start-temporal-dev:
 	@if [ "$(ATLAN_TEMPORAL_UI_ENABLED)" = true ]; then \
@@ -75,11 +76,8 @@ run-app:
 	ATLAN_APP_DASHBOARD_HTTP_HOST=$(ATLAN_APP_DASHBOARD_HTTP_HOST) \
 	ATLAN_APP_DASHBOARD_HTTP_PORT=$(ATLAN_APP_DASHBOARD_HTTP_PORT) \
 	ATLAN_TENANT_ID=$(ATLAN_TENANT_ID) \
-	OTEL_EXPORTER_OTLP_ENDPOINT="http://$(ATLAN_APP_HTTP_HOST):$(ATLAN_APP_HTTP_PORT)/telemetry" \
-	OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf" \
-	OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true \
-	OTEL_PYTHON_EXCLUDED_URLS="/telemetry/.*,/system/.*" \
-	poetry run ./.venv/bin/opentelemetry-instrument --traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-application python main.py
+	ENABLE_OTLP_LOGS=$(ENABLE_OTLP_LOGS) \
+	poetry run python main.py
 
 # Run the application with profiling
 run-with-profile:
@@ -89,11 +87,8 @@ run-with-profile:
 	ATLAN_APP_DASHBOARD_HTTP_HOST=$(ATLAN_APP_DASHBOARD_HTTP_HOST) \
 	ATLAN_APP_DASHBOARD_HTTP_PORT=$(ATLAN_APP_DASHBOARD_HTTP_PORT) \
 	ATLAN_TENANT_ID=$(ATLAN_TENANT_ID) \
-	OTEL_EXPORTER_OTLP_ENDPOINT="http://$(ATLAN_APP_HTTP_HOST):$(ATLAN_APP_HTTP_PORT)/telemetry" \
-	OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf" \
-	OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true \
-	OTEL_PYTHON_EXCLUDED_URLS="/telemetry/.*,/system/.*" \
-	poetry run ./.venv/bin/opentelemetry-instrument --traces_exporter otlp --metrics_exporter otlp --logs_exporter otlp --service_name postgresql-application scalene --profile-all --cli --outfile scalene.json --json main.py
+	ENABLE_OTLP_LOGS=$(ENABLE_OTLP_LOGS) \
+	poetry run scalene --profile-all --cli --outfile scalene.json --json main.py
 
 # Run the dashboard
 run-dashboard:
