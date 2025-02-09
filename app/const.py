@@ -129,8 +129,8 @@ TABLE_EXTRACTION_SQL = """
         AND concat(CATALOG_NAME, concat('.', SCHEMA_NAME)) ~ '{normalized_include_regex}'
     )
     {temp_table_regex_sql}
-    AND C.relkind != 'i'
-    AND C.relkind != 'I';
+    -- ignore indexes, partitioned indexes and sequences
+    AND C.relkind NOT IN ('i', 'I', 'S');
 """
 TABLE_EXTRACTION_TEMP_TABLE_REGEX_SQL = "AND T.TABLE_NAME !~ '{exclude_table_regex}'"
 
@@ -224,6 +224,8 @@ WHERE
     {temp_table_regex_sql}
     -- ignore relational views (src: https://www.postgresql.org/docs/current/catalog-pg-class.html)
     AND c.reltype != 0
+    -- ignore indexes, partitioned indexes and sequences
+    AND c.relkind NOT IN ('i', 'I', 'S')
 ORDER BY
     n.nspname, c.relname, a.attnum;
 """
