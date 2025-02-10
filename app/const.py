@@ -132,7 +132,7 @@ TABLE_EXTRACTION_SQL = """
     -- ignore indexes, partitioned indexes and sequences
     AND C.relkind NOT IN ('i', 'I', 'S');
 """
-TABLE_EXTRACTION_TEMP_TABLE_REGEX_SQL = "AND T.TABLE_NAME !~ '{exclude_table_regex}'"
+TABLE_EXTRACTION_TEMP_TABLE_REGEX_SQL = "AND C.relname !~ '{exclude_table_regex}'"
 
 COLUMN_EXTRACTION_SQL = """
 SELECT
