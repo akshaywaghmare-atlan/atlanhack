@@ -107,7 +107,6 @@ stop-all:
 	@pkill -f "temporal server start-dev" || true
 	@pkill -f "dapr run --app-id app" || true
 	@pkill -f "python main.py" || true
-	@pkill -f "opentelemetry-instrument.*main.py" || true
 	@pkill -f "scalene.*main.py" || true
 	@pkill -f "python .venv/src/application-sdk/dashboard/app.py" || true
 	@sleep 2  # Add a small delay to ensure processes have time to finish
