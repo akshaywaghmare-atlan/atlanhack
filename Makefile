@@ -68,6 +68,17 @@ install:
 	# Activate the virtual environment and install pre-commit hooks
 	poetry run pre-commit install
 
+# Run the marketplace app
+run-marketplace:
+	cd ../atlan-marketplace-app && poetry install
+	cd ../atlan-marketplace-app && nohup python3 main.py > output.log 2>&1 &
+
+run-all:
+	@echo "Starting marketplace app..."
+	$(MAKE) run-marketplace
+	@echo "Starting local application..."
+	$(MAKE) run-app
+
 # Run the application
 run-app:
 	ATLAN_APPLICATION_NAME=$(ATLAN_APPLICATION_NAME) \
