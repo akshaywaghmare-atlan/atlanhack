@@ -2,7 +2,7 @@
 APP_NAME := phoenix-postgres-app
 
 # Phony targets
-.PHONY: install start-deps run run-marketplace run-all
+.PHONY: install start-deps run run-marketplace run-all stop-marketplace
 
 # Attempt to include .env file if it exists
 -include .env
@@ -68,14 +68,34 @@ install:
 	# Activate the virtual environment and install pre-commit hooks
 	poetry run pre-commit install
 
+# Define variables
+MARKETPLACE_DIR := ../atlan-marketplace-app
+MARKETPLACE_LOG := $(MARKETPLACE_DIR)/output.log
+MARKETPLACE_PID := $(MARKETPLACE_DIR)/marketplace.pid
+
 # Run the marketplace app
 run-marketplace:
-	@if [ ! -d "../atlan-marketplace-app" ]; then \
-		echo "Error: ../atlan-marketplace-app directory not found"; \
+	@if [ ! -d "$(MARKETPLACE_DIR)" ]; then \
+		echo "Error: $(MARKETPLACE_DIR) not found. Please clone it first."; \
 		exit 1; \
 	fi
-	cd ../atlan-marketplace-app && poetry install
-	cd ../atlan-marketplace-app && nohup python3 main.py > output.log 2>&1 &
+	@command -v poetry >/dev/null 2>&1 || { echo "Poetry is required but not installed. Aborting." >&2; exit 1; }
+	@rm -f $(MARKETPLACE_LOG)
+	cd $(MARKETPLACE_DIR) && poetry install || { echo "Poetry install failed"; exit 1; }
+	@if [ -f "$(MARKETPLACE_PID)" ]; then \
+		echo "Marketplace app is already running. Skipping start."; \
+	else \
+		cd $(MARKETPLACE_DIR) && nohup python3 main.py > $(MARKETPLACE_LOG) 2>&1 & echo $$! > $(MARKETPLACE_PID); \
+		echo "Marketplace app started."; \
+	fi
+
+stop-marketplace:
+	@if [ -f "$(MARKETPLACE_PID)" ]; then \
+		kill $$(cat $(MARKETPLACE_PID)) && rm -f $(MARKETPLACE_PID); \
+		echo "Marketplace app stopped."; \
+	else \
+		echo "Marketplace app is not running."; \
+	fi
 
 run-all:
 	@echo "Starting marketplace app..."
@@ -116,6 +136,6 @@ stop-all:
 	@pkill -f "temporal server start-dev" || true
 	@pkill -f "dapr run --app-id app" || true
 	@pkill -f "python main.py" || true
-	@pkill -f "python .venv/src/application-sdk/dashboard/app.py" || true
 	@python .github/scripts/cleanup_scalene.py || true
+	$(MAKE) stop-marketplace
 	@echo "All detached processes stopped."
