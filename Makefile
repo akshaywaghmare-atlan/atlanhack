@@ -2,7 +2,7 @@
 APP_NAME := phoenix-postgres-app
 
 # Phony targets
-.PHONY: install start-deps run
+.PHONY: install start-deps run run-marketplace run-all
 
 # Attempt to include .env file if it exists
 -include .env
@@ -70,6 +70,10 @@ install:
 
 # Run the marketplace app
 run-marketplace:
+	@if [ ! -d "../atlan-marketplace-app" ]; then \
+		echo "Error: ../atlan-marketplace-app directory not found"; \
+		exit 1; \
+	fi
 	cd ../atlan-marketplace-app && poetry install
 	cd ../atlan-marketplace-app && nohup python3 main.py > output.log 2>&1 &
 
@@ -101,14 +105,8 @@ run-with-profile:
 	ENABLE_OTLP_LOGS=$(ENABLE_OTLP_LOGS) \
 	poetry run scalene --profile-all --cli --outfile scalene.json --json main.py
 
-# Run the dashboard
-run-dashboard:
-	PYTHONPATH=./.venv/src/application-sdk/ poetry run python .venv/src/application-sdk/dashboard/app.py
-
 # Run the application and dashboard
 run:
-	@echo "Starting local dashboard..."
-	$(MAKE) run-dashboard &
 	@echo "Starting local application..."
 	$(MAKE) run-app
 
