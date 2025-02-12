@@ -50,8 +50,8 @@ WHERE
 TABLE_EXTRACTION_SQL = """
     SELECT
         current_database() AS TABLE_CATALOG,
-        COALESCE(T.table_schema, MV.schemaname) AS TABLE_SCHEMA,
-        COALESCE(T.table_name, MV.matviewname) AS TABLE_NAME,
+        N.nspname AS TABLE_SCHEMA,
+        C.relname AS TABLE_NAME,
         (CASE
             WHEN c.reltuples < 0 THEN NULL
             WHEN c.relpages = 0 THEN float8 '0'
@@ -83,9 +83,11 @@ TABLE_EXTRACTION_SQL = """
         T.user_defined_type_name AS USER_DEFINED_TYPE_NAME,
         T.is_insertable_into AS IS_INSERTABLE_INTO,
         T.is_typed AS IS_TYPED,
-        T.commit_action AS COMMIT_ACTION
+        T.commit_action AS COMMIT_ACTION,
+        D.description AS REMARKS
     FROM pg_class C
     LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
+    LEFT JOIN pg_description D ON (C.oid = D.objoid AND D.objsubid = 0  and D.classoid = 'pg_class'::regclass)
     LEFT JOIN pg_stat_user_tables PSUT ON (C.oid = PSUT.relid)
     LEFT JOIN information_schema.tables T ON (C.relname = T.table_name AND N.nspname = T.table_schema)
     LEFT JOIN pg_views V ON (T.table_name = V.viewname)
@@ -201,6 +203,7 @@ SELECT
         ELSE NULL
     END AS CONSTRAINT_TYPE,
     con.conname AS CONSTRAINT_NAME,
+    ds.description AS REMARKS,
     NULL AS PARTITION_ORDER  -- Simplified for older versions
 FROM
     pg_catalog.pg_attribute a
@@ -214,6 +217,8 @@ LEFT JOIN
     pg_catalog.pg_attrdef d ON (a.attrelid, a.attnum) = (d.adrelid, d.adnum)
 LEFT JOIN
     pg_catalog.pg_constraint con ON (con.conrelid = c.oid AND a.attnum = ANY(con.conkey))
+LEFT JOIN pg_catalog.pg_description ds
+    ON ds.objoid = c.oid AND ds.objsubid = a.attnum
 WHERE
     a.attnum > 0
     AND NOT a.attisdropped
