@@ -1,20 +1,24 @@
 # Queries
 TABLES_CHECK_SQL = """
     SELECT count(*)
-    FROM INFORMATION_SCHEMA.TABLES
-    WHERE concat(TABLE_CATALOG, concat('.', TABLE_SCHEMA)) !~ '{normalized_exclude_regex}'
-        AND concat(TABLE_CATALOG, concat('.', TABLE_SCHEMA)) ~ '{normalized_include_regex}'
-        AND TABLE_SCHEMA NOT IN ('performance_schema', 'information_schema', 'pg_catalog', 'pg_internal')
+    FROM pg_class C
+    LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
+    WHERE concat(current_database(), concat('.', N.nspname)) !~ '{normalized_exclude_regex}'
+        AND concat(current_database(), concat('.', N.nspname)) ~ '{normalized_include_regex}'
+        AND N.nspname NOT IN ('performance_schema', 'information_schema') AND N.nspname NOT LIKE 'pg_%%'
+        AND C.relkind NOT IN ('i', 'I', 'S')
         {temp_table_regex_sql}
 """
-TABLES_CHECK_TEMP_TABLE_REGEX_SQL = "AND TABLE_NAME !~ '{exclude_table_regex}'"
+TABLES_CHECK_TEMP_TABLE_REGEX_SQL = "AND C.relname !~ '{exclude_table_regex}'"
 
 TEST_AUTHENTICATION_SQL = "SELECT 1;"
 
 FILTER_METADATA_SQL = """
-SELECT schema_name, catalog_name
-FROM INFORMATION_SCHEMA.SCHEMATA
-WHERE schema_name NOT LIKE 'pg_%' AND schema_name != 'information_schema'
+SELECT
+    current_database() AS CATALOG_NAME,
+    N.nspname AS SCHEMA_NAME
+FROM pg_namespace N
+WHERE N.nspname NOT LIKE 'pg_%%' AND N.nspname != 'information_schema'
 """
 
 ### Extraction Queries
@@ -25,26 +29,28 @@ SELECT d.*, d.datname as database_name FROM pg_database d WHERE datname = curren
 
 SCHEMA_EXTRACTION_SQL = """
 SELECT
-    s.*,
+    current_database() AS CATALOG_NAME,
+    N.nspname AS SCHEMA_NAME,
+    S.schema_owner,
     table_counts.table_count,
     table_counts.views_count
-FROM
-    information_schema.schemata s
-LEFT JOIN (
-    select
-	    N.nspname as table_schema,
-	    SUM(CASE WHEN C.relkind IN ('r', 'p', 'f') THEN 1 ELSE 0 END) as table_count,
-	    SUM(CASE WHEN C.relkind IN ('m', 'v') THEN 1 ELSE 0 END) as views_count
-    from pg_class as C
-    LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
-    LEFT JOIN information_schema.tables T ON (C.relname = T.table_name AND N.nspname = T.table_schema) group by N.nspname
+FROM pg_catalog.pg_namespace N
+LEFT JOIN
+	(
+	Select
+		C.relnamespace,
+	 	SUM(CASE WHEN C.relkind IN ('r', 'p', 'f') THEN 1 ELSE 0 END) as table_count,
+		SUM(CASE WHEN C.relkind IN ('m', 'v') THEN 1 ELSE 0 END) as views_count
+	FROM pg_class C
+	GROUP BY C.relnamespace
 ) as table_counts
-ON s.schema_name = table_counts.table_schema
+ON (table_counts.relnamespace = N.oid)
+LEFT JOIN information_schema.schemata S ON S.schema_name = N.nspname
 WHERE
-    s.schema_name NOT LIKE 'pg_%'
-    AND s.schema_name != 'information_schema'
-    AND concat(s.CATALOG_NAME, concat('.', s.SCHEMA_NAME)) !~ '{normalized_exclude_regex}'
-    AND concat(s.CATALOG_NAME, concat('.', s.SCHEMA_NAME)) ~ '{normalized_include_regex}';
+    N.nspname NOT LIKE 'pg_%' AND N.nspname != 'information_schema'
+    AND concat(current_database(), concat('.', N.nspname)) !~ '{normalized_exclude_regex}'
+    AND concat(current_database(), concat('.', N.nspname)) ~ '{normalized_include_regex}'
+ORDER BY N.nspname;
 """
 
 TABLE_EXTRACTION_SQL = """
@@ -123,13 +129,9 @@ TABLE_EXTRACTION_SQL = """
         FROM pg_class c
         WHERE c.relispartition = 'true' AND c.relkind = 'r'
     ) AS PARTITION_RANGE ON (C.relname = PARTITION_RANGE.PARTITION_NAME)
-    WHERE N.nspname IN (
-        SELECT schema_name
-        FROM INFORMATION_SCHEMA.SCHEMATA
-        WHERE schema_name NOT LIKE 'pg_%%' AND schema_name != 'information_schema'
-        AND concat(CATALOG_NAME, concat('.', SCHEMA_NAME)) !~ '{normalized_exclude_regex}'
-        AND concat(CATALOG_NAME, concat('.', SCHEMA_NAME)) ~ '{normalized_include_regex}'
-    )
+    WHERE N.nspname NOT LIKE 'pg_%%' AND  N.nspname != 'information_schema'
+    AND concat(current_database(), concat('.', N.nspname)) !~ '{normalized_exclude_regex}'
+    AND concat(current_database(), concat('.', N.nspname)) ~ '{normalized_include_regex}'
     {temp_table_regex_sql}
     -- ignore indexes, partitioned indexes and sequences
     AND C.relkind NOT IN ('i', 'I', 'S');
