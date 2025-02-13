@@ -78,7 +78,7 @@ jobs:
     - name: Start the application
       id: start_app
       run: |
-        make run-app &
+        make run-with-profile &
         sleep 20
 
     - name: Start the workflow
@@ -126,6 +126,7 @@ jobs:
         echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
 
     - name: Check workflow status and collect performance metrics
+      id: workflow_status
       run: |
         export PATH="$HOME/.temporalio/bin:$PATH"
         # Poll workflow status with timeout
@@ -144,13 +145,58 @@ jobs:
           sleep 1
           ATTEMPT=$((ATTEMPT+1))
         done
+        WORKFLOW_DETAILS=$(temporal workflow describe \
+          --workflow-id=${{ steps.workflow_info.outputs.workflow_id }} \
+          --run-id=${{ steps.workflow_info.outputs.run_id }} \
+          --output=json)
+        STATUS=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.status')
+        DURATION=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.executionDuration | rtrimstr("s") | tonumber | (. * 100 | round | . / 100) | tostring + "s"')
+        echo "status=$STATUS" >> $GITHUB_OUTPUT
+        echo "duration=$DURATION" >> $GITHUB_OUTPUT
 
     - name: Get scalene metrics and output
       run: |
         export PATH="$HOME/.temporalio/bin:$PATH"
+        kill $(lsof -t -i :8000)
+        sleep 10
 
-        # Check if scalene.json exists in the main branch
-        if git show origin/main:scalene.json > main_scalene.json 2>/dev/null; then
+        # First calculate metrics from current run's scalene.json
+        if [ -f scalene.json ]; then
+          # Calculate Average CPU Usage upto 2 decimal places
+          AVG_CPU=$(jq -r '
+            [
+              .files |
+              to_entries[] |
+              .value.functions[] |
+              select(.n_cpu_percent_c != null and .n_cpu_percent_python != null and .n_sys_percent != null) |
+              (.n_cpu_percent_c + .n_cpu_percent_python + .n_sys_percent)
+            ] |
+            add / length
+          ' scalene.json | awk '{printf "%.2f\n", $1}')
+
+          # Max CPU Usage upto 2 decimal places
+          MAX_CPU=$(jq -r '
+            .files |
+            to_entries[] |
+            .value.functions[] |
+            select(.n_cpu_percent_c != null and .n_cpu_percent_python != null and .n_sys_percent != null) |
+            (.n_cpu_percent_c + .n_cpu_percent_python + .n_sys_percent)
+          ' scalene.json | sort -rn | head -n1 | awk '{printf "%.2f\n", $1}')
+
+          MEMORY_USAGE=$(jq -r '
+            .max_footprint_mb
+          ' scalene.json | awk '{printf "%.2f\n", $1}')
+        else
+          echo "Current scalene.json does not exist"
+          AVG_CPU="N/A"
+          MAX_CPU="N/A"
+          MEMORY_USAGE="N/A"
+        fi
+
+        # Now fetch Main branch and calculate its metrics
+        git fetch origin main
+        if git cat-file -e origin/main:scalene.json 2>/dev/null && \
+            git show origin/main:scalene.json > main_scalene.json; then
           # Calculate metrics for the main branch
           MAIN_AVG_CPU=$(jq -r '
             [
@@ -161,7 +207,7 @@ jobs:
               (.n_cpu_percent_c + .n_cpu_percent_python + .n_sys_percent)
             ] |
             add / length
-          ' main_scalene.json)
+          ' main_scalene.json | awk '{printf "%.2f\n", $1}')
 
           MAIN_MAX_CPU=$(jq -r '
             .files |
@@ -169,11 +215,11 @@ jobs:
             .value.functions[] |
             select(.n_cpu_percent_c != null and .n_cpu_percent_python != null and .n_sys_percent != null) |
             (.n_cpu_percent_c + .n_cpu_percent_python + .n_sys_percent)
-          ' main_scalene.json | sort -rn | head -n1)
+          ' main_scalene.json | sort -rn | head -n1 | awk '{printf "%.2f\n", $1}')
 
           MAIN_MEMORY_USAGE=$(jq -r '
             .max_footprint_mb
-          ' main_scalene.json)
+          ' main_scalene.json | awk '{printf "%.2f\n", $1}')
         else
           echo "scalene.json does not exist in the main branch"
           MAIN_AVG_CPU="N/A"
@@ -182,12 +228,8 @@ jobs:
         fi
 
         # Get final workflow details and status
-        WORKFLOW_DETAILS=$(temporal workflow describe \
-          --workflow-id=${{ steps.workflow_info.outputs.workflow_id }} \
-          --run-id=${{ steps.workflow_info.outputs.run_id }} \
-          --output=json)
-        STATUS=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.status')
-        DURATION=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.executionDuration | rtrimstr("s") | tonumber | (. * 100 | round | . / 100) | tostring + "s"')
+        STATUS=${{ steps.workflow_status.outputs.status }}
+        DURATION=${{ steps.workflow_status.outputs.duration }}
         case $STATUS in
           "WORKFLOW_EXECUTION_STATUS_COMPLETED")
             DISPLAY_STATUS="🟢 Completed"
@@ -206,43 +248,6 @@ jobs:
             EXIT_CODE=1
             ;;
         esac
-
-        kill $(lsof -t -i :8000)
-
-        sleep 10
-
-        # Check if scalene.json exists
-        if [ -f scalene.json ]; then
-          echo "scalene.json exists"
-        else
-          echo "scalene.json does not exist"
-        fi
-
-        # Calculate Average CPU Usage upto 2 decimal places
-        AVG_CPU=$(jq -r '
-          [
-            .files |
-            to_entries[] |
-            .value.functions[] |
-            select(.n_cpu_percent_c != null and .n_cpu_percent_python != null and .n_sys_percent != null) |
-            (.n_cpu_percent_c + .n_cpu_percent_python + .n_sys_percent)
-          ] |
-          add / length
-        ' scalene.json | awk '{printf "%.2f\n", $1}')
-
-        # Max CPU Usage upto 2 decimal places
-        MAX_CPU=$(jq -r '
-          .files |
-          to_entries[] |
-          .value.functions[] |
-          select(.n_cpu_percent_c != null and .n_cpu_percent_python != null and .n_sys_percent != null) |
-          (.n_cpu_percent_c + .n_cpu_percent_python + .n_sys_percent)
-        ' scalene.json | sort -rn | head -n1 | awk '{printf "%.2f\n", $1}')
-
-        MEMORY_USAGE=$(jq -r '
-          .max_footprint_mb
-        ' scalene.json | awk '{printf "%.2f\n", $1}')
-
         echo "Finished Calculating Metrics"
 
 
@@ -276,7 +281,7 @@ jobs:
       if: ${{ github.event_name == 'pull_request' }}
       uses: mshick/add-pr-comment@v2
       with:
-        message-id: 'workflow_status'
+        message-id: "workflow_status"
         message-path: metrics.md
       continue-on-error: true
 
