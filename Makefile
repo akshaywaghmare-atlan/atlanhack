@@ -2,7 +2,7 @@
 APP_NAME := phoenix-postgres-app
 
 # Phony targets
-.PHONY: install start-deps run run-marketplace run-all stop-marketplace
+.PHONY: install start-deps run run-hot-reload run-all run-marketplace stop-marketplace
 
 # Attempt to include .env file if it exists
 -include .env
@@ -129,6 +129,15 @@ run-with-profile:
 run:
 	@echo "Starting local application..."
 	$(MAKE) run-app
+
+run-hot-reload:
+	@echo "Starting local application with hot-reload..."
+	poetry run watchmedo auto-restart \
+		--patterns="*.py" \
+		--recursive \
+		--directory="." \
+		-- make run-app
+
 
 # Stop all services
 stop-all:
