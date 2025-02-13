@@ -98,7 +98,5 @@ class PostgresMetadataExtractionWorkflow(SQLMetadataExtractionWorkflow):
             activities.fetch_tables,
             activities.fetch_columns,
             activities.fetch_procedures,
-            activities.write_raw_type_metadata,
             activities.transform_data,
-            activities.write_type_metadata,
         ]

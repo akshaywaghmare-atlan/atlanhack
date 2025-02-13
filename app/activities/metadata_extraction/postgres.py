@@ -46,4 +46,4 @@ class PostgresMetadataExtractionActivities(SQLMetadataExtractionActivities):
         self, batch_input: pd.DataFrame, raw_output: JsonOutput, **kwargs
     ):
         await raw_output.write_batched_dataframe(batch_input)
-        return raw_output.get_metadata(typename="extras-procedure")
+        return await raw_output.get_statistics(typename="extras-procedure")
