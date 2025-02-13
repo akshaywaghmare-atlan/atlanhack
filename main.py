@@ -104,7 +104,7 @@ async def initialize_and_start():
     logger.info("Worker started successfully")
 
     logger.info(f"Starting application on {APP_HOST}:{APP_PORT}")
-    await fast_api_app.start()
+    await fast_api_app.start(host=APP_HOST, port=APP_PORT)
 
 
 if __name__ == "__main__":
