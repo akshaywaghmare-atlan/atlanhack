@@ -30,6 +30,7 @@ ATLAN_APP_DASHBOARD_PORT = int(os.getenv("ATLAN_APP_DASHBOARD_HTTP_PORT", 8050))
 ATLAN_TENANT_ID = os.getenv("ATLAN_TENANT_ID", "default")
 ATLAN_TEMPORAL_UI_HOST = os.getenv("ATLAN_TEMPORAL_UI_HOST", "localhost")
 ATLAN_TEMPORAL_UI_PORT = int(os.getenv("ATLAN_TEMPORAL_UI_PORT", 8233))
+MAX_CONCURRENT_ACTIVITIES = int(os.getenv("ATLAN_MAX_CONCURRENT_ACTIVITIES", 5))
 
 # Set up templates
 templates = Jinja2Templates(directory="frontend/templates")
@@ -81,6 +82,7 @@ async def initialize_and_start():
             activities
         ),
         passthrough_modules=["application_sdk", "pandas", "os", "app"],
+        max_concurrent_activities=MAX_CONCURRENT_ACTIVITIES,
     )
 
     # Creating FastAPI application
