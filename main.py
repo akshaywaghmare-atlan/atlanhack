@@ -22,15 +22,15 @@ from app.workflows.metadata_extraction.postgres import (
 
 logger = get_logger(__name__)
 
-APPLICATION_NAME = os.getenv("ATLAN_APPLICATION_NAME", "postgres")
-APP_HOST = os.getenv("ATLAN_APP_HTTP_HOST", "0.0.0.0")
-APP_PORT = int(os.getenv("ATLAN_APP_HTTP_PORT", 8000))
-APP_DASHBOARD_HOST = os.getenv("ATLAN_APP_DASHBOARD_HTTP_HOST", "0.0.0.0")
-APP_DASHBOARD_PORT = int(os.getenv("ATLAN_APP_DASHBOARD_HTTP_PORT", 8050))
-TENANT_ID = os.getenv("ATLAN_TENANT_ID", "default")
 ATLAN_APPLICATION_NAME = os.getenv("ATLAN_APPLICATION_NAME", "postgres")
-TEMPORAL_UI_HOST = os.getenv("TEMPORAL_UI_HOST", "localhost")
-TEMPORAL_UI_PORT = int(os.getenv("TEMPORAL_UI_PORT", 8233))
+ATLAN_APP_HOST = os.getenv("ATLAN_APP_HTTP_HOST", "0.0.0.0")
+ATLAN_APP_PORT = int(os.getenv("ATLAN_APP_HTTP_PORT", 8000))
+ATLAN_APP_DASHBOARD_HOST = os.getenv("ATLAN_APP_DASHBOARD_HTTP_HOST", "0.0.0.0")
+ATLAN_APP_DASHBOARD_PORT = int(os.getenv("ATLAN_APP_DASHBOARD_HTTP_PORT", 8050))
+ATLAN_TENANT_ID = os.getenv("ATLAN_TENANT_ID", "default")
+ATLAN_TEMPORAL_UI_HOST = os.getenv("ATLAN_TEMPORAL_UI_HOST", "localhost")
+ATLAN_TEMPORAL_UI_PORT = int(os.getenv("ATLAN_TEMPORAL_UI_PORT", 8233))
+MAX_CONCURRENT_ACTIVITIES = int(os.getenv("ATLAN_MAX_CONCURRENT_ACTIVITIES", 5))
 
 # Set up templates
 templates = Jinja2Templates(directory="frontend/templates")
@@ -41,14 +41,14 @@ async def home(request: Request) -> HTMLResponse:
         "index.html",
         {
             "request": request,
-            "app_dashboard_http_port": APP_DASHBOARD_PORT,
-            "app_dashboard_http_host": APP_DASHBOARD_HOST,
-            "app_http_port": APP_PORT,
-            "app_http_host": APP_HOST,
-            "tenant_id": TENANT_ID,
+            "app_dashboard_http_port": ATLAN_APP_DASHBOARD_PORT,
+            "app_dashboard_http_host": ATLAN_APP_DASHBOARD_HOST,
+            "app_http_port": ATLAN_APP_PORT,
+            "app_http_host": ATLAN_APP_HOST,
+            "tenant_id": ATLAN_TENANT_ID,
             "app_name": ATLAN_APPLICATION_NAME,
-            "temporal_ui_host": TEMPORAL_UI_HOST,
-            "temporal_ui_port": TEMPORAL_UI_PORT,
+            "temporal_ui_host": ATLAN_TEMPORAL_UI_HOST,
+            "temporal_ui_port": ATLAN_TEMPORAL_UI_PORT,
         },
     )
 
@@ -62,7 +62,7 @@ def setup_routes(app: FastAPIApplication):
 async def initialize_and_start():
     # Creating resources
     sql_client = PostgreSQLClient()
-    temporal_client = TemporalClient(application_name=APPLICATION_NAME)
+    temporal_client = TemporalClient(application_name=ATLAN_APPLICATION_NAME)
     await temporal_client.load()
 
     # Creating controllers
@@ -82,6 +82,7 @@ async def initialize_and_start():
             activities
         ),
         passthrough_modules=["application_sdk", "pandas", "os", "app"],
+        max_concurrent_activities=MAX_CONCURRENT_ACTIVITIES,
     )
 
     # Creating FastAPI application
@@ -99,12 +100,12 @@ async def initialize_and_start():
 
     # Add more logging statements
     logger.info("Created application")
-    logger.info(f"Starting worker on {APPLICATION_NAME}")
+    logger.info(f"Starting worker on {ATLAN_APPLICATION_NAME}")
     await worker.start(daemon=True)
     logger.info("Worker started successfully")
 
-    logger.info(f"Starting application on {APP_HOST}:{APP_PORT}")
-    await fast_api_app.start()
+    logger.info(f"Starting application on {ATLAN_APP_HOST}:{ATLAN_APP_PORT}")
+    await fast_api_app.start(host=ATLAN_APP_HOST, port=ATLAN_APP_PORT)
 
 
 if __name__ == "__main__":

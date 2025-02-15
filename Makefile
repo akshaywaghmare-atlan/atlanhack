@@ -2,7 +2,7 @@
 APP_NAME := phoenix-postgres-app
 
 # Phony targets
-.PHONY: install start-deps run
+.PHONY: install start-deps run run-hot-reload run-all run-marketplace stop-marketplace
 
 # Attempt to include .env file if it exists
 -include .env
@@ -68,6 +68,41 @@ install:
 	# Activate the virtual environment and install pre-commit hooks
 	poetry run pre-commit install
 
+# Define variables
+MARKETPLACE_DIR := ../atlan-marketplace-app
+MARKETPLACE_LOG := $(MARKETPLACE_DIR)/output.log
+MARKETPLACE_PID := $(MARKETPLACE_DIR)/marketplace.pid
+
+# Run the marketplace app
+run-marketplace:
+	@if [ ! -d "$(MARKETPLACE_DIR)" ]; then \
+		echo "Error: $(MARKETPLACE_DIR) not found. Please clone it first."; \
+		exit 1; \
+	fi
+	@command -v poetry >/dev/null 2>&1 || { echo "Poetry is required but not installed. Aborting." >&2; exit 1; }
+	@rm -f $(MARKETPLACE_LOG)
+	cd $(MARKETPLACE_DIR) && poetry install || { echo "Poetry install failed"; exit 1; }
+	@if [ -f "$(MARKETPLACE_PID)" ]; then \
+		echo "Marketplace app is already running. Skipping start."; \
+	else \
+		cd $(MARKETPLACE_DIR) && nohup python3 main.py > $(MARKETPLACE_LOG) 2>&1 & echo $$! > $(MARKETPLACE_PID); \
+		echo "Marketplace app started."; \
+	fi
+
+stop-marketplace:
+	@if [ -f "$(MARKETPLACE_PID)" ]; then \
+		kill $$(cat $(MARKETPLACE_PID)) && rm -f $(MARKETPLACE_PID); \
+		echo "Marketplace app stopped."; \
+	else \
+		echo "Marketplace app is not running."; \
+	fi
+
+run-all:
+	@echo "Starting marketplace app..."
+	$(MAKE) run-marketplace
+	@echo "Starting local application..."
+	$(MAKE) run-app
+
 # Run the application
 run-app:
 	ATLAN_APPLICATION_NAME=$(ATLAN_APPLICATION_NAME) \
@@ -90,16 +125,19 @@ run-with-profile:
 	ENABLE_OTLP_LOGS=$(ENABLE_OTLP_LOGS) \
 	poetry run scalene --profile-all --cli --outfile scalene.json --json main.py
 
-# Run the dashboard
-run-dashboard:
-	PYTHONPATH=./.venv/src/application-sdk/ poetry run python .venv/src/application-sdk/dashboard/app.py
-
 # Run the application and dashboard
 run:
-	@echo "Starting local dashboard..."
-	$(MAKE) run-dashboard &
 	@echo "Starting local application..."
 	$(MAKE) run-app
+
+run-hot-reload:
+	@echo "Starting local application with hot-reload..."
+	poetry run watchmedo auto-restart \
+		--patterns="*.py" \
+		--recursive \
+		--directory="." \
+		-- make run-app
+
 
 # Stop all services
 stop-all:
@@ -107,6 +145,9 @@ stop-all:
 	@pkill -f "temporal server start-dev" || true
 	@pkill -f "dapr run --app-id app" || true
 	@pkill -f "python main.py" || true
-	@pkill -f "python .venv/src/application-sdk/dashboard/app.py" || true
+	@pkill -f "scalene.*main.py" || true
+	@sleep 2  # Add a small delay to ensure processes have time to finish
 	@python .github/scripts/cleanup_scalene.py || true
+	$(MAKE) stop-marketplace
 	@echo "All detached processes stopped."
+
