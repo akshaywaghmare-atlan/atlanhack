@@ -285,16 +285,6 @@ jobs:
           message-path: metrics.md
         continue-on-error: true
 
-      - name: Commit scalene.json file
-        if: always()
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "chore: update scalene.json with latest performance metrics"
-          file_pattern: "scalene.json"
-          commit_author: GitHub Actions <actions@github.com>
-          skip_dirty_check: false
-          push_options: "--force"
-
       # Stop all services
       - name: Stop all services and monitoring
         if: always()
@@ -304,3 +294,14 @@ jobs:
 
           # Stop the application and services gracefully
           make stop-all || true
+          sleep 2
+
+      - name: Commit scalene.json file
+        if: always()
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update scalene.json with latest performance metrics"
+          file_pattern: "scalene.json"
+          commit_author: GitHub Actions <actions@github.com>
+          skip_dirty_check: false
+          push_options: "--force"
