@@ -148,7 +148,7 @@ stop-all:
 	@pkill -f "dapr run --app-id app" || true
 	@pkill -f "python main.py" || true
 	@pkill -f "scalene.*main.py" || true
-	@sleep 5  # Add a small delay to ensure processes have time to finish
+	@sleep 2  # Add a small delay to ensure processes have time to finish
 	$(MAKE) stop-marketplace
 	@echo "All detached processes stopped."
 
