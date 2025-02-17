@@ -294,7 +294,7 @@ jobs:
 
           # Stop the application and services gracefully
           make stop-all || true
-          sleep 10
+          sleep 5
 
       - name: Commit scalene.json file
         if: always()
