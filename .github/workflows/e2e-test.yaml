@@ -293,7 +293,7 @@ jobs:
           pkill -f "mpstat" || true
 
           # Stop the application and services gracefully
-          make stop-all
+          make stop-all || true
           sleep 10
 
       - name: Commit scalene.json file
