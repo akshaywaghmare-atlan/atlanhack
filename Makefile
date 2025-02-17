@@ -141,13 +141,14 @@ run-hot-reload:
 
 # Stop all services
 stop-all:
+	@echo "Running scalene cleanup..."
+	@python .github/scripts/cleanup_scalene.py
 	@echo "Stopping all detached processes..."
 	@pkill -f "temporal server start-dev" || true
 	@pkill -f "dapr run --app-id app" || true
 	@pkill -f "python main.py" || true
 	@pkill -f "scalene.*main.py" || true
 	@sleep 5  # Add a small delay to ensure processes have time to finish
-	@python .github/scripts/cleanup_scalene.py
 	$(MAKE) stop-marketplace
 	@echo "All detached processes stopped."
 
