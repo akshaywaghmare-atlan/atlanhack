@@ -142,7 +142,7 @@ run-hot-reload:
 # Stop all services
 stop-all:
 	@echo "Running scalene cleanup..."
-	@python .github/scripts/cleanup_scalene.py
+	@python .github/scripts/cleanup_scalene.py || true
 	@echo "Stopping all detached processes..."
 	@pkill -f "temporal server start-dev" || true
 	@pkill -f "dapr run --app-id app" || true
