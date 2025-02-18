@@ -294,3 +294,13 @@ jobs:
 
         # Stop the application and services gracefully
         make stop-all || true
+
+    - name: Commit scalene.json file
+      if: always()
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "chore: update scalene.json with latest performance metrics"
+        file_pattern: "scalene.json"
+        commit_author: GitHub Actions <actions@github.com>
+        skip_dirty_check: false
+        push_options: "--force"
