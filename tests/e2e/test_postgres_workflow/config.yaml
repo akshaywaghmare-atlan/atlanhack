@@ -1,0 +1,39 @@
+credentials:
+  username: $E2E_POSTGRES_USERNAME
+  password: $E2E_POSTGRES_PASSWORD
+  host: $E2E_POSTGRES_HOST
+  port: $E2E_POSTGRES_PORT
+  extra:
+    database: "postgres"
+  authType: "basic"
+  type: "all"
+  database: "postgres"
+metadata:
+  exclude-filter: '{}'
+  include-filter: '{}'
+  temp-table-regex: ""
+  extraction-method: "direct"
+connection:
+  connection_name: "dev"
+  connection_qualified_name: "default/postgres/1738930739"
+server_config:
+  server_host: "http://localhost:8000"
+  server_version: "workflows/v1"
+expected_api_responses:
+  auth:
+    success: true
+    message: "Authentication successful"
+  metadata:
+    success: true
+    data: [{"TABLE_CATALOG": "postgres", "TABLE_SCHEMA": "public"}]
+  preflight_check:
+    success: true
+    data:
+      databaseSchemaCheck:
+        success: true
+        successMessage: "Schemas and Databases check successful"
+        failureMessage: ""
+      tablesCheck:
+        success: true
+        successMessage: "Tables check successful. Table count: 13"
+        failureMessage: ""

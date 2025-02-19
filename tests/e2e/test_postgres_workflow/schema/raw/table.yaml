@@ -1,0 +1,36 @@
+schema_type: dataframe
+version: 0.22.1
+columns:
+  table_catalog:
+    title: Table Catalog
+    description: The name of the catalog
+    dtype: str
+    nullable: false
+    checks:
+      str_matches:
+        value: postgres
+        options:
+          raise_warning: false
+          ignore_na: true
+    unique: false
+    coerce: false
+    required: true
+    regex: false
+checks:
+  check_record_count:
+    value: 13
+    options:
+      raise_warning: false
+      ignore_na: true
+index: null
+dtype: null
+coerce: false
+strict: false
+name: null
+ordered: false
+unique: null
+report_duplicates: all
+unique_column_names: false
+add_missing_columns: false
+title: Raw Table Pandera Schema
+description: Pandera schema definition for the raw table

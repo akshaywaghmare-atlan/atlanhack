@@ -13,7 +13,7 @@ pytest-asyncio = "^0.24.0"
 # use local application-sdk repository for development
 # application-sdk = { path = "../application-sdk/", develop = true, extras = ["workflows", "daft"]}
 # use remote application-sdk repository
-application-sdk = {git = "git@github.com:atlanhq/application-sdk.git", rev = "02d0dbfae97eb7a0d26dab83c3cb105990a76100", extras = ["workflows", "daft"]}
+application-sdk = {git = "git@github.com:atlanhq/application-sdk.git", rev = "b3f3ae798ef8f53da205008e309a48958d049e63", extras = ["workflows", "iam_auth"]}
 psycopg = {extras = ["binary"], version = "^3.2.3"}
 jinja2 = "^3.1.2"
 
@@ -32,6 +32,9 @@ watchdog = "^6.0.0"
 pytest = "^8.3.3"
 coverage = "^7.6.1"
 scalene = "^1.5.20"
+pandera = {extras = ["io"], version = "^0.22.1"}
+orjson = "^3.10.7"
+pytest-order = "^1.3.0"
 
 [build-system]
 requires = ["poetry-core"]
