@@ -8,7 +8,7 @@ columns:
     nullable: false
     checks:
       str_matches:
-        value: assets_100k
+        value: assets_100k_test
         options:
           raise_warning: false
           ignore_na: true
