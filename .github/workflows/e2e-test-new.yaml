@@ -94,8 +94,8 @@ jobs:
       env:
         E2E_POSTGRES_HOST: ${{ secrets.POSTGRES_DB_HOST }}
         E2E_POSTGRES_PORT: 5432
-        E2E_POSTGRES_USERNAME: "postgres",
-        E2E_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_DB_PASSWORD }},
+        E2E_POSTGRES_USERNAME: "postgres"
+        E2E_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_DB_PASSWORD }}
       run: |
         # Start the curl request in the background and capture its PID
         poetry run coverage run -m pytest tests/e2e
