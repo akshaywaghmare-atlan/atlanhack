@@ -2,13 +2,28 @@ schema_type: dataframe
 version: 0.22.1
 columns:
   table_catalog:
-    title: Table Catalog
-    description: The name of the catalog
+    title: Table Catalog Name Check
+    description: Check if the catalog name of records in the raw data is matched as expected
     dtype: str
     nullable: false
     checks:
       str_matches:
-        value: postgres
+        value: assets_100k
+        options:
+          raise_warning: false
+          ignore_na: true
+    unique: false
+    coerce: false
+    required: true
+    regex:
+  table_schema:
+    title: Table Schema Name Check
+    description: Check if the schema name of records in the raw data is matched as expected
+    dtype: str
+    nullable: false
+    checks:
+      str_matches:
+        value: schema_1
         options:
           raise_warning: false
           ignore_na: true
@@ -16,9 +31,15 @@ columns:
     coerce: false
     required: true
     regex: false
+    unique: false
+    coerce: false
+    required: true
+    regex: false
+# Since we are checking the catalog and schema name above, here we are checking if the no. of tables extracted matches the expected count
+# We are not checking the table names here since tests will start failing if any adds/removes a table from the database/schema
 checks:
-  check_record_count:
-    value: 13
+  check_record_count_ge:
+    value: 100
     options:
       raise_warning: false
       ignore_na: true

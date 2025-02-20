@@ -4,13 +4,13 @@ credentials:
   host: $E2E_POSTGRES_HOST
   port: $E2E_POSTGRES_PORT
   extra:
-    database: "postgres"
+    database: "assets_100k"
   authType: "basic"
   type: "all"
-  database: "postgres"
+  database: "assets_100k"
 metadata:
   exclude-filter: '{}'
-  include-filter: '{}'
+  include-filter: '{"^assets_100k$":["^schema_1$"]}'
   temp-table-regex: ""
   extraction-method: "direct"
 connection:
@@ -25,15 +25,7 @@ expected_api_responses:
     message: "Authentication successful"
   metadata:
     success: true
-    data: [{"TABLE_CATALOG": "postgres", "TABLE_SCHEMA": "public"}]
+    data: [{'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'public'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_1'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_2'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_3'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_4'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_5'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_6'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_7'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_8'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_9'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_10'}]
   preflight_check:
     success: true
-    data:
-      databaseSchemaCheck:
-        success: true
-        successMessage: "Schemas and Databases check successful"
-        failureMessage: ""
-      tablesCheck:
-        success: true
-        successMessage: "Tables check successful. Table count: 13"
-        failureMessage: ""
+    data: {'databaseSchemaCheck': {'success': True, 'successMessage': 'Schemas and Databases check successful', 'failureMessage': ''}, 'tablesCheck': {'success': True, 'successMessage': 'Tables check successful. Table count: 100', 'failureMessage': ''}}

@@ -3,7 +3,7 @@ version: 0.22.1
 columns:
   typeName:
     title: Type Name
-    description: The type of the database
+    description: Check the type name of the data asset
     dtype: str
     nullable: false
     checks:
@@ -23,7 +23,7 @@ columns:
     nullable: false
     checks:
       str_matches:
-        value: postgres
+        value: assets_100k
         options:
           raise_warning: false
           ignore_na: true
@@ -48,7 +48,7 @@ columns:
     regex: false
   attributes.connectorName:
     title: Connector Name
-    description: The name of the connector
+    description: Checks the name of the connector.
     dtype: str
     nullable: false
     checks:
@@ -98,7 +98,7 @@ columns:
     nullable: false
     checks:
       str_matches:
-        value: default/postgres/1738930739/postgres
+        value: default/postgres/1738930739/assets_100k
         options:
           raise_warning: false
           ignore_na: true
@@ -152,7 +152,7 @@ columns:
     required: true
     regex: false
 checks:
-  check_record_count:
+  check_record_count_ge:
     value: 1
     options:
       raise_warning: false
