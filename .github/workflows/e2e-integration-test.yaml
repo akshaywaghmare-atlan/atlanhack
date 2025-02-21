@@ -1,4 +1,4 @@
-name: E2E New Application Test
+name: E2E Integration Test
 on:
   push:
     branches:
@@ -87,25 +87,21 @@ jobs:
     - name: Start the application
       id: start_app
       run: |
-        make run-with-profile &
+        make run-app &
         sleep 20
 
-    - name: Run the end-to-end tests
+    - name: Run the end-to-end integration tests
       env:
         E2E_POSTGRES_HOST: ${{ secrets.POSTGRES_DB_HOST }}
         E2E_POSTGRES_PORT: 5432
         E2E_POSTGRES_USERNAME: "postgres"
         E2E_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_DB_PASSWORD }}
       run: |
-        # Start the curl request in the background and capture its PID
         poetry run coverage run -m pytest tests/e2e
 
     # Stop all services
     - name: Stop all services and monitoring
       if: always()
       run: |
-        # Kill monitoring process first
-        pkill -f "mpstat" || true
-
         # Stop the application and services gracefully
         make stop-all || true
