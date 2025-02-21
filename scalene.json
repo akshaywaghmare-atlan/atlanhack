@@ -1,14 +1,14 @@
 {
-  "max_footprint_mb": 1025.26962184906,
+  "max_footprint_mb": 1029.6010112762451,
   "files": {
     "/home/runner/work/atlan-postgres-app/atlan-postgres-app/.venv/lib/python3.11/site-packages/application_sdk/outputs/objectstore.py": {
       "functions": [
         {
           "line": "ObjectStoreOutput.push_file_to_object_store",
           "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 0.00031368535015685925,
-          "n_sys_percent": 0.0014553703986165236,
-          "n_malloc_mb": 195.11859512329102
+          "n_cpu_percent_python": 0.00033521874002896695,
+          "n_sys_percent": 0.001500965253774569,
+          "n_malloc_mb": 195.11822319030762
         }
       ]
     },
@@ -16,10 +16,10 @@
       "functions": [
         {
           "line": "_UnaryUnaryMultiCallable._blocking",
-          "n_cpu_percent_c": 0.002636448826729378,
+          "n_cpu_percent_c": 0.004657909837577619,
           "n_cpu_percent_python": 0.0,
-          "n_sys_percent": 0.024983406695110403,
-          "n_malloc_mb": 195.02849578857422
+          "n_sys_percent": 0.026473111652203833,
+          "n_malloc_mb": 195.02920532226562
         }
       ]
     },
@@ -27,10 +27,10 @@
       "functions": [
         {
           "line": "_transform",
-          "n_cpu_percent_c": 0.0019139833823125106,
-          "n_cpu_percent_python": 0.001222280146628497,
-          "n_sys_percent": 0.0023935932480821684,
-          "n_malloc_mb": 195.0012321472168
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.0011113238710868654,
+          "n_sys_percent": 0.0009621896902804882,
+          "n_malloc_mb": 195.00116539001465
         }
       ]
     },
@@ -38,10 +38,10 @@
       "functions": [
         {
           "line": "vstack",
-          "n_cpu_percent_c": 0.0030176198005934666,
-          "n_cpu_percent_python": 0.0,
-          "n_sys_percent": 0.0003390428785149437,
-          "n_malloc_mb": 100.47346496582031
+          "n_cpu_percent_c": 0.0024574457361833165,
+          "n_cpu_percent_python": 0.0008802038747938692,
+          "n_sys_percent": 0.0005076979709848667,
+          "n_malloc_mb": 92.3384017944336
         }
       ]
     },
@@ -49,17 +49,28 @@
       "functions": [
         {
           "line": "_astype_nansafe",
-          "n_cpu_percent_c": 0.0015949382598894285,
+          "n_cpu_percent_c": 0.0010604674467940775,
           "n_cpu_percent_python": 0.0,
-          "n_sys_percent": 0.0005279980268692784,
-          "n_malloc_mb": 20.000022888183594
+          "n_sys_percent": 0.0004944162019178581,
+          "n_malloc_mb": 20.000030517578125
         },
         {
           "line": "_astype_float_to_int_nansafe",
-          "n_cpu_percent_c": 0.0004329137717973472,
-          "n_cpu_percent_python": 0.0004835077982280796,
-          "n_sys_percent": 0.0002729368639727984,
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.0009209374615706118,
+          "n_sys_percent": 1.646541000872672e-05,
           "n_malloc_mb": 0.0
+        }
+      ]
+    },
+    "/home/runner/work/atlan-postgres-app/atlan-postgres-app/.venv/lib/python3.11/site-packages/pandas/core/internals/blocks.py": {
+      "functions": [
+        {
+          "line": "Block.copy",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.002660300618524336,
+          "n_sys_percent": 2.5544782224191986e-05,
+          "n_malloc_mb": 14.68719482421875
         }
       ]
     },
@@ -68,22 +79,22 @@
         {
           "line": "mgr_to_mgr",
           "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 0.0011855836858365827,
-          "n_sys_percent": 8.736840703540054e-05,
+          "n_cpu_percent_python": 0.0013838706334580553,
+          "n_sys_percent": 0.0,
           "n_malloc_mb": 0.0
         },
         {
           "line": "_list_of_dict_to_arrays",
-          "n_cpu_percent_c": 0.006836395930368511,
-          "n_cpu_percent_python": 0.008557342048289592,
-          "n_sys_percent": 0.00012420681149107475,
-          "n_malloc_mb": 19.079917907714844
+          "n_cpu_percent_c": 0.007285349041081443,
+          "n_cpu_percent_python": 0.04056038124494602,
+          "n_sys_percent": 0.0016410220490780387,
+          "n_malloc_mb": 19.079757690429688
         },
         {
           "line": "convert_object_array.<locals>.convert",
-          "n_cpu_percent_c": 0.0029351905508534877,
+          "n_cpu_percent_c": 0.002241249297209698,
           "n_cpu_percent_python": 0.0,
-          "n_sys_percent": 0.00012347040995450023,
+          "n_sys_percent": 1.7950577134765044e-05,
           "n_malloc_mb": 0.0
         }
       ]
@@ -93,16 +104,16 @@
         {
           "line": "_stack_arrays",
           "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 0.003518571144053231,
-          "n_sys_percent": 0.00040254731763585204,
-          "n_malloc_mb": 47.3363618850708
+          "n_cpu_percent_python": 0.005156087645399836,
+          "n_sys_percent": 0.0007096943922319579,
+          "n_malloc_mb": 37.22264862060547
         },
         {
           "line": "_merge_blocks",
-          "n_cpu_percent_c": 0.0033094853538921205,
-          "n_cpu_percent_python": 0.001289439906680106,
-          "n_sys_percent": 0.0004467306670637246,
-          "n_malloc_mb": 74.0412826538086
+          "n_cpu_percent_c": 0.0038371578698740325,
+          "n_cpu_percent_python": 0.0024966734534890974,
+          "n_sys_percent": 0.0007974431648728202,
+          "n_malloc_mb": 73.86550903320312
         }
       ]
     },
@@ -110,10 +121,10 @@
       "functions": [
         {
           "line": "to_dict",
-          "n_cpu_percent_c": 0.01576718269663141,
-          "n_cpu_percent_python": 0.03779009725190773,
-          "n_sys_percent": 0.00026773744428659735,
-          "n_malloc_mb": 70.00184631347656
+          "n_cpu_percent_c": 0.01591374296831847,
+          "n_cpu_percent_python": 0.037599284118798405,
+          "n_sys_percent": 0.00034321809420206076,
+          "n_malloc_mb": 70.00186920166016
         }
       ]
     },
@@ -122,37 +133,44 @@
         {
           "line": "to_json",
           "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 0.0009066635250240936,
-          "n_sys_percent": 0.008498694991925383,
-          "n_malloc_mb": 195.01568794250488
+          "n_cpu_percent_python": 0.0009072662419614707,
+          "n_sys_percent": 0.008577321111771414,
+          "n_malloc_mb": 195.01574325561523
         },
         {
           "line": "Writer.write",
-          "n_cpu_percent_c": 0.08664035663176044,
+          "n_cpu_percent_c": 0.08209801164487318,
           "n_cpu_percent_python": 0.0,
-          "n_sys_percent": 0.0024540743381488354,
-          "n_malloc_mb": 509.13274002075195
+          "n_sys_percent": 0.005837566542362359,
+          "n_malloc_mb": 509.13065910339355
         },
         {
           "line": "JsonReader._combine_lines",
-          "n_cpu_percent_c": 0.0008959054025819078,
-          "n_cpu_percent_python": 0.0023889767784316426,
-          "n_sys_percent": 0.003640735260796656,
-          "n_malloc_mb": 163.4650535583496
+          "n_cpu_percent_c": 0.0011164356322556559,
+          "n_cpu_percent_python": 0.0023217628263846263,
+          "n_sys_percent": 0.0033876218960054434,
+          "n_malloc_mb": 167.36059284210205
         },
         {
-          "line": "JsonReader.__next__",
-          "n_cpu_percent_c": 0.008626810796532904,
-          "n_cpu_percent_python": 0.0,
-          "n_sys_percent": 0.0009004575602365529,
+          "line": "JsonReader._get_object_parser",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.0005239573015543303,
+          "n_sys_percent": 0.000391346601340729,
           "n_malloc_mb": 0.0
         },
         {
+          "line": "JsonReader.__next__",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.009788267073545309,
+          "n_sys_percent": 0.0002750058962659774,
+          "n_malloc_mb": 10.00045108795166
+        },
+        {
           "line": "FrameParser._parse",
-          "n_cpu_percent_c": 0.03739892064994527,
+          "n_cpu_percent_c": 0.006705126412153318,
           "n_cpu_percent_python": 0.0,
-          "n_sys_percent": 0.005002916793203213,
-          "n_malloc_mb": 516.6214942932129
+          "n_sys_percent": 0.001570514826042024,
+          "n_malloc_mb": 516.6214790344238
         }
       ]
     },
@@ -160,10 +178,10 @@
       "functions": [
         {
           "line": "convert_to_line_delimits",
-          "n_cpu_percent_c": 0.03205374862025905,
-          "n_cpu_percent_python": 0.0,
-          "n_sys_percent": 0.019890854633626952,
-          "n_malloc_mb": 975.0256595611572
+          "n_cpu_percent_c": 0.012588127325642563,
+          "n_cpu_percent_python": 0.01793688910525474,
+          "n_sys_percent": 0.020987898918006568,
+          "n_malloc_mb": 975.024019241333
         }
       ]
     },
@@ -171,16 +189,23 @@
       "functions": [
         {
           "line": "_convert_arrays_to_dataframe",
-          "n_cpu_percent_c": 0.003524927629894999,
+          "n_cpu_percent_c": 0.0044876941055230195,
           "n_cpu_percent_python": 0.0,
-          "n_sys_percent": 0.0002712109982020003,
-          "n_malloc_mb": 21.97966766357422
+          "n_sys_percent": 0.00029817435401776715,
+          "n_malloc_mb": 33.69068908691406
         },
         {
           "line": "_wrap_result",
           "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 0.0009188359748374731,
-          "n_sys_percent": 0.0005704728911374612,
+          "n_cpu_percent_python": 0.0007027733472111643,
+          "n_sys_percent": 0.0002950528695259389,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "pandasSQL_builder",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 2.006527625376155e-05,
+          "n_sys_percent": 0.0006975333734792671,
           "n_malloc_mb": 0.0
         }
       ]
@@ -190,9 +215,20 @@
         {
           "line": "BaseCursor._maybe_prepare_gen",
           "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 0.011039753985801266,
-          "n_sys_percent": 0.006016632717927481,
-          "n_malloc_mb": 30.004150390625
+          "n_cpu_percent_python": 0.008784119400031645,
+          "n_sys_percent": 0.0047239776115186455,
+          "n_malloc_mb": 40.00215435028076
+        }
+      ]
+    },
+    "/home/runner/work/atlan-postgres-app/atlan-postgres-app/.venv/lib/python3.11/site-packages/psycopg/cursor_async.py": {
+      "functions": [
+        {
+          "line": "AsyncCursor.fetchall",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.026622000548403905,
+          "n_sys_percent": 0.0037668677561958175,
+          "n_malloc_mb": 0.0
         }
       ]
     },
@@ -201,27 +237,48 @@
         {
           "line": "AtlanObject._populate_extra_fields",
           "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 3.1544399396428524,
-          "n_sys_percent": 0.022151849478135824,
+          "n_cpu_percent_python": 3.0646755651679447,
+          "n_sys_percent": 0.022464085101344067,
           "n_malloc_mb": 0.0
         },
         {
           "line": "AtlanObject.build_extra",
           "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 0.2361028363103276,
-          "n_sys_percent": 0.0013033383344626139,
+          "n_cpu_percent_python": 0.23567217626085496,
+          "n_sys_percent": 0.001805483610536176,
           "n_malloc_mb": 0.0
         }
       ]
     },
-    "/home/runner/work/atlan-postgres-app/atlan-postgres-app/.venv/lib/python3.11/site-packages/pydantic/plugin/_schema_validator.py": {
+    "/home/runner/work/atlan-postgres-app/atlan-postgres-app/.venv/lib/python3.11/site-packages/pydantic/_internal/_core_utils.py": {
       "functions": [
         {
-          "line": "create_schema_validator",
-          "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 0.0,
-          "n_sys_percent": 0.0,
-          "n_malloc_mb": 10.000205039978027
+          "line": "get_type_ref",
+          "n_cpu_percent_c": 9.550349330974053e-05,
+          "n_cpu_percent_python": 0.0015191838592179742,
+          "n_sys_percent": 0.00016497045478544472,
+          "n_malloc_mb": 10.000033378601074
+        },
+        {
+          "line": "collect_invalid_schemas.<locals>._is_schema_valid",
+          "n_cpu_percent_c": 4.566343432604226e-05,
+          "n_cpu_percent_python": 0.001184690834151944,
+          "n_sys_percent": 0.0005085815376995651,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "_WalkCoreSchema._copy_schema",
+          "n_cpu_percent_c": 0.00011132884336238492,
+          "n_cpu_percent_python": 0.00317002337357394,
+          "n_sys_percent": 0.0001850486049227788,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "simplify_schema_references.<locals>.collect_refs",
+          "n_cpu_percent_c": 0.00020714476161873488,
+          "n_cpu_percent_python": 0.0016691721262456344,
+          "n_sys_percent": 5.8731128394606295e-06,
+          "n_malloc_mb": 0.0
         }
       ]
     },
@@ -229,93 +286,100 @@
       "functions": [
         {
           "line": "ModelMetaclass.__new__",
-          "n_cpu_percent_c": 0.00021210026455087156,
-          "n_cpu_percent_python": 0.01305332004108874,
-          "n_sys_percent": 0.0038639003391963377,
+          "n_cpu_percent_c": 0.0003380261590573618,
+          "n_cpu_percent_python": 0.015385995142286737,
+          "n_sys_percent": 0.0013878076593632326,
           "n_malloc_mb": 0.0
         },
         {
           "line": "ModelMetaclass.__instancecheck__",
           "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 0.0658178753630251,
-          "n_sys_percent": 0.0004410240920658106,
+          "n_cpu_percent_python": 0.07043616358059675,
+          "n_sys_percent": 0.0011049009956922038,
           "n_malloc_mb": 0.0
         },
         {
           "line": "BaseModel.__init__",
-          "n_cpu_percent_c": 0.04064272132438977,
-          "n_cpu_percent_python": 0.021270187527074533,
-          "n_sys_percent": 0.0004335502779203282,
+          "n_cpu_percent_c": 0.052240607567515536,
+          "n_cpu_percent_python": 0.019822118337078892,
+          "n_sys_percent": 0.0003139418426854571,
           "n_malloc_mb": 0.0
         },
         {
           "line": "BaseModel.__setattr__",
-          "n_cpu_percent_c": 0.15552839314183534,
-          "n_cpu_percent_python": 2.372503405230225,
-          "n_sys_percent": 0.017033929209062763,
+          "n_cpu_percent_c": 0.14198372364142406,
+          "n_cpu_percent_python": 2.3717314848157067,
+          "n_sys_percent": 0.01878670210084417,
           "n_malloc_mb": 0.0
         },
         {
           "line": "BaseModel._init_private_attributes",
           "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 0.009362726388058615,
-          "n_sys_percent": 0.0,
+          "n_cpu_percent_python": 0.015063843582739706,
+          "n_sys_percent": 0.00014868382284824783,
           "n_malloc_mb": 0.0
         },
         {
           "line": "BaseModel.dict",
           "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 0.02391642225701083,
-          "n_sys_percent": 7.707404032295872e-05,
+          "n_cpu_percent_python": 0.021074050893898515,
+          "n_sys_percent": 0.0,
           "n_malloc_mb": 0.0
         },
         {
           "line": "BaseModel._copy_and_set_values",
-          "n_cpu_percent_c": 0.020502253110737664,
-          "n_cpu_percent_python": 0.011125183906538326,
-          "n_sys_percent": 0.00023028418192413887,
+          "n_cpu_percent_c": 0.0159469218794825,
+          "n_cpu_percent_python": 0.009284835252854024,
+          "n_sys_percent": 0.00016138971839414824,
           "n_malloc_mb": 0.0
         },
         {
           "line": "BaseModel.validate",
           "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 0.0015613850898942992,
+          "n_cpu_percent_python": 0.0008580571676264095,
           "n_sys_percent": 0.0,
           "n_malloc_mb": 0.0
         },
         {
           "line": "BaseModel._get_value",
           "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 0.2653782918282304,
-          "n_sys_percent": 0.0017450672217000005,
+          "n_cpu_percent_python": 0.2647831410141556,
+          "n_sys_percent": 0.0026001653844844523,
+          "n_malloc_mb": 0.0
+        },
+        {
+          "line": "BaseModel.__try_update_forward_refs__",
+          "n_cpu_percent_c": 0.00010737167493725707,
+          "n_cpu_percent_python": 0.0016737752019084823,
+          "n_sys_percent": 6.615257807061335e-07,
           "n_malloc_mb": 0.0
         },
         {
           "line": "BaseModel.__iter__",
           "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 0.02220699732172794,
-          "n_sys_percent": 0.000294492283988378,
+          "n_cpu_percent_python": 0.033755041127240024,
+          "n_sys_percent": 0.00010331101032698269,
           "n_malloc_mb": 0.0
         },
         {
           "line": "BaseModel._iter",
-          "n_cpu_percent_c": 0.0057314237679349225,
-          "n_cpu_percent_python": 0.24531236993969363,
-          "n_sys_percent": 0.0015543433595209956,
+          "n_cpu_percent_c": 0.002498560373635036,
+          "n_cpu_percent_python": 0.257337188361751,
+          "n_sys_percent": 0.0022040192773765364,
           "n_malloc_mb": 0.0
         },
         {
           "line": "BaseModel._calculate_keys",
           "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 0.011626264415907302,
-          "n_sys_percent": 3.1594451768180214e-05,
+          "n_cpu_percent_python": 0.017468301829368087,
+          "n_sys_percent": 3.0414383619858343e-05,
           "n_malloc_mb": 0.0
         },
         {
           "line": "validate_model",
           "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 0.9803662646466197,
-          "n_sys_percent": 0.007127333792718764,
+          "n_cpu_percent_python": 0.990243541746464,
+          "n_sys_percent": 0.0067029868482829935,
           "n_malloc_mb": 0.0
         }
       ]
@@ -324,10 +388,10 @@
       "functions": [
         {
           "line": "ResultInternal._manyrow_getter.<locals>.manyrows",
-          "n_cpu_percent_c": 0.001222557615495782,
+          "n_cpu_percent_c": 0.000317489032303943,
           "n_cpu_percent_python": 0.0,
-          "n_sys_percent": 0.0003699574505976368,
-          "n_malloc_mb": 10.000045776367188
+          "n_sys_percent": 0.00024064325082174604,
+          "n_malloc_mb": 10.000030517578125
         }
       ]
     },
@@ -335,9 +399,9 @@
       "functions": [
         {
           "line": "_worker",
-          "n_cpu_percent_c": 47.019608535675985,
+          "n_cpu_percent_c": 47.16577587539462,
           "n_cpu_percent_python": 0.0,
-          "n_sys_percent": 1.887707165765242,
+          "n_sys_percent": 1.802223998032319,
           "n_malloc_mb": 0.0
         }
       ]
@@ -346,52 +410,52 @@
       "functions": [
         {
           "line": "deepcopy",
-          "n_cpu_percent_c": 0.022999700939121674,
-          "n_cpu_percent_python": 0.4801911515663548,
-          "n_sys_percent": 0.05879357435715289,
+          "n_cpu_percent_c": 0.030250590147415705,
+          "n_cpu_percent_python": 0.3515763961185348,
+          "n_sys_percent": 0.05764584502757212,
           "n_malloc_mb": 0.0
         },
         {
           "line": "_deepcopy_atomic",
-          "n_cpu_percent_c": 0.0014619725999611376,
-          "n_cpu_percent_python": 0.07115707818199432,
-          "n_sys_percent": 0.00650898821709047,
+          "n_cpu_percent_c": 0.0005387865214334824,
+          "n_cpu_percent_python": 0.02539552504959677,
+          "n_sys_percent": 0.004844257921382893,
           "n_malloc_mb": 0.0
         },
         {
           "line": "_deepcopy_list",
-          "n_cpu_percent_c": 0.0002678817107136574,
-          "n_cpu_percent_python": 0.011477063432616971,
-          "n_sys_percent": 0.00032925473828952307,
+          "n_cpu_percent_c": 4.84684655029509e-05,
+          "n_cpu_percent_python": 0.00566887610160364,
+          "n_sys_percent": 0.001037506700331257,
           "n_malloc_mb": 0.0
         },
         {
           "line": "_deepcopy_tuple",
-          "n_cpu_percent_c": 0.00021167931647513206,
-          "n_cpu_percent_python": 0.016847327340727535,
-          "n_sys_percent": 0.0017149374237112364,
+          "n_cpu_percent_c": 0.0005546975960281395,
+          "n_cpu_percent_python": 0.024115301640174554,
+          "n_sys_percent": 0.0010236679703585951,
           "n_malloc_mb": 0.0
         },
         {
           "line": "_deepcopy_dict",
-          "n_cpu_percent_c": 0.013567921872381782,
-          "n_cpu_percent_python": 0.06364734801034293,
-          "n_sys_percent": 0.010713591017479195,
-          "n_malloc_mb": 0.0
+          "n_cpu_percent_c": 0.03584823033622088,
+          "n_cpu_percent_python": 0.08566392814929438,
+          "n_sys_percent": 0.01861817646129439,
+          "n_malloc_mb": 10.000041961669922
         },
         {
           "line": "_keep_alive",
-          "n_cpu_percent_c": 0.0007487075189814408,
-          "n_cpu_percent_python": 0.03390516270273276,
-          "n_sys_percent": 0.0032469582254359116,
+          "n_cpu_percent_c": 0.0009305975019820252,
+          "n_cpu_percent_python": 0.024068452208069826,
+          "n_sys_percent": 0.00456627526685915,
           "n_malloc_mb": 0.0
         },
         {
           "line": "_reconstruct",
-          "n_cpu_percent_c": 0.023795279097980168,
-          "n_cpu_percent_python": 0.09580080526938715,
-          "n_sys_percent": 0.012968788923097914,
-          "n_malloc_mb": 10.000188827514648
+          "n_cpu_percent_c": 0.0012853136578568954,
+          "n_cpu_percent_python": 0.06159179527989801,
+          "n_sys_percent": 0.007205773654315559,
+          "n_malloc_mb": 10.000085830688477
         }
       ]
     },
@@ -400,15 +464,15 @@
         {
           "line": "_PollLikeSelector.unregister",
           "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 0.000538674154635415,
-          "n_sys_percent": 0.0006756091498325336,
+          "n_cpu_percent_python": 0.0012334108225186637,
+          "n_sys_percent": 0.0005473476774699872,
           "n_malloc_mb": 0.0
         },
         {
           "line": "EpollSelector.select",
-          "n_cpu_percent_c": 2.7761599622551305,
-          "n_cpu_percent_python": 7.3182838544968725,
-          "n_sys_percent": 2.585064982856365,
+          "n_cpu_percent_c": 2.810884289552107,
+          "n_cpu_percent_python": 7.368404180900167,
+          "n_sys_percent": 2.6351853531960985,
           "n_malloc_mb": 0.0
         }
       ]
@@ -417,34 +481,16 @@
       "functions": [
         {
           "line": "Condition.__enter__",
-          "n_cpu_percent_c": 7.75774908258184e-05,
-          "n_cpu_percent_python": 0.0008590237598496094,
-          "n_sys_percent": 0.00044172151967784585,
-          "n_malloc_mb": 0.0
-        },
-        {
-          "line": "Condition.wait",
-          "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 5.040628077826366e-05,
-          "n_sys_percent": 0.0006719697464471364,
+          "n_cpu_percent_c": 0.00010671280225943681,
+          "n_cpu_percent_python": 0.000767064617328704,
+          "n_sys_percent": 0.0005567247754325338,
           "n_malloc_mb": 0.0
         },
         {
           "line": "Thread.run",
-          "n_cpu_percent_c": 23.452880475724363,
+          "n_cpu_percent_c": 23.31658272077717,
           "n_cpu_percent_python": 0.0,
-          "n_sys_percent": 3.140306044613077,
-          "n_malloc_mb": 0.0
-        }
-      ]
-    },
-    "/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/weakref.py": {
-      "functions": [
-        {
-          "line": "WeakValueDictionary.__init__.<locals>.remove",
-          "n_cpu_percent_c": 0.0,
-          "n_cpu_percent_python": 0.012676801435608911,
-          "n_sys_percent": 0.0005481103324269657,
+          "n_sys_percent": 3.178464296229341,
           "n_malloc_mb": 0.0
         }
       ]
