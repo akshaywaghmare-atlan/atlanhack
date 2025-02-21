@@ -298,7 +298,7 @@ jobs:
         make stop-all || true
 
     - name: Commit scalene.json file
-      if: always()
+      if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' }}
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
         commit_message: "[skip ci] chore: update scalene.json with latest performance metrics"
