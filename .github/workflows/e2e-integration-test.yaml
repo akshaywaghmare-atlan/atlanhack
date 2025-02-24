@@ -11,6 +11,8 @@ on:
     branches:
       - main
       - develop
+  repository_dispatch:
+    types: [trigger-e2e-test]
 
 jobs:
   test:
@@ -74,6 +76,13 @@ jobs:
         poetry config virtualenvs.in-project true
         # Install the dependencies
         poetry install -vv
+
+        # Update the application-sdk to the application-sdk PR's latest commit hash
+        application_sdk_commit_hash = ${{ github.event.client_payload.commit_hash }}
+        if [ -n "$application_sdk_commit_hash" ]; then
+          poetry add git+https://github.com/atlanhq/application-sdk.git@application_sdk_commit_hash
+        fi
+
         poetry update application-sdk --dry-run
 
     # Start dapr and temporal services
