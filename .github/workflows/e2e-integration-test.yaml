@@ -78,9 +78,11 @@ jobs:
         poetry install -vv
 
         # Update the application-sdk to the application-sdk PR's latest commit hash
-        application_sdk_commit_hash = ${{ github.event.client_payload.commit_hash }}
-        if [ -n "$application_sdk_commit_hash" ]; then
-          poetry add git+https://github.com/atlanhq/application-sdk.git@application_sdk_commit_hash
+        echo ${{ github.event.client_payload.commit_hash }}
+        commit_hash=${{ github.event.client_payload.commit_hash }}
+        echo "Commit hash: $commit_hash"
+        if [ -n "$commit_hash" ]; then
+          poetry add git+https://github.com/atlanhq/application-sdk.git@commit_hash
         fi
 
         poetry update application-sdk --dry-run
