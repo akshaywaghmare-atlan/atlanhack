@@ -184,7 +184,7 @@
           "n_malloc_mb": 0.0
         },
         {
-          "line": "pandasSQL_builder",
+          "line": "_wrap_result",
           "n_cpu_percent_c": 0.0,
           "n_cpu_percent_python": 0.00016151758609454485,
           "n_sys_percent": 0.0034754894112420717,
@@ -429,6 +429,13 @@
     },
     "/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/selectors.py": {
       "functions": [
+        {
+          "line": "_PollLikeSelector.unregister",
+          "n_cpu_percent_c": 0.0,
+          "n_cpu_percent_python": 0.0004355549961531073,
+          "n_sys_percent": 0.000152372309628594,
+          "n_malloc_mb": 0.0
+        },
         {
           "line": "EpollSelector.select",
           "n_cpu_percent_c": 2.8685588680464393,
