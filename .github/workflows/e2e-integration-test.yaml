@@ -82,7 +82,8 @@ jobs:
         commit_hash=${{ github.event.client_payload.commit_hash }}
         echo "Commit hash: $commit_hash"
         if [ -n "$commit_hash" ]; then
-          poetry add git+https://github.com/atlanhq/application-sdk.git@commit_hash
+          echo "Commit hash IF: $commit_hash"
+          poetry add git+https://github.com/atlanhq/application-sdk.git@$commit_hash
         fi
 
         poetry update application-sdk --dry-run
