@@ -70,6 +70,27 @@ jobs:
           DOCKER_CLIENT_TIMEOUT: 300
           COMPOSE_HTTP_TIMEOUT: 300
 
+      - name: Build and push argo docker image
+        id: ghcr_docker_build_argo
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile.Argo
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ghcr.io/atlanhq/${{ github.event.repository.name }}-argo-${{ steps.get_lowercase_branch.outputs.lowercase_branch }}:latest
+            ghcr.io/atlanhq/${{ github.event.repository.name }}-argo-${{ steps.get_lowercase_branch.outputs.lowercase_branch }}:${{ steps.get_version.outputs.version }}
+          secrets: |
+            PRIVATE_REPO_ACCESS_TOKEN=${{ secrets.ORG_PAT_GITHUB }}
+          build-args: |
+            BASE_IMAGE=ghcr.io/atlanhq/${{ github.event.repository.name }}-${{ steps.get_lowercase_branch.outputs.lowercase_branch }}:latest
+            ACCESS_TOKEN_USR=$GITHUB_ACTOR
+            ACCESS_TOKEN_PWD=${{ secrets.ORG_PAT_GITHUB }}
+        env:
+          DOCKER_CLIENT_TIMEOUT: 300
+          COMPOSE_HTTP_TIMEOUT: 300
+
       # - name: Login to Harbor Registry
       #   run: |
       #     bash ./.github/scripts/registry-login.sh "${{ secrets.HARBOR_URL }}" '${{ secrets.HARBOR_USERNAME }}' "${{ secrets.HARBOR_PASSWORD }}"
