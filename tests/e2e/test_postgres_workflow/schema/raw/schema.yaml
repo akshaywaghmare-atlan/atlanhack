@@ -18,7 +18,7 @@ columns:
     regex: false
   schema_name:
     title: Schema Name
-    description: Check the name of tjhe schema
+    description: Check the name of the schema
     dtype: str
     nullable: false
     checks:
