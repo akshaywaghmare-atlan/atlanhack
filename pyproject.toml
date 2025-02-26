@@ -11,16 +11,11 @@ python = "^3.11.10"
 fastapi = {extras = ["standard"], version = "^0.115.0"}
 pytest-asyncio = "^0.24.0"
 # use local application-sdk repository for development
-# application-sdk = { path = "../application-sdk/", develop = true, extras = ["workflows", "iam_auth", "tests"]}
+# application-sdk = { path = "../application-sdk/", develop = true, extras = ["workflows", "iam_auth", "sqlalchemy", "tests"]}
 # use remote application-sdk repository
-application-sdk = {git = "git@github.com:atlanhq/application-sdk.git", rev = "3864b751ffb23e66027c844ee1600c2e25c8cea3", extras = ["workflows", "iam_auth", "tests"]}
+application-sdk = {git = "git@github.com:atlanhq/application-sdk.git", rev = "34d5f801ef7863ff0373b4c25362ed9e8e42a77a", extras = ["workflows", "iam_auth", "sqlalchemy", "tests"]}
 psycopg = {extras = ["binary"], version = "^3.2.3"}
 jinja2 = "^3.1.2"
-
-[tool.poetry.group.app.dependencies]
-aiofiles = "^24.1.0"
-sqlalchemy = {extras = ["asyncio"], version = "^2.0.35"}
-
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.8.0"
