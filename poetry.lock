@@ -186,14 +186,15 @@ uvloop = "^0.21.0"
 daft = ["getdaft[sql] (>=0.3.15,<0.4.0)"]
 iam-auth = ["boto3 (>=1.31.3,<2.0.0)"]
 iceberg = ["pyiceberg (>=0.8.1,<0.9.0)"]
+scale-data-generator = ["duckdb (>=1.1.3,<2.0.0)", "duckdb-engine (>=0.14.0,<0.15.0)", "faker (>=8.0.0,<9.0.0)", "numpy (>=1.23.5,<2.0.0)", "pandas (>=2.2.3,<3.0.0)", "pyarrow (>=17.0.0,<18.0.0)", "pyyaml (>=6.0.2,<7.0.0)"]
 sqlalchemy = ["sqlalchemy[asyncio] (>=2.0.36,<3.0.0)"]
 workflows = ["dapr (>=1.14.0,<2.0.0)", "pandas (>=2.2.3,<3.0.0)", "temporalio (>=1.7.1,<2.0.0)"]
 
 [package.source]
 type = "git"
 url = "git@github.com:atlanhq/application-sdk.git"
-reference = "0f182758aba48406f260f22c6b49044e13aab70e"
-resolved_reference = "0f182758aba48406f260f22c6b49044e13aab70e"
+reference = "34d5f801ef7863ff0373b4c25362ed9e8e42a77a"
+resolved_reference = "34d5f801ef7863ff0373b4c25362ed9e8e42a77a"
 
 [[package]]
 name = "attrs"
@@ -3207,4 +3208,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11.10"
-content-hash = "81ff926ef64755c3c63b450166bd4bc14442460f33c62b91cb3e58ab63683af7"
+content-hash = "81f87270b9330bdfd7e958e3e8ae2e6c9d1276e92f1121c3c9b212dbe146b3b7"
