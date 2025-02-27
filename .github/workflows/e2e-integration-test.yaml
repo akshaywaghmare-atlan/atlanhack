@@ -74,7 +74,7 @@ jobs:
         commit_hash=${{ github.event.inputs.distinct_id }}
         echo "Commit hash: $commit_hash"
         if [ -n "$commit_hash" ]; then
-          sed -i '' "s/rev = \"[^\"]*\"/rev = \"$commit_hash\"/" pyproject.toml
+          sed -i "s/rev = \"[^\"]*\"/rev = \"$commit_hash\"/" pyproject.toml
         fi
 
     - name: Set up system git client for poetry
