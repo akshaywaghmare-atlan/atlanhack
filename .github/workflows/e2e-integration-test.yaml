@@ -75,6 +75,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
+        echo "Current Branch: ${{ github.ref }}"
         git config --global url."https://${{ secrets.ORG_PAT_GITHUB }}@github.com/".insteadOf "git@github.com:"
         # Configure poetry to use project-specific virtualenv
         poetry config virtualenvs.in-project true
@@ -87,7 +88,7 @@ jobs:
         echo "Commit hash: $commit_hash"
         if [ -n "$commit_hash" ]; then
           echo "Commit hash IF: $commit_hash"
-          poetry add git+https://github.com/atlanhq/application-sdk.git@$commit_hash
+          poetry add git+ssh://git@github.com/atlanhq/application-sdk.git@$commit_hash -vv
         fi
 
         poetry update application-sdk --dry-run
