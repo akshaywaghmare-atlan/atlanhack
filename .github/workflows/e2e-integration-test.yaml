@@ -88,6 +88,7 @@ jobs:
         # Configure poetry to use project-specific virtualenv
         poetry config virtualenvs.in-project true
         # Install the dependencies
+        poetry lock --no-update
         poetry install -vv
         poetry update application-sdk --dry-run
 
