@@ -71,9 +71,7 @@ jobs:
       #----------------------------------------------
     - name: Update application-sdk rev
       run: |
-        # commit_hash=${{ github.event.inputs.distinct_id }}
-        commit_hash="ee04d1d4c6474a2b9f5875558a36c87c8e0e2a6f"
-        echo "Commit hash: $commit_hash"
+        commit_hash=${{ github.event.inputs.distinct_id }}
         if [ -n "$commit_hash" ]; then
           sed -i "s/rev = \"[^\"]*\"/rev = \"$commit_hash\"/" pyproject.toml
         fi
