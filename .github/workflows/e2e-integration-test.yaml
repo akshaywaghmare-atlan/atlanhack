@@ -88,7 +88,7 @@ jobs:
         echo "Commit hash: $commit_hash"
         if [ -n "$commit_hash" ]; then
           echo "Commit hash IF: $commit_hash"
-          poetry add git+ssh://git@github.com/atlanhq/application-sdk.git@$commit_hash -vv
+          poetry add https://${{ secrets.ORG_PAT_GITHUB }}@github.com/atlanhq/application-sdk.git@$commit_hash -vv
         fi
 
         poetry update application-sdk --dry-run
