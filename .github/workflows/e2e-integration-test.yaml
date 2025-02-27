@@ -11,8 +11,9 @@ on:
     branches:
       - main
       - develop
-  repository_dispatch:
-    types: [trigger-e2e-test]
+  workflow_dispatch:
+    inputs:
+      distinct_id:
 
 jobs:
   test:
@@ -26,6 +27,9 @@ jobs:
       contents: write
 
     steps:
+    - name: echo distinct ID ${{ github.event.inputs.distinct_id }}
+        run: echo ${{ github.event.inputs.distinct_id }}
+
     - uses: actions/checkout@v4
       with:
         token : ${{ secrets.ORG_PAT_GITHUB }}
@@ -78,8 +82,8 @@ jobs:
         poetry install -vv
 
         # Update the application-sdk to the application-sdk PR's latest commit hash
-        echo ${{ github.event.client_payload.commit_hash }}
-        commit_hash=${{ github.event.client_payload.commit_hash }}
+        echo ${{ github.event.inputs.distinct_id }}
+        commit_hash=${{ github.event.inputs.distinct_id }}
         echo "Commit hash: $commit_hash"
         if [ -n "$commit_hash" ]; then
           echo "Commit hash IF: $commit_hash"
