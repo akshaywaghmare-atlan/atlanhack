@@ -18,7 +18,13 @@ from app.activities.metadata_extraction.postgres import (
 logger = get_logger(__name__)
 
 DEFAULT_HEARTBEAT_TIMEOUT = timedelta(
-    seconds=int(os.getenv("ATLAN_HEARTBEAT_TIMEOUT", 120))
+    seconds=int(os.getenv("ATLAN_HEARTBEAT_TIMEOUT", 120)) # 2 minutes
+)
+DEFAULT_START_TO_CLOSE_TIMEOUT = timedelta(
+    seconds=int(os.getenv("ATLAN_START_TO_CLOSE_TIMEOUT", 2 * 60 * 60)) # 2 hours
+)
+DEFAULT_SCHEDULE_TO_START_TIMEOUT = timedelta(
+    seconds=int(os.getenv("ATLAN_SCHEDULE_TO_START_TIMEOUT", 6 * 60 * 60)) # 6 hours
 )
 
 @workflow.defn
@@ -26,6 +32,8 @@ class PostgresMetadataExtractionWorkflow(SQLMetadataExtractionWorkflow):
     activities_cls = PostgresMetadataExtractionActivities
 
     default_heartbeat_timeout = DEFAULT_HEARTBEAT_TIMEOUT
+    default_start_to_close_timeout = DEFAULT_START_TO_CLOSE_TIMEOUT
+    default_schedule_to_start_timeout = DEFAULT_SCHEDULE_TO_START_TIMEOUT
 
     @workflow.run
     async def run(self, workflow_config: Dict[str, Any]):
@@ -56,8 +64,9 @@ class PostgresMetadataExtractionWorkflow(SQLMetadataExtractionWorkflow):
             self.activities_cls.preflight_check,
             workflow_args,
             retry_policy=retry_policy,
-            start_to_close_timeout=timedelta(seconds=1000),
+            start_to_close_timeout=self.default_start_to_close_timeout,
             heartbeat_timeout=self.default_heartbeat_timeout,
+            schedule_to_start_timeout=self.default_schedule_to_start_timeout,
         )
 
         fetch_and_transforms = [
@@ -65,31 +74,26 @@ class PostgresMetadataExtractionWorkflow(SQLMetadataExtractionWorkflow):
                 self.activities_cls.fetch_databases,
                 workflow_args,
                 retry_policy,
-                start_to_close_timeout_seconds=7200,  # 2 hours
             ),
             self.fetch_and_transform(
                 self.activities_cls.fetch_schemas,
                 workflow_args,
                 retry_policy,
-                start_to_close_timeout_seconds=7200,
             ),
             self.fetch_and_transform(
                 self.activities_cls.fetch_tables,
                 workflow_args,
                 retry_policy,
-                start_to_close_timeout_seconds=7200,
             ),
             self.fetch_and_transform(
                 self.activities_cls.fetch_columns,
                 workflow_args,
                 retry_policy,
-                start_to_close_timeout_seconds=7200,
             ),
             self.fetch_and_transform(
                 self.activities_cls.fetch_procedures,
                 workflow_args,
                 retry_policy,
-                start_to_close_timeout_seconds=7200,
             ),
         ]
         await asyncio.gather(*fetch_and_transforms)
