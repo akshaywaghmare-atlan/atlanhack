@@ -69,27 +69,26 @@ jobs:
       #       set up system git client for poetry
       #       known to be available only in poetry 1.8.5
       #----------------------------------------------
+    - name: Update application-sdk rev
+      run: |
+        commit_hash=${{ github.event.inputs.distinct_id }}
+        if [ -n "$commit_hash" ]; then
+          sed -i "s/rev = \"[^\"]*\"/rev = \"$commit_hash\"/" pyproject.toml
+        fi
+
     - name: Set up system git client for poetry
       run: |
         poetry config experimental.system-git-client true
 
     - name: Install Dependencies
       run: |
+        echo "Current Branch: ${{ github.ref }}"
         git config --global url."https://${{ secrets.ORG_PAT_GITHUB }}@github.com/".insteadOf "git@github.com:"
         # Configure poetry to use project-specific virtualenv
         poetry config virtualenvs.in-project true
         # Install the dependencies
+        poetry lock --no-update
         poetry install -vv
-
-        # Update the application-sdk to the application-sdk PR's latest commit hash
-        echo ${{ github.event.inputs.distinct_id }}
-        commit_hash=${{ github.event.inputs.distinct_id }}
-        echo "Commit hash: $commit_hash"
-        if [ -n "$commit_hash" ]; then
-          echo "Commit hash IF: $commit_hash"
-          poetry add git+https://github.com/atlanhq/application-sdk.git@$commit_hash
-        fi
-
         poetry update application-sdk --dry-run
 
     # Start dapr and temporal services
