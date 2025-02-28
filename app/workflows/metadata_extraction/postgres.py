@@ -1,4 +1,5 @@
 import asyncio
+import os
 from datetime import timedelta
 from typing import Any, Callable, Dict, List
 
@@ -16,10 +17,15 @@ from app.activities.metadata_extraction.postgres import (
 
 logger = get_logger(__name__)
 
+DEFAULT_HEARTBEAT_TIMEOUT = timedelta(
+    seconds=int(os.getenv("ATLAN_HEARTBEAT_TIMEOUT", 120))
+)
 
 @workflow.defn
 class PostgresMetadataExtractionWorkflow(SQLMetadataExtractionWorkflow):
     activities_cls = PostgresMetadataExtractionActivities
+
+    default_heartbeat_timeout = DEFAULT_HEARTBEAT_TIMEOUT
 
     @workflow.run
     async def run(self, workflow_config: Dict[str, Any]):
@@ -51,6 +57,7 @@ class PostgresMetadataExtractionWorkflow(SQLMetadataExtractionWorkflow):
             workflow_args,
             retry_policy=retry_policy,
             start_to_close_timeout=timedelta(seconds=1000),
+            heartbeat_timeout=self.default_heartbeat_timeout,
         )
 
         fetch_and_transforms = [
