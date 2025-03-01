@@ -155,7 +155,7 @@ SELECT
     CASE
         WHEN pg_get_expr(d.adbin, d.adrelid) LIKE 'nextval%' THEN 'YES'
         ELSE 'NO'
-    END AS IS_AUTOINCREMENT,
+    END AS IS_AUTO_INCREMENT,
     CASE
         WHEN t.typtype = 'd' THEN t.typtypmod
         ELSE NULL
@@ -164,14 +164,17 @@ SELECT
         WHEN t.typtype = 'b' AND t.typelem <> 0 THEN t.typlen
         ELSE NULL
     END AS CHARACTER_OCTET_LENGTH,
-    'NEVER' AS IS_GENERATEDCOLUMN,  -- Simplified for older versions
+    'NO' AS IS_GENERATED,  -- Simplified for older versions
     'NO' AS IS_IDENTITY,  -- Simplified for older versions
     NULL AS IDENTITY_CYCLE,  -- Simplified for older versions
     CASE
         WHEN t.typelem <> 0 THEN t.typelem
         ELSE t.oid
     END::regtype::text AS COLUMN_SIZE,
-    2 AS NUM_PREC_RADIX,
+    CASE
+        WHEN t.typname IN ('bit', 'varbit') THEN 2
+        ELSE 10
+    END AS NUM_PREC_RADIX,
     CASE
         WHEN t.typtype = 'b' AND t.typelem = 0 THEN
             CASE
