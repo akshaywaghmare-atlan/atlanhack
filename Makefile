@@ -110,6 +110,8 @@ run-app:
 	ATLAN_APP_HTTP_PORT=$(ATLAN_APP_HTTP_PORT) \
 	ATLAN_APP_DASHBOARD_HTTP_HOST=$(ATLAN_APP_DASHBOARD_HTTP_HOST) \
 	ATLAN_APP_DASHBOARD_HTTP_PORT=$(ATLAN_APP_DASHBOARD_HTTP_PORT) \
+	ATLAN_TEMPORAL_HOST=$(ATLAN_TEMPORAL_HOST) \
+	ATLAN_TEMPORAL_PORT=$(ATLAN_TEMPORAL_PORT) \
 	ATLAN_TENANT_ID=$(ATLAN_TENANT_ID) \
 	ENABLE_OTLP_LOGS=$(ENABLE_OTLP_LOGS) \
 	poetry run python main.py
@@ -121,6 +123,8 @@ run-with-profile:
 	ATLAN_APP_HTTP_PORT=$(ATLAN_APP_HTTP_PORT) \
 	ATLAN_APP_DASHBOARD_HTTP_HOST=$(ATLAN_APP_DASHBOARD_HTTP_HOST) \
 	ATLAN_APP_DASHBOARD_HTTP_PORT=$(ATLAN_APP_DASHBOARD_HTTP_PORT) \
+	ATLAN_TEMPORAL_HOST=$(ATLAN_TEMPORAL_HOST) \
+	ATLAN_TEMPORAL_PORT=$(ATLAN_TEMPORAL_PORT) \
 	ATLAN_TENANT_ID=$(ATLAN_TENANT_ID) \
 	ENABLE_OTLP_LOGS=$(ENABLE_OTLP_LOGS) \
 	poetry run scalene --profile-all --cli --outfile scalene.json --json main.py
@@ -141,13 +145,14 @@ run-hot-reload:
 
 # Stop all services
 stop-all:
+	@echo "Running scalene cleanup..."
+	@python .github/scripts/cleanup_scalene.py || true
 	@echo "Stopping all detached processes..."
 	@pkill -f "temporal server start-dev" || true
 	@pkill -f "dapr run --app-id app" || true
 	@pkill -f "python main.py" || true
 	@pkill -f "scalene.*main.py" || true
 	@sleep 2  # Add a small delay to ensure processes have time to finish
-	@python .github/scripts/cleanup_scalene.py || true
 	$(MAKE) stop-marketplace
 	@echo "All detached processes stopped."
 
