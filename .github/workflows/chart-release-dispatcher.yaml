@@ -5,7 +5,7 @@ on:
     workflows:
       - "Publish App Docker Image"
     branches:
-      - hackathon-2025
+      - hackathon_2025
     types:
       - completed
 

@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - develop
-      - hackathon-2025
+      - hackathon_2025
     paths:
       - '**'
       - '!kurl-installer.yaml'
