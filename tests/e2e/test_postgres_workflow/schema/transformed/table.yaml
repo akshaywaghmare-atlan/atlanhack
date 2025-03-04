@@ -196,21 +196,6 @@ columns:
     coerce: false
     required: true
     regex: false
-  isIncomplete:
-    title: Is Incomplete
-    description: Indicates if the schema is incomplete
-    dtype: bool
-    nullable: false
-    checks:
-      equal_to:
-        value: true
-        options:
-          raise_warning: false
-          ignore_na: true
-    unique: false
-    coerce: false
-    required: true
-    regex: false
   status:
     title: Status
     description: The status of the schema

@@ -18,15 +18,14 @@ from app.activities.metadata_extraction.postgres import (
 logger = get_logger(__name__)
 
 DEFAULT_HEARTBEAT_TIMEOUT = timedelta(
-    seconds=int(os.getenv("ATLAN_HEARTBEAT_TIMEOUT", 120))  # 2 minutes
+    seconds=int(os.getenv("ATLAN_HEARTBEAT_TIMEOUT", 120)) # 2 minutes
 )
 DEFAULT_START_TO_CLOSE_TIMEOUT = timedelta(
-    seconds=int(os.getenv("ATLAN_START_TO_CLOSE_TIMEOUT", 2 * 60 * 60))  # 2 hours
+    seconds=int(os.getenv("ATLAN_START_TO_CLOSE_TIMEOUT", 2 * 60 * 60)) # 2 hours
 )
 DEFAULT_SCHEDULE_TO_START_TIMEOUT = timedelta(
-    seconds=int(os.getenv("ATLAN_SCHEDULE_TO_START_TIMEOUT", 6 * 60 * 60))  # 6 hours
+    seconds=int(os.getenv("ATLAN_SCHEDULE_TO_START_TIMEOUT", 6 * 60 * 60)) # 6 hours
 )
-
 
 @workflow.defn
 class PostgresMetadataExtractionWorkflow(SQLMetadataExtractionWorkflow):
