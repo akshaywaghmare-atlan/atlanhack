@@ -40,3 +40,6 @@ archive.zip
 dist/
 
 gh_secret
+
+# env
+.env.dev
