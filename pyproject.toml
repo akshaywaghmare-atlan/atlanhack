@@ -28,6 +28,7 @@ watchdog = "^6.0.0"
 pytest = "^8.3.3"
 coverage = "^7.6.1"
 scalene = "^1.5.20"
+hypothesis = "^6.98.8"
 
 [build-system]
 requires = ["poetry-core"]
