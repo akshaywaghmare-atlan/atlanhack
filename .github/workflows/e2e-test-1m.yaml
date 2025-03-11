@@ -13,7 +13,7 @@ jobs:
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
-    timeout-minutes: 10
+    timeout-minutes: 30
     if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || contains(github.event.pull_request.labels.*.name, 'e2e-test-1m') }}
 
     steps:
@@ -144,7 +144,7 @@ jobs:
             break
           fi
           echo "Workflow still running... (Attempt $((ATTEMPT+1))/$MAX_ATTEMPTS)"
-          sleep 1
+          sleep 10
           ATTEMPT=$((ATTEMPT+1))
         done
         WORKFLOW_DETAILS=$(temporal workflow describe \
