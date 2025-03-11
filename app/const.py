@@ -5,7 +5,7 @@ TABLES_CHECK_SQL = """
     LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
     WHERE concat(current_database(), concat('.', N.nspname)) !~ '{normalized_exclude_regex}'
         AND concat(current_database(), concat('.', N.nspname)) ~ '{normalized_include_regex}'
-        AND N.nspname NOT IN ('performance_schema', 'information_schema') AND N.nspname NOT LIKE 'pg_%%'
+        AND N.nspname NOT IN ('performance_schema', 'information_schema') AND N.nspname NOT LIKE 'pg$_%' ESCAPE '$'
         AND C.relkind IN ('r','p','v','m','f')
         {temp_table_regex_sql}
 """
@@ -18,7 +18,7 @@ SELECT
     current_database() AS CATALOG_NAME,
     N.nspname AS SCHEMA_NAME
 FROM pg_namespace N
-WHERE N.nspname NOT LIKE 'pg_%%' AND N.nspname != 'information_schema'
+WHERE N.nspname NOT LIKE 'pg$_%' ESCAPE '$' AND N.nspname != 'information_schema'
 """
 
 ### Extraction Queries
@@ -47,7 +47,7 @@ LEFT JOIN
 ON (table_counts.relnamespace = N.oid)
 LEFT JOIN information_schema.schemata S ON S.schema_name = N.nspname
 WHERE
-    N.nspname NOT LIKE 'pg_%' AND N.nspname != 'information_schema'
+    N.nspname NOT LIKE 'pg$_%' ESCAPE '$' AND N.nspname != 'information_schema'
     AND concat(current_database(), concat('.', N.nspname)) !~ '{normalized_exclude_regex}'
     AND concat(current_database(), concat('.', N.nspname)) ~ '{normalized_include_regex}'
 ORDER BY N.nspname;
@@ -129,7 +129,7 @@ TABLE_EXTRACTION_SQL = """
         FROM pg_class c
         WHERE c.relispartition = 'true' AND c.relkind = 'r'
     ) AS PARTITION_RANGE ON (C.relname = PARTITION_RANGE.PARTITION_NAME)
-    WHERE N.nspname NOT LIKE 'pg_%%' AND  N.nspname != 'information_schema'
+    WHERE N.nspname NOT LIKE 'pg$_%' ESCAPE '$' AND  N.nspname != 'information_schema'
     AND concat(current_database(), concat('.', N.nspname)) !~ '{normalized_exclude_regex}'
     AND concat(current_database(), concat('.', N.nspname)) ~ '{normalized_include_regex}'
     {temp_table_regex_sql}
@@ -228,7 +228,7 @@ LEFT JOIN pg_catalog.pg_description ds
 WHERE
     a.attnum > 0
     AND NOT a.attisdropped
-    AND n.nspname NOT LIKE 'pg_%%'
+    AND n.nspname NOT LIKE 'pg$_%' ESCAPE '$'
     AND n.nspname != 'information_schema'
     AND concat(current_database(), concat('.', n.nspname)) !~ '{normalized_exclude_regex}'
     AND concat(current_database(), concat('.', n.nspname)) ~ '{normalized_include_regex}'
@@ -242,6 +242,7 @@ ORDER BY
 """
 COLUMN_EXTRACTION_TEMP_TABLE_REGEX_SQL = "AND c.relname !~ '{exclude_table_regex}'"
 
+# note: that procedures were introduced in postgres 11 and prior to that they were called functions
 PROCEDURE_EXTRACTION_SQL = """
 SELECT
         current_database() AS PROCEDURE_CATALOG,
