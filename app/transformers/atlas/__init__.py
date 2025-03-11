@@ -1,21 +1,12 @@
-from typing import Any, Dict, Union
+from typing import Any, Dict
 
 from application_sdk.transformers.atlas import AtlasTransformer
 from application_sdk.transformers.atlas.sql import Column, Procedure, Table
-from pyatlan.model import assets
 
 
 class PostgresTable(Table):
     @classmethod
-    def parse_obj(
-        cls, obj: Dict[str, Any]
-    ) -> Union[
-        assets.Table,
-        assets.View,
-        assets.MaterialisedView,
-        assets.SnowflakeDynamicTable,
-        assets.TablePartition,
-    ]:
+    def get_attributes(cls, obj: Dict[str, Any]) -> Dict[str, Any]:
         """
         Postgres view and materialized view definitions are select queries,
         so we need to format the view definition to be a valid SQL query.
@@ -25,73 +16,86 @@ class PostgresTable(Table):
         assert "table_name" in obj, "table_name cannot be None"
         assert "table_type" in obj, "table_type cannot be None"
 
-        table = super().parse_obj(obj)
+        entity_data = super().get_attributes(obj)
+        table_attributes = entity_data.get("attributes", {})
+        table_custom_attributes = entity_data.get("custom_attributes", {})
 
-        if hasattr(table, "constraint"):
-            table.constraint = obj.get("partition_constraint", "")
+        table_attributes["constraint"] = obj.get("partition_constraint", "")
 
         if (
             obj.get("table_kind", "") == "p"
             or obj.get("table_type", "") == "PARTITIONED TABLE"
         ):
-            table.is_partitioned = True
-            table.partition_strategy = obj.get("partition_strategy", "")
-            table.partition_count = obj.get("partition_count", 0)
-        elif hasattr(table, "is_partitioned"):
-            table.is_partitioned = False
+            table_attributes["is_partitioned"] = True
+            table_attributes["partition_strategy"] = obj.get("partition_strategy", "")
+            table_attributes["partition_count"] = obj.get("partition_count", 0)
+        else:
+            table_attributes["is_partitioned"] = False
 
-        if not table.custom_attributes:
-            table.custom_attributes = {}
-
-        table.custom_attributes["is_insertable_into"] = obj.get(
+        table_custom_attributes["is_insertable_into"] = obj.get(
             "is_insertable_into", False
         )
-        table.custom_attributes["is_typed"] = obj.get("is_typed", False)
-        table.custom_attributes["self_referencing_col_name"] = obj.get(
+        table_custom_attributes["is_typed"] = obj.get("is_typed", False)
+        table_custom_attributes["self_referencing_col_name"] = obj.get(
             "self_referencing_col_name", ""
         )
-        table.custom_attributes["ref_generation"] = obj.get("ref_generation", "")
-
+        table_custom_attributes["ref_generation"] = obj.get("ref_generation", "")
         if obj.get("table_type") == "VIEW":
             view_definition = "CREATE OR REPLACE VIEW {view_name} AS {query}"
-            table.attributes.definition = view_definition.format(
+            table_attributes["definition"] = view_definition.format(
                 view_name=obj.get("table_name", ""),
                 query=obj.get("view_definition", ""),
             )
         elif obj.get("table_type") == "MATERIALIZED VIEW":
             view_definition = "CREATE MATERIALIZED VIEW {view_name} AS {query}"
-            table.attributes.definition = view_definition.format(
+            table_attributes["definition"] = view_definition.format(
                 view_name=obj.get("table_name", ""),
                 query=obj.get("view_definition", ""),
             )
+        
+        entity_class = None
+        if entity_data["entity_class"] == Table:
+            entity_class = PostgresTable
+        else:
+            entity_class = entity_data["entity_class"]
 
-        return table
+        return {
+            **entity_data,
+            "attributes": table_attributes,
+            "custom_attributes": table_custom_attributes,
+            "entity_class": entity_class,
+        }
 
 
 class PostgresColumn(Column):
     @classmethod
-    def parse_obj(cls, obj: Dict[str, Any]) -> assets.Column:
-        column = super().parse_obj(obj)
+    def get_attributes(cls, obj: Dict[str, Any]) -> Dict[str, Any]:
+        entity_data = super().get_attributes(obj)
 
-        if not column.custom_attributes:
-            column.custom_attributes = {}
+        column_attributes = entity_data.get("attributes", {})
+        column_custom_attributes = entity_data.get("custom_attributes", {})
 
         if obj.get("numeric_precision_radix", "") != "":
-            column.custom_attributes["num_prec_radix"] = obj.get(
+            column_custom_attributes["num_prec_radix"] = obj.get(
                 "numeric_precision_radix", ""
             )
         if obj.get("is_identity", "") != "":
-            column.custom_attributes["is_identity"] = obj.get("is_identity", "")
+            column_custom_attributes["is_identity"] = obj.get("is_identity", "")
         if obj.get("identity_cycle", "") != "":
-            column.custom_attributes["identity_cycle"] = obj.get("identity_cycle", "")
+            column_custom_attributes["identity_cycle"] = obj.get("identity_cycle", "")
 
         if obj.get("constraint_type", "") == "PRIMARY KEY":
-            column.is_primary = True
+            column_attributes["is_primary"] = True
 
         elif obj.get("constraint_type", "") == "FOREIGN KEY":
-            column.is_foreign = True
+            column_attributes["is_foreign"] = True
 
-        return column
+        return {
+            **entity_data,
+            "attributes": column_attributes,
+            "custom_attributes": column_custom_attributes,
+            "entity_class": PostgresColumn
+        }
 
 
 class PostgresAtlasTransformer(AtlasTransformer):
