@@ -156,8 +156,8 @@ def test_postgres_table():
         "table_catalog": "test_db",
         "connection_qualified_name": "default/postgres/test-connection",
     }
-    result = PostgresTable.get_attributes(table_data)
-    assert result["entity_class"] == assets.Table
+    result = PostgresTable.parse_obj(table_data)
+    assert isinstance(result, assets.Table)
 
     # Test view with SQL definition
     view_data = {
@@ -168,10 +168,10 @@ def test_postgres_table():
         "table_catalog": "test_db",
         "connection_qualified_name": "default/postgres/test-connection",
     }
-    result = PostgresTable.get_attributes(view_data)
-    assert result["entity_class"] == assets.View
+    result = PostgresTable.parse_obj(view_data)
+    assert isinstance(result, assets.View)
     assert (
-        result["attributes"]["definition"]
+        result.attributes.definition
         == "CREATE OR REPLACE VIEW test_view AS SELECT * FROM base_table"
     )
 
@@ -184,10 +184,10 @@ def test_postgres_table():
         "table_catalog": "test_db",
         "connection_qualified_name": "default/postgres/test-connection",
     }
-    result = PostgresTable.get_attributes(mview_data)
-    assert result["entity_class"] == assets.MaterialisedView
+    result = PostgresTable.parse_obj(mview_data)
+    assert isinstance(result, assets.MaterialisedView)
     assert (
-        result["attributes"]["definition"]
+        result.attributes.definition
         == "CREATE MATERIALIZED VIEW test_mview AS SELECT * FROM base_table"
     )
 
