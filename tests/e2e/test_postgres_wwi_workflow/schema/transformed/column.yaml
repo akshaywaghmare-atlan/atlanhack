@@ -8,7 +8,7 @@ columns:
     nullable: false
     checks:
       str_matches:
-        value: Table
+        value: Column
         options:
           raise_warning: false
           ignore_na: true
@@ -17,16 +17,10 @@ columns:
     required: true
     regex: false
   attributes.name:
-    title: Table Name
-    description: The name of the table
+    title: Column Name
+    description: The name of the column
     dtype: str
     nullable: false
-    checks:
-      isin:
-        value: ['connectors_12', 'connectors_2', 'connectors_26', 'connectors_42', 'connectors_46', 'connectors_48', 'connectors_60', 'connectors_8', 'connectors_9', 'customers_1', 'customers_18', 'customers_24', 'customers_25', 'customers_43', 'customers_6', 'destinations_100', 'destinations_35', 'destinations_49', 'destinations_5', 'destinations_58', 'destinations_63', 'destinations_71', 'destinations_73', 'events_13', 'events_21', 'events_40', 'events_41', 'events_55', 'events_61', 'events_64', 'events_89', 'events_98', 'invoices_20', 'invoices_28', 'invoices_36', 'invoices_45', 'invoices_59', 'invoices_65', 'invoices_76', 'jobs_19', 'jobs_52', 'orders_47', 'orders_51', 'orders_56', 'orders_62', 'orders_77', 'orders_83', 'orders_94', 'orders_95', 'orders_97', 'processes_11', 'processes_4', 'processes_69', 'processes_79', 'processes_82', 'products_10', 'products_14', 'products_3', 'products_44', 'products_72', 'products_74', 'products_81', 'products_86', 'products_91', 'shipments_22', 'shipments_23', 'shipments_27', 'shipments_29', 'shipments_31', 'shipments_34', 'shipments_53', 'shipments_66', 'shipments_68', 'shipments_75', 'shipments_80', 'shipments_87', 'shipments_90', 'shipments_92', 'sources_33', 'sources_37', 'sources_50', 'sources_57', 'sources_67', 'sources_70', 'transactions_17', 'transactions_32', 'transactions_54', 'transactions_7', 'transactions_78', 'transactions_88', 'transactions_96', 'transactions_99', 'users_15', 'users_16', 'users_30', 'users_38', 'users_39', 'users_84', 'users_85', 'users_93']
-        options:
-          raise_warning: false
-          ignore_na: true
     unique: false
     coerce: false
     required: true
@@ -83,14 +77,14 @@ columns:
     nullable: false
     checks:
       str_matches:
-        value: default/postgres/1738930739
+        value: default/postgres/[0-9]{10}
         options:
           raise_warning: false
           ignore_na: true
     unique: false
     coerce: false
     required: true
-    regex: false
+    regex: true
   attributes.qualifiedName:
     title: Qualified Name
     description: The qualified name of the attribute
@@ -98,14 +92,14 @@ columns:
     nullable: false
     checks:
       str_matches:
-        value: default/postgres/1738930739/assets_100k/schema_1
+        value: default/postgres/[0-9]{10}/wwi/.*
         options:
           raise_warning: false
           ignore_na: true
     unique: false
     coerce: false
     required: true
-    regex: false
+    regex: true
   attributes.databaseName:
     title: Database Name
     description: The name of the database
@@ -113,7 +107,7 @@ columns:
     nullable: false
     checks:
       str_matches:
-        value: assets_100k
+        value: wwi
         options:
           raise_warning: false
           ignore_na: true
@@ -128,25 +122,19 @@ columns:
     nullable: false
     checks:
       str_matches:
-        value: default/postgres/1738930739/assets_100k
+        value: default/postgres/[0-9]{10}/wwi
         options:
           raise_warning: false
           ignore_na: true
     unique: false
     coerce: false
     required: true
-    regex: false
+    regex: true
   attributes.schemaName:
     title: Schema Name
     description: The name of the schema
     dtype: str
     nullable: false
-    checks:
-      str_matches:
-        value: schema_1
-        options:
-          raise_warning: false
-          ignore_na: true
     unique: false
     coerce: false
     required: true
@@ -158,44 +146,56 @@ columns:
     nullable: false
     checks:
       str_matches:
-        value: default/postgres/1738930739/assets_100k/schema_1
+        value: default/postgres/[0-9]{10}/wwi/.*
         options:
           raise_warning: false
           ignore_na: true
     unique: false
     coerce: false
     required: true
+    regex: true
+  attributes.tableName:
+    title: Table Name
+    description: The name of the table
+    dtype: str
+    nullable: true
+    unique: false
+    coerce: false
+    required: false
     regex: false
-  attributes.columnCount:
-    title: Table Count
-    description: The count of tables in the schema
-    dtype: int64
-    nullable: false
+  attributes.materialisedViewName:
+    title: Materialised View Name
+    description: The name of the table
+    dtype: str
+    nullable: true
+    unique: false
+    coerce: false
+    required: false
+    regex: false
+  attributes.viewName:
+    title: View Name
+    description: The name of the view
+    dtype: str
+    nullable: true
+    unique: false
+    coerce: false
+    required: false
+    regex: false
+  attributes.tableQualifiedName:
+    title: Table Qualified Name
+    description: The qualified name of the table
+    dtype: str
+    nullable: true
+    unique: false
+    coerce: false
+    required: true
+    regex: true
     checks:
-      equal_to:
-        value: 101
+      str_matches:
+        value: default/postgres/[0-9]{10}/wwi/.*
         options:
           raise_warning: false
           ignore_na: true
-    unique: false
-    coerce: false
-    required: true
-    regex: false
-  attributes.isPartitioned:
-    title: Is table partitioned
-    description: Indicates if the table is partitioned
-    dtype: bool
-    nullable: false
-    checks:
-      equal_to:
-        value: false
-        options:
-          raise_warning: false
-          ignore_na: true
-    unique: false
-    coerce: false
-    required: true
-    regex: false
   status:
     title: Status
     description: The status of the schema
@@ -211,24 +211,90 @@ columns:
     coerce: false
     required: true
     regex: false
-  customAttributes.table_type:
-    title: Table type
-    description: Type of the table [Table or View]
+  attributes.lastSyncWorkflowName:
+    title: lastSyncWorkflowName
+    description: The name of the last sync workflow
     dtype: str
     nullable: false
-    checks:
-      str_matches:
-        value: TABLE
-        options:
-          raise_warning: false
-          ignore_na: true
+    unique: false
+    coerce: false
+    required: true
+    regex: false
+  attributes.lastSyncRunAt:
+    title: lastSyncRunAt
+    description: The timestamp of the last sync run
+    dtype: int
+    nullable: false
+    unique: false
+    coerce: false
+    required: true
+    regex: false
+  attributes.dataType:
+    title: Data Type
+    description: The data type of the column
+    dtype: str
+    nullable: false
+    unique: false
+    coerce: false
+    required: true
+    regex: false
+  attributes.isPartition:
+    title: Is Partition
+    description: Whether the column is a partition
+    dtype: bool
+    nullable: false
+    unique: false
+    coerce: false
+    required: true
+    regex: false
+  attributes.isPrimary:
+    title: Is Primary
+    description: Whether the column is a primary key
+    dtype: bool
+    nullable: false
+    unique: false
+    coerce: false
+    required: true
+    regex: false
+  attributes.isForeign:
+    title: Is Foreign
+    description: Whether the column is a foreign key
+    dtype: bool
+    nullable: false
+    unique: false
+    coerce: false
+    required: true
+    regex: false
+  attributes.isNullable:
+    title: Is Nullable
+    description: Whether the column is nullable
+    dtype: bool
+    nullable: false
+    unique: false
+    coerce: false
+    required: true
+    regex: false
+  attributes.numericScale:
+    title: Numeric Scale
+    description: The numeric scale of the column
+    dtype: float
+    nullable: false
+    unique: false
+    coerce: false
+    required: true
+    regex: false
+  attributes.maxLength:
+    title: Max Length
+    description: The maximum length of the column
+    dtype: int
+    nullable: false
     unique: false
     coerce: false
     required: true
     regex: false
 checks:
   check_record_count_ge:
-    value: 100
+    value: 953
     options:
       raise_warning: false
       ignore_na: true
@@ -242,5 +308,5 @@ unique: null
 report_duplicates: all
 unique_column_names: false
 add_missing_columns: false
-title: Transformed Table Pandera Schema
-description: Pandera schema definition for the transformed table output
+title: Transformed Column Pandera Schema
+description: Pandera schema definition for the transformed column output

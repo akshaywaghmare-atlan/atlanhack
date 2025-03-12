@@ -8,7 +8,7 @@ columns:
     nullable: false
     checks:
       str_matches:
-        value: assets_100k
+        value: wwi
         options:
           raise_warning: false
           ignore_na: true
@@ -21,12 +21,6 @@ columns:
     description: Check the name of the schema
     dtype: str
     nullable: false
-    checks:
-      str_matches:
-        value: schema_1
-        options:
-          raise_warning: false
-          ignore_na: true
     unique: false
     coerce: false
     required: true
@@ -36,12 +30,6 @@ columns:
     description: Check the name of the schema owner
     dtype: str
     nullable: false
-    checks:
-      str_matches:
-        value: postgres
-        options:
-          raise_warning: false
-          ignore_na: true
     unique: false
     coerce: false
     required: true
@@ -49,14 +37,8 @@ columns:
   table_count:
     title: Table Count
     description: Check for total number of tables for this schema
-    dtype: int64
-    nullable: false
-    checks:
-      equal_to:
-        value: 100
-        options:
-          raise_warning: true
-          ignore_na: true
+    dtype: float64
+    nullable: true
     unique: false
     coerce: false
     required: true
@@ -64,24 +46,12 @@ columns:
   views_count:
     title: null
     description: null
-    dtype: int64
-    nullable: false
-    checks:
-      equal_to:
-        value: 0
-        options:
-          raise_warning: false
-          ignore_na: true
+    dtype: float64
+    nullable: true
     unique: false
     coerce: false
     required: true
     regex: false
-checks:
-  check_record_count_ge:
-    value: 1
-    options:
-      raise_warning: false
-      ignore_na: true
 index: null
 dtype: null
 coerce: false

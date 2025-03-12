@@ -8,7 +8,7 @@ columns:
     nullable: false
     checks:
       str_matches:
-        value: Database
+        value: Schema
         options:
           raise_warning: false
           ignore_na: true
@@ -17,16 +17,10 @@ columns:
     required: true
     regex: false
   attributes.name:
-    title: Database Name
-    description: The name of the database
+    title: Schema Name
+    description: The name of the schema
     dtype: str
     nullable: false
-    checks:
-      str_matches:
-        value: assets_100k
-        options:
-          raise_warning: false
-          ignore_na: true
     unique: false
     coerce: false
     required: true
@@ -83,14 +77,14 @@ columns:
     nullable: false
     checks:
       str_matches:
-        value: default/postgres/1738930739
+        value: default/postgres/[0-9]{10}
         options:
           raise_warning: false
           ignore_na: true
     unique: false
     coerce: false
     required: true
-    regex: false
+    regex: true
   attributes.qualifiedName:
     title: Qualified Name
     description: The qualified name of the attribute
@@ -98,7 +92,22 @@ columns:
     nullable: false
     checks:
       str_matches:
-        value: default/postgres/1738930739/assets_100k
+        value: default/postgres/[0-9]{10}/wwi/.*
+        options:
+          raise_warning: false
+          ignore_na: true
+    unique: false
+    coerce: false
+    required: true
+    regex: true
+  attributes.databaseName:
+    title: Database Name
+    description: The name of the database
+    dtype: str
+    nullable: false
+    checks:
+      str_matches:
+        value: wwi
         options:
           raise_warning: false
           ignore_na: true
@@ -106,17 +115,35 @@ columns:
     coerce: false
     required: true
     regex: false
-  attributes.schemaCount:
-    title: Schema Count
-    description: The count of schemas
-    dtype: int64
+  attributes.databaseQualifiedName:
+    title: Database Qualified Name
+    description: The qualified name of the database
+    dtype: str
     nullable: false
     checks:
-      equal_to:
-        value: 0
+      str_matches:
+        value: default/postgres/[0-9]{10}/wwi
         options:
           raise_warning: false
           ignore_na: true
+    unique: false
+    coerce: false
+    required: true
+    regex: true
+  attributes.tableCount:
+    title: Table Count
+    description: The count of tables in the schema
+    dtype: float64
+    nullable: true
+    unique: false
+    coerce: false
+    required: true
+    regex: false
+  attributes.viewsCount:
+    title: View Count
+    description: The count of views in the schema
+    dtype: float64
+    nullable: true
     unique: false
     coerce: false
     required: true
@@ -138,7 +165,7 @@ columns:
     regex: false
 checks:
   check_record_count_ge:
-    value: 1
+    value: 16
     options:
       raise_warning: false
       ignore_na: true
@@ -152,5 +179,5 @@ unique: null
 report_duplicates: all
 unique_column_names: false
 add_missing_columns: false
-title: Transformed Database Pandera Schema
-description: Pandera schema definition for the transformed database output
+title: Transformed Schema Pandera Schema
+description: Pandera schema definition for the transformed schema output

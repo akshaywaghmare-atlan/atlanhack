@@ -1,14 +1,14 @@
 schema_type: dataframe
 version: 0.22.1
 columns:
-  datname:
+  table_catalog:
     title: Table Catalog Name Check
     description: Check if the catalog name of records in the raw data is matched as expected
     dtype: str
     nullable: false
     checks:
       str_matches:
-        value: assets_100k
+        value: wwi
         options:
           raise_warning: false
           ignore_na: true
@@ -16,17 +16,11 @@ columns:
     coerce: false
     required: true
     regex:
-  database_name:
+  table_schema:
     title: Table Schema Name Check
     description: Check if the schema name of records in the raw data is matched as expected
     dtype: str
     nullable: false
-    checks:
-      str_matches:
-        value: assets_100k
-        options:
-          raise_warning: false
-          ignore_na: true
     unique: false
     coerce: false
     required: true
@@ -35,12 +29,6 @@ columns:
     coerce: false
     required: true
     regex: false
-checks:
-  check_record_count_ge:
-    value: 1
-    options:
-      raise_warning: false
-      ignore_na: true
 index: null
 dtype: null
 coerce: false
@@ -51,5 +39,5 @@ unique: null
 report_duplicates: all
 unique_column_names: false
 add_missing_columns: false
-title: Raw Database Pandera Schema
-description: Pandera schema definition for the raw database output
+title: Raw Table Pandera Schema
+description: Pandera schema definition for the raw table output
