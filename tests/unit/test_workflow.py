@@ -26,13 +26,33 @@ ActivityResult = List[Dict[str, str]]
 
 # Custom strategies for PostgreSQL testing
 postgres_auth_types = st.sampled_from(["basic", "iam_user", "iam_role"])
+
+# Strategy for extra fields in credentials
+postgres_extra_strategy = st.one_of(
+    st.fixed_dictionaries({"database": st.text()}),  # Basic auth
+    st.fixed_dictionaries(
+        {  # IAM user auth
+            "database": st.text(),
+            "aws_region": st.text(),
+        }
+    ),
+    st.fixed_dictionaries(
+        {  # IAM role auth
+            "database": st.text(),
+            "role_arn": st.text(),
+            "external_id": st.text(),
+            "aws_region": st.text(),
+        }
+    ),
+)
+
 postgres_credentials_strategy = st.fixed_dictionaries(
     {
         "username": st.text(),
         "password": st.text(),
         "host": st.text(),
         "port": st.integers(min_value=1, max_value=65535).map(str),
-        "extra": st.fixed_dictionaries({"database": st.text()}),
+        "extra": postgres_extra_strategy,
         "authType": postgres_auth_types,
     }
 )
@@ -63,11 +83,25 @@ def test_postgres_client_connection_string(credentials):
         expected = f"postgresql+psycopg://{credentials['username']}:{encoded_password}@{credentials['host']}:{credentials['port']}{db_part}?application_name=Atlan&connect_timeout=5"
         result = client.get_sqlalchemy_connection_string()
         assert result == expected
-    elif credentials["authType"] in ["iam_user", "iam_role"]:
-        with pytest.raises(
-            Exception
-        ):  # Will raise because we can't actually assume IAM roles in tests
-            client.get_sqlalchemy_connection_string()
+    elif credentials["authType"] == "iam_user":
+        if "aws_region" not in credentials["extra"]:
+            with pytest.raises(KeyError):
+                client.get_sqlalchemy_connection_string()
+        else:
+            with pytest.raises(
+                Exception
+            ):  # Will raise because we can't actually assume IAM roles in tests
+                client.get_sqlalchemy_connection_string()
+    elif credentials["authType"] == "iam_role":
+        required_fields = {"role_arn", "external_id", "aws_region"}
+        if not all(field in credentials["extra"] for field in required_fields):
+            with pytest.raises(KeyError):
+                client.get_sqlalchemy_connection_string()
+        else:
+            with pytest.raises(
+                Exception
+            ):  # Will raise because we can't actually assume IAM roles in tests
+                client.get_sqlalchemy_connection_string()
     else:
         with pytest.raises(ValueError):
             client.get_sqlalchemy_connection_string()
@@ -156,8 +190,8 @@ def test_postgres_table(table_data):
 
 
 @given(
-    connector_name=st.text(min_size=1, max_size=50),
-    tenant_id=st.text(min_size=1, max_size=50),
+    connector_name=st.text(),
+    tenant_id=st.text(),
 )
 def test_custom_transformer_initialization(connector_name, tenant_id):
     """Test PostgresAtlasTransformer initialization and entity class mappings"""
