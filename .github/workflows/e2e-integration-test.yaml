@@ -180,7 +180,7 @@ jobs:
         echo "## 📊 Postgres App Integration Test Results and Performance Metrics" >> metrics.md
         echo "### Runner Environment Details" >> metrics.md
         echo "$(mpstat 1 1 | awk 'NR == 1')" >> metrics.md
-        echo "Total Memory: $(free -m | awk 'NR == 2 {print $2}')" MB >> metrics.md
+        echo "Total Memory: $(free -m | awk 'NR == 2 {print $2}') MB" >> metrics.md
 
         echo "### 🎯 Test Summary" >> metrics.md
         echo "| Metric | Value |" >> metrics.md
