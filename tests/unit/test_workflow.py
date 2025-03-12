@@ -28,11 +28,11 @@ ActivityResult = List[Dict[str, str]]
 postgres_auth_types = st.sampled_from(["basic", "iam_user", "iam_role"])
 postgres_credentials_strategy = st.fixed_dictionaries(
     {
-        "username": st.text(min_size=1, max_size=50),
-        "password": st.text(min_size=1, max_size=100),
-        "host": st.text(min_size=1, max_size=100),
+        "username": st.text(),
+        "password": st.text(),
+        "host": st.text(),
         "port": st.integers(min_value=1, max_value=65535).map(str),
-        "extra": st.fixed_dictionaries({"database": st.text(min_size=1, max_size=50)}),
+        "extra": st.fixed_dictionaries({"database": st.text()}),
         "authType": postgres_auth_types,
     }
 )
@@ -41,11 +41,11 @@ postgres_table_types = st.sampled_from(["BASE TABLE", "VIEW", "MATERIALIZED VIEW
 postgres_table_strategy = st.fixed_dictionaries(
     {
         "table_type": postgres_table_types,
-        "table_name": st.text(min_size=1, max_size=50),
-        "table_schema": st.text(min_size=1, max_size=50),
-        "table_catalog": st.text(min_size=1, max_size=50),
+        "table_name": st.text(),
+        "table_schema": st.text(),
+        "table_catalog": st.text(),
         "connection_qualified_name": st.just("default/postgres/test-connection"),
-        "view_definition": st.text(min_size=1, max_size=200),
+        "view_definition": st.text(),
     }
 )
 
@@ -153,6 +153,7 @@ def test_postgres_table(table_data):
             result.attributes.definition
             == f"CREATE MATERIALIZED VIEW {table_data['table_name']} AS {table_data['view_definition']}"
         )
+
 
 @given(
     connector_name=st.text(min_size=1, max_size=50),
