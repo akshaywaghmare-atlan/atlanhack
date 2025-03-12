@@ -154,7 +154,6 @@ def test_postgres_table(table_data):
             == f"CREATE MATERIALIZED VIEW {table_data['table_name']} AS {table_data['view_definition']}"
         )
 
-
 @given(
     connector_name=st.text(min_size=1, max_size=50),
     tenant_id=st.text(min_size=1, max_size=50),
