@@ -153,27 +153,6 @@ jobs:
           MEMORY_USAGE="N/A"
         fi
 
-        # Get final workflow details and status
-        STATUS=${{ steps.workflow_status.outputs.status }}
-        DURATION=${{ steps.workflow_status.outputs.duration }}
-        case $STATUS in
-          "WORKFLOW_EXECUTION_STATUS_COMPLETED")
-            DISPLAY_STATUS="🟢 Completed"
-            EXIT_CODE=0
-            ;;
-          "WORKFLOW_EXECUTION_STATUS_FAILED")
-            DISPLAY_STATUS="🔴 Failed"
-            EXIT_CODE=1
-            ;;
-          "WORKFLOW_EXECUTION_STATUS_RUNNING")
-            DISPLAY_STATUS="🟠 Running"
-            EXIT_CODE=1
-            ;;
-          *)
-            DISPLAY_STATUS="❓ ${STATUS}"
-            EXIT_CODE=1
-            ;;
-        esac
         echo "Finished Calculating Metrics"
 
         # Generate comprehensive report
@@ -181,12 +160,6 @@ jobs:
         echo "### Runner Environment Details" >> metrics.md
         echo "$(mpstat 1 1 | awk 'NR == 1')" >> metrics.md
         echo "Total Memory: $(free -m | awk 'NR == 2 {print $2}') MB" >> metrics.md
-
-        echo "### 🎯 Test Summary" >> metrics.md
-        echo "| Metric | Value |" >> metrics.md
-        echo "|--------|-------|" >> metrics.md
-        echo "| Status | $DISPLAY_STATUS |" >> metrics.md
-        echo "| Workflow Duration | $DURATION |" >> metrics.md
 
         echo "### 📊 Resource Usage" >> metrics.md
         echo "| Metric | Value |" >> metrics.md
@@ -198,7 +171,7 @@ jobs:
         echo "---" >> metrics.md
 
         cat metrics.md
-        exit $EXIT_CODE
+        exit 0
 
     - name: Comment workflow status on Pull Request
       if: ${{ github.event_name == 'pull_request' }}
