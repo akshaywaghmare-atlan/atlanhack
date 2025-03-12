@@ -1,0 +1,42 @@
+{
+  "table_variation_1": {
+    "typeName": "Table",
+    "attributes": {
+      "qualifiedName": "default/postgres/1728518400/wwi/fivetran_log/user",
+      "name": "user",
+      "tenantId": "default",
+      "connectorName": "postgres",
+      "connectionName": "test-connection",
+      "connectionQualifiedName": "default/postgres/1728518400",
+      "lastSyncWorkflowName": "test_workflow_id",
+      "lastSyncRun": "test_run_id",
+      "databaseName": "wwi",
+      "databaseQualifiedName": "default/postgres/1728518400/wwi",
+      "schemaName": "fivetran_log",
+      "schemaQualifiedName": "default/postgres/1728518400/wwi/fivetran_log",
+      "columnCount": 10,
+      "rowCount": 40,
+      "sizeBytes": 0,
+      "externalLocation": "",
+      "externalLocationRegion": "",
+      "externalLocationFormat": "",
+      "isPartitioned": false,
+      "atlanSchema": {
+        "typeName": "Schema",
+        "attributes": {},
+        "uniqueAttributes": {
+          "qualifiedName": "default/postgres/1728518400/wwi/fivetran_log"
+        }
+      }
+    },
+    "status": "ACTIVE",
+    "customAttributes": {
+      "table_type": "TABLE",
+      "is_insertable_into": "YES",
+      "number_columns_in_part_key": null,
+      "columns_participating_in_part_key": null,
+      "is_typed": "NO",
+      "engine": null
+    }
+  }
+}

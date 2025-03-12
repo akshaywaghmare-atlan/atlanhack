@@ -1,0 +1,29 @@
+{
+  "table_variation_1": {
+    "table_catalog": "wwi",
+    "table_schema": "fivetran_log",
+    "table_name": "user",
+    "row_count": 40.0,
+    "column_count": 10,
+    "table_kind": "r",
+    "table_type": "TABLE",
+    "is_partition": false,
+    "partition_strategy": null,
+    "partition_count": null,
+    "parent_table_name": null,
+    "partitioned_parent_table": null,
+    "partition_constraint": null,
+    "number_columns_in_part_key": null,
+    "columns_participating_in_part_key": null,
+    "view_definition": null,
+    "self_referencing_column_name": null,
+    "reference_generation": null,
+    "user_defined_type_catalog": null,
+    "user_defined_type_schema": null,
+    "user_defined_type_name": null,
+    "is_insertable_into": "YES",
+    "is_typed": "NO",
+    "commit_action": null,
+    "remarks": null
+  }
+}
