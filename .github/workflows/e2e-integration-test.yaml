@@ -173,11 +173,11 @@ jobs:
         cat metrics.md
         exit 0
 
-    - name: Comment workflow status on Pull Request
+    - name: Comment integration test profiling status on Pull Request
       if: ${{ github.event_name == 'pull_request' }}
       uses: mshick/add-pr-comment@v2
       with:
-        message-id: "workflow_status"
+        message-id: "integration_test_profiling"
         message-path: metrics.md
       continue-on-error: true
 
