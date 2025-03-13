@@ -1,8 +1,8 @@
 credentials:
-  username: postgres
-  password: ir96Yqk2VyVbXcpD@@jg
-  host: se-demo-postgres.cluster-c9vry54uacic.us-east-1.rds.amazonaws.com
-  port: 5432
+  username: $E2E_POSTGRES_USERNAME
+  password: $E2E_POSTGRES_PASSWORD
+  host: $E2E_POSTGRES_HOST
+  port: $E2E_POSTGRES_PORT
   extra:
     database: "wwi"
   authType: "basic"
