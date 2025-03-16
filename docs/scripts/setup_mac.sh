@@ -64,7 +64,7 @@ fi
 # Check and install poetry
 if ! command_exists poetry; then
     log "Installing poetry..."
-    curl -sSL https://install.python-poetry.org | python3 -
+    pip install poetry==1.8.5
 else
     log "Poetry is already installed."
 fi
