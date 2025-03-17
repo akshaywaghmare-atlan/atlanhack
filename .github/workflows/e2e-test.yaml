@@ -175,8 +175,8 @@ jobs:
         echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
         echo "assets_size=100k" >> $GITHUB_OUTPUT
 
-    - name: Check workflow status and collect performance metrics
-      id: workflow_status
+    - name: Check workflow status and collect performance metrics for 100k
+      id: workflow_status_100k
       run: |
         export PATH="$HOME/.temporalio/bin:$PATH"
         # Poll workflow status with timeout
@@ -184,8 +184,8 @@ jobs:
         ATTEMPT=0
         while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
           WORKFLOW_DETAILS=$(temporal workflow describe \
-            --workflow-id=${{ steps.workflow_info.outputs.workflow_id }} \
-            --run-id=${{ steps.workflow_info.outputs.run_id }} \
+            --workflow-id=${{ steps.workflow_info_100k.outputs.workflow_id }} \
+            --run-id=${{ steps.workflow_info_100k.outputs.run_id }} \
             --output=json)
           STATUS=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.status')
           if [ "$STATUS" != "WORKFLOW_EXECUTION_STATUS_RUNNING" ]; then
@@ -196,8 +196,37 @@ jobs:
           ATTEMPT=$((ATTEMPT+1))
         done
         WORKFLOW_DETAILS=$(temporal workflow describe \
-          --workflow-id=${{ steps.workflow_info.outputs.workflow_id }} \
-          --run-id=${{ steps.workflow_info.outputs.run_id }} \
+          --workflow-id=${{ steps.workflow_info_100k.outputs.workflow_id }} \
+          --run-id=${{ steps.workflow_info_100k.outputs.run_id }} \
+          --output=json)
+        STATUS=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.status')
+        DURATION=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.executionDuration | rtrimstr("s") | tonumber | (. * 100 | round | . / 100) | tostring + "s"')
+        echo "status=$STATUS" >> $GITHUB_OUTPUT
+        echo "duration=$DURATION" >> $GITHUB_OUTPUT
+
+    - name: Check workflow status and collect performance metrics for 1m
+      id: workflow_status_1m
+      run: |
+        export PATH="$HOME/.temporalio/bin:$PATH"
+        # Poll workflow status with timeout
+        MAX_ATTEMPTS=300
+        ATTEMPT=0
+        while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+          WORKFLOW_DETAILS=$(temporal workflow describe \
+            --workflow-id=${{ steps.workflow_info_1m.outputs.workflow_id }} \
+            --run-id=${{ steps.workflow_info_1m.outputs.run_id }} \
+            --output=json)
+          STATUS=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.status')
+          if [ "$STATUS" != "WORKFLOW_EXECUTION_STATUS_RUNNING" ]; then
+            break
+          fi
+          echo "Workflow still running... (Attempt $((ATTEMPT+1))/$MAX_ATTEMPTS)"
+          sleep 10
+          ATTEMPT=$((ATTEMPT+1))
+        done
+        WORKFLOW_DETAILS=$(temporal workflow describe \
+          --workflow-id=${{ steps.workflow_info_1m.outputs.workflow_id }} \
+          --run-id=${{ steps.workflow_info_1m.outputs.run_id }} \
           --output=json)
         STATUS=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.status')
         DURATION=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.executionDuration | rtrimstr("s") | tonumber | (. * 100 | round | . / 100) | tostring + "s"')
