@@ -84,6 +84,7 @@ jobs:
         sleep 20
 
     - name: Start the 1M workflow
+      if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test-1m') }}
       id: workflow_info
       run: |
         # Start the curl request in the background and capture its PID
@@ -128,6 +129,7 @@ jobs:
         echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
 
     - name: Start the 100k workflow
+      if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test') }}
       id: workflow_info
       run: |
         # Start the curl request in the background and capture its PID
