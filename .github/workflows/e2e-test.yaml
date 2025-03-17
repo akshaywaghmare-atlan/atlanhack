@@ -85,7 +85,7 @@ jobs:
 
     - name: Start the 1M workflow
       if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test-1m') }}
-      id: workflow_info
+      id: workflow_info_1m
       run: |
         # Start the curl request in the background and capture its PID
         curl -X POST \
@@ -127,10 +127,11 @@ jobs:
 
         echo "workflow_id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
         echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
+        echo "assets_size=1m" >> $GITHUB_OUTPUT
 
     - name: Start the 100k workflow
       if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test') }}
-      id: workflow_info
+      id: workflow_info_100k
       run: |
         # Start the curl request in the background and capture its PID
         curl -X POST \
@@ -172,6 +173,7 @@ jobs:
 
         echo "workflow_id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
         echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
+        echo "assets_size=100k" >> $GITHUB_OUTPUT
 
     - name: Check workflow status and collect performance metrics
       id: workflow_status
@@ -300,7 +302,7 @@ jobs:
 
 
         # Generate comprehensive report
-        echo "## 📊 Postgres App E2E 1M Test Results and Performance Metrics" >> metrics.md
+        echo "## 📊 Postgres App E2E Test Results and Performance Metrics" >> metrics.md
         echo "### Runner Environment Details" >> metrics.md
         echo "$(mpstat 1 1 | awk 'NR == 1')" >> metrics.md
         echo "Total Memory: $(free -m | awk 'NR == 2 {print $2}')" MB >> metrics.md
@@ -308,7 +310,7 @@ jobs:
         echo "### 🎯 Test Summary" >> metrics.md
         echo "| Metric | Value |" >> metrics.md
         echo "|--------|-------|" >> metrics.md
-        echo "| Database | assets_1m |" >> metrics.md
+        echo "| Database | 100k |" >> metrics.md
         echo "| Status | $DISPLAY_STATUS |" >> metrics.md
         echo "| Workflow Duration | $DURATION |" >> metrics.md
 
