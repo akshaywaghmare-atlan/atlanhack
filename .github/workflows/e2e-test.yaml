@@ -1,4 +1,4 @@
-name: E2E Application Test - 100k Assets
+name: E2E Application Test
 on:
   push:
     branches:
