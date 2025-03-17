@@ -176,6 +176,7 @@ jobs:
         echo "assets_size=100k" >> $GITHUB_OUTPUT
 
     - name: Check workflow status and collect performance metrics for 100k
+      if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test') }}
       id: workflow_status_100k
       run: |
         export PATH="$HOME/.temporalio/bin:$PATH"
@@ -205,6 +206,7 @@ jobs:
         echo "duration=$DURATION" >> $GITHUB_OUTPUT
 
     - name: Check workflow status and collect performance metrics for 1m
+      if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test-1m') }}
       id: workflow_status_1m
       run: |
         export PATH="$HOME/.temporalio/bin:$PATH"
