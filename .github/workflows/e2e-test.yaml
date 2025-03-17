@@ -309,8 +309,13 @@ jobs:
         fi
 
         # Get final workflow details and status
-        STATUS=${{ steps.workflow_status.outputs.status }}
-        DURATION=${{ steps.workflow_status.outputs.duration }}
+        if [ "${{ contains(github.event.pull_request.labels.*.name, 'e2e-test-1m') }}" = "true" ]; then
+          STATUS=${{ steps.workflow_status_1m.outputs.status }}
+          DURATION=${{ steps.workflow_status_1m.outputs.duration }}
+        else
+          STATUS=${{ steps.workflow_status_100k.outputs.status }}
+          DURATION=${{ steps.workflow_status_100k.outputs.duration }}
+        fi
         case $STATUS in
           "WORKFLOW_EXECUTION_STATUS_COMPLETED")
             DISPLAY_STATUS="🟢 Completed"
