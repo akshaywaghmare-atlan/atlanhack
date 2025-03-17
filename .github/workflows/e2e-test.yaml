@@ -310,7 +310,7 @@ jobs:
         echo "### 🎯 Test Summary" >> metrics.md
         echo "| Metric | Value |" >> metrics.md
         echo "|--------|-------|" >> metrics.md
-        echo "| Database | assets_100k |" >> metrics.md
+        echo "| Database | assets_${{ steps.workflow_info_1m.outputs.assets_size || steps.workflow_info_100k.outputs.assets_size }} |" >> metrics.md
         echo "| Status | $DISPLAY_STATUS |" >> metrics.md
         echo "| Workflow Duration | $DURATION |" >> metrics.md
 
