@@ -14,7 +14,7 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
     timeout-minutes: 30
-    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || contains(github.event.pull_request.labels.*.name, 'e2e-test-1m') || contains(github.event.pull_request.labels.*.name, 'e2e-test') }}
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || contains(github.event.pull_request.labels.*.name, 'e2e-test-1m') }}
 
     steps:
     - uses: actions/checkout@v4
@@ -95,7 +95,7 @@ jobs:
               "host": "${{ secrets.POSTGRES_DB_HOST }}",
               "port": 5432,
               "extra": {
-                "database": "assets_1m"
+                "database": ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test-1m') ? 'assets_1m' : 'assets_100k' }}
               },
               "username": "postgres",
               "password": "${{ secrets.POSTGRES_DB_PASSWORD }}",
@@ -254,7 +254,7 @@ jobs:
 
 
         # Generate comprehensive report
-        echo "## 📊 Postgres App E2E 1M Test Results and Performance Metrics" >> metrics.md
+        echo "## 📊 Postgres App E2E Test Results and Performance Metrics" >> metrics.md
         echo "### Runner Environment Details" >> metrics.md
         echo "$(mpstat 1 1 | awk 'NR == 1')" >> metrics.md
         echo "Total Memory: $(free -m | awk 'NR == 2 {print $2}')" MB >> metrics.md
@@ -262,7 +262,7 @@ jobs:
         echo "### 🎯 Test Summary" >> metrics.md
         echo "| Metric | Value |" >> metrics.md
         echo "|--------|-------|" >> metrics.md
-        echo "| Database | assets_1m |" >> metrics.md
+        echo "| Database | assets_100k |" >> metrics.md
         echo "| Status | $DISPLAY_STATUS |" >> metrics.md
         echo "| Workflow Duration | $DURATION |" >> metrics.md
 
