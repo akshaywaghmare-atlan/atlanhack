@@ -14,7 +14,7 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
     timeout-minutes: 30
-    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || contains(github.event.pull_request.labels.*.name, 'e2e-test') }}
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || contains(github.event.pull_request.labels.*.name, 'e2e-test-1m') || contains(github.event.pull_request.labels.*.name, 'e2e-test') }}
 
     steps:
     - uses: actions/checkout@v4
@@ -84,6 +84,7 @@ jobs:
         sleep 20
 
     - name: Start the 1M workflow
+      if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test-1m') }}
       id: workflow_info_1m
       run: |
         # Start the curl request in the background and capture its PID
@@ -129,6 +130,7 @@ jobs:
         echo "assets_size=1m" >> $GITHUB_OUTPUT
 
     - name: Start the 100k workflow
+      if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test') }}
       id: workflow_info_100k
       run: |
         # Start the curl request in the background and capture its PID
