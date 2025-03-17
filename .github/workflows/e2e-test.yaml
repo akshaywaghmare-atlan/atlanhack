@@ -84,7 +84,6 @@ jobs:
         sleep 20
 
     - name: Start the 1M workflow
-      if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test-1m') }}
       id: workflow_info_1m
       run: |
         # Start the curl request in the background and capture its PID
@@ -130,7 +129,6 @@ jobs:
         echo "assets_size=1m" >> $GITHUB_OUTPUT
 
     - name: Start the 100k workflow
-      if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test') }}
       id: workflow_info_100k
       run: |
         # Start the curl request in the background and capture its PID
@@ -310,7 +308,7 @@ jobs:
         echo "### 🎯 Test Summary" >> metrics.md
         echo "| Metric | Value |" >> metrics.md
         echo "|--------|-------|" >> metrics.md
-        echo "| Database | ${{{ steps.workflow_info_1m.outputs.assets_size }}, ${{{ steps.workflow_info_100k.outputs.assets_size }}} |" >> metrics.md
+        echo "| Database | assets_100k |" >> metrics.md
         echo "| Status | $DISPLAY_STATUS |" >> metrics.md
         echo "| Workflow Duration | $DURATION |" >> metrics.md
 
