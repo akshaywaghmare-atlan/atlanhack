@@ -83,7 +83,8 @@ jobs:
         make run-with-profile &
         sleep 20
 
-    - name: Start the workflow
+    - name: Start the 1M workflow
+      if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test-1m') }}
       id: workflow_info
       run: |
         # Start the curl request in the background and capture its PID
@@ -96,6 +97,51 @@ jobs:
               "port": 5432,
               "extra": {
                 "database": "assets_1m"
+              },
+              "username": "postgres",
+              "password": "${{ secrets.POSTGRES_DB_PASSWORD }}",
+              "region": "ap-south-1"
+            },
+            "connection": {
+              "connection_name": "postgres",
+              "connection_qualified_name": "default/postgres/0"
+            },
+            "metadata": {
+              "exclude-filter": "{}",
+              "include-filter": "{}",
+              "temp-table-regex": "",
+              "extraction-method": "direct"
+            }
+          }' \
+          http://0.0.0.0:8000/workflows/v1/start > response.json &
+        CURL_PID=$!
+
+        # Wait for the curl request to complete
+        wait $CURL_PID
+
+        # Parse the response
+        RESPONSE=$(cat response.json)
+        # Extract workflow_id and run_id
+        WORKFLOW_ID=$(echo $RESPONSE | jq -r '.data.workflow_id')
+        RUN_ID=$(echo $RESPONSE | jq -r '.data.run_id')
+
+        echo "workflow_id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
+        echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
+
+    - name: Start the 100k workflow
+      if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test') }}
+      id: workflow_info
+      run: |
+        # Start the curl request in the background and capture its PID
+        curl -X POST \
+          -H "Content-Type: application/json" \
+          -d '{
+            "credentials": {
+              "authType": "basic",
+              "host": "${{ secrets.POSTGRES_DB_HOST }}",
+              "port": 5432,
+              "extra": {
+                "database": "assets_100k"
               },
               "username": "postgres",
               "password": "${{ secrets.POSTGRES_DB_PASSWORD }}",
