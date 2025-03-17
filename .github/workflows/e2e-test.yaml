@@ -13,8 +13,8 @@ jobs:
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
-    timeout-minutes: 10
-    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || contains(github.event.pull_request.labels.*.name, 'e2e-test') }}
+    timeout-minutes: 30
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || contains(github.event.pull_request.labels.*.name, 'e2e-test') || contains(github.event.pull_request.labels.*.name, 'e2e-test-1m') }}
 
     steps:
     - uses: actions/checkout@v4
@@ -95,7 +95,7 @@ jobs:
               "host": "${{ secrets.POSTGRES_DB_HOST }}",
               "port": 5432,
               "extra": {
-                "database": "assets_100k"
+                "database": ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test-1m') ? 'assets_1m' : 'assets_100k' }}
               },
               "username": "postgres",
               "password": "${{ secrets.POSTGRES_DB_PASSWORD }}",
@@ -144,7 +144,7 @@ jobs:
             break
           fi
           echo "Workflow still running... (Attempt $((ATTEMPT+1))/$MAX_ATTEMPTS)"
-          sleep 1
+          sleep 10
           ATTEMPT=$((ATTEMPT+1))
         done
         WORKFLOW_DETAILS=$(temporal workflow describe \
