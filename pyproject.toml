@@ -13,7 +13,7 @@ pytest-asyncio = "^0.24.0"
 # use local application-sdk repository for development
 # application-sdk = { path = "../application-sdk/", develop = true, extras = ["workflows", "iam_auth", "sqlalchemy", "tests"]}
 # use remote application-sdk repository
-application-sdk = {git = "git@github.com:atlanhq/application-sdk.git", rev = "72445157b22485e625cf8f439d662da7b18ca98d", extras = ["workflows", "iam_auth", "sqlalchemy", "tests"]}
+application-sdk = {git = "git@github.com:atlanhq/application-sdk.git", rev = "3b44b2accbb82a6399609fadc922646b81f51de9", extras = ["workflows", "iam_auth", "sqlalchemy", "tests"]}
 psycopg = {extras = ["binary"], version = "^3.2.3"}
 jinja2 = "^3.1.2"
 poetry-plugin-dotenv = "^2.8.0"
