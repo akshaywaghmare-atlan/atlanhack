@@ -130,7 +130,6 @@ run-hot-reload:
 		--directory="." \
 		-- make run-app
 
-
 # Stop all services
 stop-all:
 	@echo "Running scalene cleanup..."
