@@ -199,8 +199,8 @@ workflows = ["dapr (>=1.14.0,<2.0.0)", "pandas (>=2.2.3,<3.0.0)", "temporalio (>
 [package.source]
 type = "git"
 url = "git@github.com:atlanhq/application-sdk.git"
-reference = "ea74289db3b399911e5de8cf90be7fb1935ba451"
-resolved_reference = "ea74289db3b399911e5de8cf90be7fb1935ba451"
+reference = "e50a926fb440ee915ecc56bc0b29635fc4de7ad9"
+resolved_reference = "e50a926fb440ee915ecc56bc0b29635fc4de7ad9"
 
 [[package]]
 name = "attrs"
@@ -4837,4 +4837,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11.10"
-content-hash = "73c7e7a778b0c96391e3a5872f20e5223f0e881e9a3afe8b1e73e86800d139a2"
+content-hash = "aa0facc238a295b39a780b2d7c2dc0f25f65bc6f0c4bc3758fa45187df62fab7"
