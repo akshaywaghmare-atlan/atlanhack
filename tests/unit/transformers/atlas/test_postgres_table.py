@@ -51,14 +51,17 @@ def raw_data(resources_dir: str) -> Dict[str, Any]:
     with open(os.path.join(resources_dir, "raw_postgres_tables.json")) as f:
         return json.load(f)
 
+
 @pytest.fixture
 def expected_data(resources_dir: str) -> Dict[str, Any]:
     with open(os.path.join(resources_dir, "transformed_postgres_tables.json")) as f:
         return json.load(f)
 
+
 @pytest.fixture
 def transformer():
     return PostgresAtlasTransformer(connector_name="postgres", tenant_id="default")
+
 
 def assert_attributes(
     transformed_data: Dict[str, Any],
@@ -105,4 +108,3 @@ def test_table_variation_1_transformation(
     assert_attributes(
         transformed_data, expected_table, table_custom_attributes, is_custom=True
     )
-
