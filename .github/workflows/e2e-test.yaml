@@ -13,8 +13,8 @@ jobs:
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
-    timeout-minutes: 10
-    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || contains(github.event.pull_request.labels.*.name, 'e2e-test') }}
+    timeout-minutes: 30
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || contains(github.event.pull_request.labels.*.name, 'e2e-test-1m') || contains(github.event.pull_request.labels.*.name, 'e2e-test') }}
 
     steps:
     - uses: actions/checkout@v4
@@ -83,8 +83,55 @@ jobs:
         make run-with-profile &
         sleep 20
 
-    - name: Start the workflow
-      id: workflow_info
+    - name: Start the 1M workflow
+      if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test-1m') }}
+      id: workflow_info_1m
+      run: |
+        # Start the curl request in the background and capture its PID
+        curl -X POST \
+          -H "Content-Type: application/json" \
+          -d '{
+            "credentials": {
+              "authType": "basic",
+              "host": "${{ secrets.POSTGRES_DB_HOST }}",
+              "port": 5432,
+              "extra": {
+                "database": "assets_1m"
+              },
+              "username": "postgres",
+              "password": "${{ secrets.POSTGRES_DB_PASSWORD }}",
+              "region": "ap-south-1"
+            },
+            "connection": {
+              "connection_name": "postgres",
+              "connection_qualified_name": "default/postgres/0"
+            },
+            "metadata": {
+              "exclude-filter": "{}",
+              "include-filter": "{}",
+              "temp-table-regex": "",
+              "extraction-method": "direct"
+            }
+          }' \
+          http://0.0.0.0:8000/workflows/v1/start > response.json &
+        CURL_PID=$!
+
+        # Wait for the curl request to complete
+        wait $CURL_PID
+
+        # Parse the response
+        RESPONSE=$(cat response.json)
+        # Extract workflow_id and run_id
+        WORKFLOW_ID=$(echo $RESPONSE | jq -r '.data.workflow_id')
+        RUN_ID=$(echo $RESPONSE | jq -r '.data.run_id')
+
+        echo "workflow_id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
+        echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
+        echo "assets_size=1m" >> $GITHUB_OUTPUT
+
+    - name: Start the 100k workflow
+      if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test') }}
+      id: workflow_info_100k
       run: |
         # Start the curl request in the background and capture its PID
         curl -X POST \
@@ -126,9 +173,11 @@ jobs:
 
         echo "workflow_id=$WORKFLOW_ID" >> $GITHUB_OUTPUT
         echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
+        echo "assets_size=100k" >> $GITHUB_OUTPUT
 
-    - name: Check workflow status and collect performance metrics
-      id: workflow_status
+    - name: Check workflow status and collect performance metrics for 100k
+      if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test') }}
+      id: workflow_status_100k
       run: |
         export PATH="$HOME/.temporalio/bin:$PATH"
         # Poll workflow status with timeout
@@ -136,20 +185,50 @@ jobs:
         ATTEMPT=0
         while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
           WORKFLOW_DETAILS=$(temporal workflow describe \
-            --workflow-id=${{ steps.workflow_info.outputs.workflow_id }} \
-            --run-id=${{ steps.workflow_info.outputs.run_id }} \
+            --workflow-id=${{ steps.workflow_info_100k.outputs.workflow_id }} \
+            --run-id=${{ steps.workflow_info_100k.outputs.run_id }} \
             --output=json)
           STATUS=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.status')
           if [ "$STATUS" != "WORKFLOW_EXECUTION_STATUS_RUNNING" ]; then
             break
           fi
           echo "Workflow still running... (Attempt $((ATTEMPT+1))/$MAX_ATTEMPTS)"
-          sleep 1
+          sleep 10
           ATTEMPT=$((ATTEMPT+1))
         done
         WORKFLOW_DETAILS=$(temporal workflow describe \
-          --workflow-id=${{ steps.workflow_info.outputs.workflow_id }} \
-          --run-id=${{ steps.workflow_info.outputs.run_id }} \
+          --workflow-id=${{ steps.workflow_info_100k.outputs.workflow_id }} \
+          --run-id=${{ steps.workflow_info_100k.outputs.run_id }} \
+          --output=json)
+        STATUS=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.status')
+        DURATION=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.executionDuration | rtrimstr("s") | tonumber | (. * 100 | round | . / 100) | tostring + "s"')
+        echo "status=$STATUS" >> $GITHUB_OUTPUT
+        echo "duration=$DURATION" >> $GITHUB_OUTPUT
+
+    - name: Check workflow status and collect performance metrics for 1m
+      if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e-test-1m') }}
+      id: workflow_status_1m
+      run: |
+        export PATH="$HOME/.temporalio/bin:$PATH"
+        # Poll workflow status with timeout
+        MAX_ATTEMPTS=300
+        ATTEMPT=0
+        while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+          WORKFLOW_DETAILS=$(temporal workflow describe \
+            --workflow-id=${{ steps.workflow_info_1m.outputs.workflow_id }} \
+            --run-id=${{ steps.workflow_info_1m.outputs.run_id }} \
+            --output=json)
+          STATUS=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.status')
+          if [ "$STATUS" != "WORKFLOW_EXECUTION_STATUS_RUNNING" ]; then
+            break
+          fi
+          echo "Workflow still running... (Attempt $((ATTEMPT+1))/$MAX_ATTEMPTS)"
+          sleep 10
+          ATTEMPT=$((ATTEMPT+1))
+        done
+        WORKFLOW_DETAILS=$(temporal workflow describe \
+          --workflow-id=${{ steps.workflow_info_1m.outputs.workflow_id }} \
+          --run-id=${{ steps.workflow_info_1m.outputs.run_id }} \
           --output=json)
         STATUS=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.status')
         DURATION=$(echo $WORKFLOW_DETAILS | jq -r '.workflowExecutionInfo.executionDuration | rtrimstr("s") | tonumber | (. * 100 | round | . / 100) | tostring + "s"')
@@ -230,8 +309,13 @@ jobs:
         fi
 
         # Get final workflow details and status
-        STATUS=${{ steps.workflow_status.outputs.status }}
-        DURATION=${{ steps.workflow_status.outputs.duration }}
+        if [ "${{ contains(github.event.pull_request.labels.*.name, 'e2e-test-1m') }}" = "true" ]; then
+          STATUS=${{ steps.workflow_status_1m.outputs.status }}
+          DURATION=${{ steps.workflow_status_1m.outputs.duration }}
+        else
+          STATUS=${{ steps.workflow_status_100k.outputs.status }}
+          DURATION=${{ steps.workflow_status_100k.outputs.duration }}
+        fi
         case $STATUS in
           "WORKFLOW_EXECUTION_STATUS_COMPLETED")
             DISPLAY_STATUS="🟢 Completed"
@@ -262,7 +346,7 @@ jobs:
         echo "### 🎯 Test Summary" >> metrics.md
         echo "| Metric | Value |" >> metrics.md
         echo "|--------|-------|" >> metrics.md
-        echo "| Database | assets_100k |" >> metrics.md
+        echo "| Database | assets_${{ steps.workflow_info_1m.outputs.assets_size || steps.workflow_info_100k.outputs.assets_size }} |" >> metrics.md
         echo "| Status | $DISPLAY_STATUS |" >> metrics.md
         echo "| Workflow Duration | $DURATION |" >> metrics.md
 
