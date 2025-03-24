@@ -102,7 +102,7 @@ jobs:
     - name: Start the application
       id: start_app
       run: |
-        make run-app &
+        make run-with-profile &
         sleep 20
 
     - name: Run the end-to-end integration tests
@@ -114,9 +114,78 @@ jobs:
       run: |
         poetry run coverage run -m pytest tests/e2e
 
+    - name: Get scalene metrics and output
+      run: |
+        export PATH="$HOME/.temporalio/bin:$PATH"
+        kill $(lsof -t -i :8000) || true
+        sleep 10
+
+        # Calculate metrics from current run's scalene.json
+        if [ -f scalene.json ]; then
+          # Calculate Average CPU Usage upto 2 decimal places
+          AVG_CPU=$(jq -r '
+            [
+              .files |
+              to_entries[] |
+              .value.functions[] |
+              select(.n_cpu_percent_c != null and .n_cpu_percent_python != null and .n_sys_percent != null) |
+              (.n_cpu_percent_c + .n_cpu_percent_python + .n_sys_percent)
+            ] |
+            add / length
+          ' scalene.json | awk '{printf "%.2f\n", $1}')
+
+          # Max CPU Usage upto 2 decimal places
+          MAX_CPU=$(jq -r '
+            .files |
+            to_entries[] |
+            .value.functions[] |
+            select(.n_cpu_percent_c != null and .n_cpu_percent_python != null and .n_sys_percent != null) |
+            (.n_cpu_percent_c + .n_cpu_percent_python + .n_sys_percent)
+          ' scalene.json | sort -rn | head -n1 | awk '{printf "%.2f\n", $1}')
+
+          MEMORY_USAGE=$(jq -r '
+            .max_footprint_mb
+          ' scalene.json | awk '{printf "%.2f\n", $1}')
+        else
+          echo "Current scalene.json does not exist"
+          AVG_CPU="N/A"
+          MAX_CPU="N/A"
+          MEMORY_USAGE="N/A"
+        fi
+
+        echo "Finished Calculating Metrics"
+
+        # Generate comprehensive report
+        echo "## 📊 Postgres App Integration Test Results and Performance Metrics" >> metrics.md
+        echo "### Runner Environment Details" >> metrics.md
+        echo "$(mpstat 1 1 | awk 'NR == 1')" >> metrics.md
+        echo "Total Memory: $(free -m | awk 'NR == 2 {print $2}') MB" >> metrics.md
+
+        echo "### 📊 Resource Usage" >> metrics.md
+        echo "| Metric | Value |" >> metrics.md
+        echo "|--------|-------|" >> metrics.md
+        echo "| Average CPU Usage | $AVG_CPU% |" >> metrics.md
+        echo "| Max CPU Usage | $MAX_CPU% |" >> metrics.md
+        echo "| Memory Usage | $MEMORY_USAGE MB |" >> metrics.md
+
+        echo "---" >> metrics.md
+
+        cat metrics.md
+        exit 0
+
+    - name: Comment integration test profiling status on Pull Request
+      if: ${{ github.event_name == 'pull_request' }}
+      uses: mshick/add-pr-comment@v2
+      with:
+        message-id: "integration_test_profiling"
+        message-path: metrics.md
+      continue-on-error: true
+
     # Stop all services
     - name: Stop all services and monitoring
       if: always()
       run: |
+        # Kill monitoring process first
+        pkill -f "mpstat" || true
         # Stop the application and services gracefully
         make stop-all || true

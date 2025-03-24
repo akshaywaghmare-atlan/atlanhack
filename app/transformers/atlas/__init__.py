@@ -52,7 +52,7 @@ class PostgresTable(Table):
                 view_name=obj.get("table_name", ""),
                 query=obj.get("view_definition", ""),
             )
-        
+
         entity_class = None
         if entity_data["entity_class"] == Table:
             entity_class = PostgresTable
@@ -94,7 +94,7 @@ class PostgresColumn(Column):
             **entity_data,
             "attributes": column_attributes,
             "custom_attributes": column_custom_attributes,
-            "entity_class": PostgresColumn
+            "entity_class": PostgresColumn,
         }
 
 
