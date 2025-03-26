@@ -23,9 +23,6 @@ DEFAULT_HEARTBEAT_TIMEOUT = timedelta(
 DEFAULT_START_TO_CLOSE_TIMEOUT = timedelta(
     seconds=int(os.getenv("ATLAN_START_TO_CLOSE_TIMEOUT", 2 * 60 * 60))  # 2 hours
 )
-DEFAULT_SCHEDULE_TO_START_TIMEOUT = timedelta(
-    seconds=int(os.getenv("ATLAN_SCHEDULE_TO_START_TIMEOUT", 6 * 60 * 60))  # 6 hours
-)
 
 
 @workflow.defn
@@ -34,7 +31,6 @@ class PostgresMetadataExtractionWorkflow(SQLMetadataExtractionWorkflow):
 
     default_heartbeat_timeout = DEFAULT_HEARTBEAT_TIMEOUT
     default_start_to_close_timeout = DEFAULT_START_TO_CLOSE_TIMEOUT
-    default_schedule_to_start_timeout = DEFAULT_SCHEDULE_TO_START_TIMEOUT
 
     @workflow.run
     async def run(self, workflow_config: Dict[str, Any]):
@@ -67,7 +63,6 @@ class PostgresMetadataExtractionWorkflow(SQLMetadataExtractionWorkflow):
             retry_policy=retry_policy,
             start_to_close_timeout=self.default_start_to_close_timeout,
             heartbeat_timeout=self.default_heartbeat_timeout,
-            schedule_to_start_timeout=self.default_schedule_to_start_timeout,
         )
 
         fetch_and_transforms = [
