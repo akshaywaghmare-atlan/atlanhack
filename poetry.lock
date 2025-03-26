@@ -199,8 +199,8 @@ workflows = ["dapr (>=1.14.0,<2.0.0)", "pandas (>=2.2.3,<3.0.0)", "temporalio (>
 [package.source]
 type = "git"
 url = "git@github.com:atlanhq/application-sdk.git"
-reference = "69ac69a53e12c023228fd261f11a19ac18af446d"
-resolved_reference = "69ac69a53e12c023228fd261f11a19ac18af446d"
+reference = "2b6ad069c7ab8c91b2b4a97c5cf9b77105e2f14a"
+resolved_reference = "2b6ad069c7ab8c91b2b4a97c5cf9b77105e2f14a"
 
 [[package]]
 name = "attrs"
