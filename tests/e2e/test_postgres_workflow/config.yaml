@@ -10,7 +10,7 @@ credentials:
   database: "assets_100k"
 test_name: "test_postgres_workflow"
 metadata:
-  exclude-filter: '{}'
+  exclude-filter: "{}"
   include-filter: '{"^assets_100k$":["^schema_1$"]}'
   temp-table-regex: ""
   extraction-method: "direct"
@@ -26,7 +26,40 @@ expected_api_responses:
     message: "Authentication successful"
   metadata:
     success: true
-    data: [{'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'public'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_1'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_2'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_3'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_4'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_5'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_6'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_7'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_8'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_9'}, {'TABLE_CATALOG': 'assets_100k', 'TABLE_SCHEMA': 'schema_10'}]
+    data:
+      [
+        { "TABLE_CATALOG": "assets_100k", "TABLE_SCHEMA": "public" },
+        { "TABLE_CATALOG": "assets_100k", "TABLE_SCHEMA": "schema_1" },
+        { "TABLE_CATALOG": "assets_100k", "TABLE_SCHEMA": "schema_2" },
+        { "TABLE_CATALOG": "assets_100k", "TABLE_SCHEMA": "schema_3" },
+        { "TABLE_CATALOG": "assets_100k", "TABLE_SCHEMA": "schema_4" },
+        { "TABLE_CATALOG": "assets_100k", "TABLE_SCHEMA": "schema_5" },
+        { "TABLE_CATALOG": "assets_100k", "TABLE_SCHEMA": "schema_6" },
+        { "TABLE_CATALOG": "assets_100k", "TABLE_SCHEMA": "schema_7" },
+        { "TABLE_CATALOG": "assets_100k", "TABLE_SCHEMA": "schema_8" },
+        { "TABLE_CATALOG": "assets_100k", "TABLE_SCHEMA": "schema_9" },
+        { "TABLE_CATALOG": "assets_100k", "TABLE_SCHEMA": "schema_10" },
+      ]
   preflight_check:
     success: true
-    data: {'databaseSchemaCheck': {'success': True, 'successMessage': 'Schemas and Databases check successful', 'failureMessage': ''}, 'tablesCheck': {'success': True, 'successMessage': 'Tables check successful. Table count: 100', 'failureMessage': ''}}
+    data:
+      {
+        "databaseSchemaCheck":
+          {
+            "success": True,
+            "successMessage": "Schemas and Databases check successful",
+            "failureMessage": "",
+          },
+        "tablesCheck":
+          {
+            "success": True,
+            "successMessage": "Tables check successful. Table count: 100",
+            "failureMessage": "",
+          },
+        "versionCheck":
+          {
+            "success": true,
+            "successMessage": "Client version 15.4 meets minimum required version $ATLAN_SQL_SERVER_MIN_VERSION",
+            "failureMessage": "",
+          },
+      }

@@ -258,3 +258,7 @@ SELECT
     AND concat(current_database(), concat('.', N.nspname)) !~ '{normalized_exclude_regex}'
     AND  concat(current_database(), concat('.', N.nspname)) ~ '{normalized_include_regex}';
 """
+
+GET_CLIENT_VERSION_SQL = """
+SELECT version();
+"""
