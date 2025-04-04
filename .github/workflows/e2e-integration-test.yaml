@@ -101,6 +101,8 @@ jobs:
     # Start the application
     - name: Start the application
       id: start_app
+      env:
+        ATLAN_SQL_SERVER_MIN_VERSION: "10.0"
       run: |
         make run-with-profile &
         sleep 20
@@ -111,6 +113,7 @@ jobs:
         E2E_POSTGRES_PORT: 5432
         E2E_POSTGRES_USERNAME: "postgres"
         E2E_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_DB_PASSWORD }}
+        ATLAN_SQL_SERVER_MIN_VERSION: "10.0"
       run: |
         poetry run coverage run -m pytest tests/e2e
 
