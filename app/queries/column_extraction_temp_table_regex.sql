@@ -1,0 +1,1 @@
+"AND c.relname !~ '{exclude_table_regex}'

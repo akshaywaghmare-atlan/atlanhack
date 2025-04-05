@@ -1,0 +1,1 @@
+SELECT d.*, d.datname as database_name FROM pg_database d WHERE datname = current_database();
