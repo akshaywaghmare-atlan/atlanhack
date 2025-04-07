@@ -8,7 +8,6 @@ from application_sdk.inputs.sql_query import SQLQueryInput
 from application_sdk.outputs.json import JsonOutput
 from temporalio import activity
 
-from app.clients import PostgreSQLClient
 from app.const import (
     COLUMN_EXTRACTION_SQL,
     COLUMN_EXTRACTION_TEMP_TABLE_REGEX_SQL,
@@ -18,8 +17,6 @@ from app.const import (
     TABLE_EXTRACTION_SQL,
     TABLE_EXTRACTION_TEMP_TABLE_REGEX_SQL,
 )
-from app.handlers import PostgresWorkflowHandler
-from app.transformers.atlas import PostgresAtlasTransformer
 
 
 class PostgresMetadataExtractionActivities(SQLMetadataExtractionActivities):
@@ -31,10 +28,6 @@ class PostgresMetadataExtractionActivities(SQLMetadataExtractionActivities):
 
     tables_extraction_temp_table_regex_sql = TABLE_EXTRACTION_TEMP_TABLE_REGEX_SQL
     column_extraction_temp_table_regex_sql = COLUMN_EXTRACTION_TEMP_TABLE_REGEX_SQL
-
-    sql_client_class = PostgreSQLClient
-    handler_class = PostgresWorkflowHandler
-    transformer_class = PostgresAtlasTransformer
 
     @activity.defn
     @auto_heartbeater

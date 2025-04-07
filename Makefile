@@ -16,21 +16,21 @@ ATLAN_DAPR_APP_PORT ?= 3000
 ATLAN_DAPR_HTTP_PORT ?= 3500
 ATLAN_DAPR_GRPC_PORT ?= 50001
 ATLAN_DAPR_METRICS_PORT ?= 3100
-ATLAN_TEMPORAL_UI_ENABLED?=true
-ATLAN_TEMPORAL_HOST ?= 127.0.0.1
-ATLAN_TEMPORAL_PORT ?= 7233
-ATLAN_TEMPORAL_UI_HOST ?= 127.0.0.1
-ATLAN_TEMPORAL_UI_PORT ?= 8233
-ATLAN_TEMPORAL_METRICS_PORT ?= 8234
+ATLAN_WORKFLOW_UI_ENABLED?=true
+ATLAN_WORKFLOW_HOST ?= 127.0.0.1
+ATLAN_WORKFLOW_PORT ?= 7233
+ATLAN_WORKFLOW_UI_HOST ?= 127.0.0.1
+ATLAN_WORKFLOW_UI_PORT ?= 8233
+ATLAN_WORKFLOW_METRICS_PORT ?= 8234
 ATLAN_TENANT_ID ?= "default"
 ATLAN_APPLICATION_NAME ?= "postgres"
 ENABLE_OTLP_LOGS ?= false
 # Start Temporal locally
 start-temporal-dev:
-	@if [ "$(ATLAN_TEMPORAL_UI_ENABLED)" = true ]; then \
-		temporal server start-dev --db-filename /tmp/temporal.db --ip $(ATLAN_TEMPORAL_HOST) --port $(ATLAN_TEMPORAL_PORT) --ui-ip $(ATLAN_TEMPORAL_UI_HOST) --ui-port $(ATLAN_TEMPORAL_UI_PORT) --metrics-port $(ATLAN_TEMPORAL_METRICS_PORT); \
+	@if [ "$(ATLAN_WORKFLOW_UI_ENABLED)" = true ]; then \
+		temporal server start-dev --db-filename /tmp/temporal.db --ip $(ATLAN_WORKFLOW_HOST) --port $(ATLAN_WORKFLOW_PORT) --ui-ip $(ATLAN_WORKFLOW_UI_HOST) --ui-port $(ATLAN_WORKFLOW_UI_PORT) --metrics-port $(ATLAN_WORKFLOW_METRICS_PORT); \
 	else \
-		temporal server start-dev --db-filename /tmp/temporal.db --ip $(ATLAN_TEMPORAL_HOST) --port $(ATLAN_TEMPORAL_PORT) --metrics-port $(ATLAN_TEMPORAL_METRICS_PORT) --headless; \
+		temporal server start-dev --db-filename /tmp/temporal.db --ip $(ATLAN_WORKFLOW_HOST) --port $(ATLAN_WORKFLOW_PORT) --metrics-port $(ATLAN_WORKFLOW_METRICS_PORT) --headless; \
 	fi
 
 # Start Dapr

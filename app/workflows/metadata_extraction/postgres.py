@@ -16,7 +16,6 @@ from app.activities.metadata_extraction.postgres import (
 )
 
 logger = get_logger(__name__)
-
 DEFAULT_HEARTBEAT_TIMEOUT = timedelta(
     seconds=int(os.getenv("ATLAN_HEARTBEAT_TIMEOUT", 120))  # 2 minutes
 )

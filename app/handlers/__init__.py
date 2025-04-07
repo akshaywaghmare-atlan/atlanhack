@@ -11,6 +11,7 @@ from app.const import (
 class PostgresWorkflowHandler(SQLHandler):
     """
     Handler class for Postgres SQL workflows
+    Primarily handles business logic for test authentication, preflight checks and more.
     """
 
     metadata_sql = FILTER_METADATA_SQL
