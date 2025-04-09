@@ -1,11 +1,10 @@
-import pandas as pd
 from application_sdk.activities.common.utils import auto_heartbeater
 from application_sdk.activities.metadata_extraction.sql import (
     SQLMetadataExtractionActivities,
 )
-from application_sdk.decorators import transform
+from application_sdk.decorators import transform_daft
 from application_sdk.inputs.sql_query import SQLQueryInput
-from application_sdk.outputs.json import JsonOutput
+from application_sdk.outputs.parquet import ParquetOutput
 from temporalio import activity
 
 from app.const import (
@@ -31,12 +30,10 @@ class PostgresMetadataExtractionActivities(SQLMetadataExtractionActivities):
 
     @activity.defn
     @auto_heartbeater
-    @transform(
-        batch_input=SQLQueryInput(query="fetch_procedure_sql"),
-        raw_output=JsonOutput(output_suffix="/raw/extras-procedure"),
+    @transform_daft(
+        batch_input=SQLQueryInput(query="fetch_procedure_sql", chunk_size=None),
+        raw_output=ParquetOutput(output_suffix="/raw/extras-procedure"),
     )
-    async def fetch_procedures(
-        self, batch_input: pd.DataFrame, raw_output: JsonOutput, **kwargs
-    ):
-        await raw_output.write_batched_dataframe(batch_input)
+    async def fetch_procedures(self, batch_input, raw_output: ParquetOutput, **kwargs):
+        await raw_output.write_daft_dataframe(batch_input)
         return await raw_output.get_statistics(typename="extras-procedure")

@@ -1,8 +1,8 @@
-from application_sdk.clients.sql import AsyncSQLClient
+from application_sdk.clients.sql import SQLClient
 from application_sdk.common.utils import parse_credentials_extra
 
 
-class PostgreSQLClient(AsyncSQLClient):
+class PostgreSQLClient(SQLClient):
     def get_sqlalchemy_connection_string(self) -> str:
         """
         Get the SQLAlchemy connection string for the PostgreSQL client
