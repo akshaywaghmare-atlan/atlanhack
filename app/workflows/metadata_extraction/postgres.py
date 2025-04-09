@@ -47,6 +47,7 @@ class PostgresMetadataExtractionWorkflow(SQLMetadataExtractionWorkflow):
         workflow_args["workflow_run_id"] = workflow_run_id
 
         workflow.logger.info(f"Starting extraction workflow for {workflow_id}")
+        logger.info(f"Starting extraction workflow for {workflow_id}")
         retry_policy = RetryPolicy(
             maximum_attempts=6,
             backoff_coefficient=2,

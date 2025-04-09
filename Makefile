@@ -106,11 +106,11 @@ run-all:
 # Run the application
 run-app:
 	POETRY_PLUGIN_DOTENV_LOCATION=".env" \
-	poetry run python main.py
+	poetry run ./.venv/bin/opentelemetry-instrument --traces_exporter otlp --metrics_exporter otlp --service_name postgresql-application python main.py
 
 run-dev:
 	POETRY_PLUGIN_DOTENV_LOCATION=".env.dev" \
-	poetry run python main.py
+	poetry run ./.venv/bin/opentelemetry-instrument --traces_exporter otlp --metrics_exporter otlp --service_name postgresql-application python main.py
 
 # Run the application with profiling
 run-with-profile:
