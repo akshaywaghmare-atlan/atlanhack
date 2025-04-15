@@ -60,6 +60,7 @@ install:
 	fi
 	# Configure poetry to use project-specific virtualenv
 	poetry config virtualenvs.in-project true
+	poetry config experimental.system-git-client true
 
 	# Install the dependencies
 	poetry install -vv

@@ -5,7 +5,7 @@ This guide will help you get up and running with the application in no time.
 ## 1. Clone the Repository
 
 ```bash
-git clone --recurse-submodules https://github.com/atlanhq/phoenix-postgres-app.git
+git clone --recurse-submodules https://github.com/atlanhq/atlan-postgres-app.git
 ```
 
 ## 2. Install Atlan PaaS CLI

@@ -13,13 +13,13 @@ This guide will help you set up your Mac for developing this project, starting f
 
 ```bash
 # https
-git clone https://github.com/atlanhq/phoenix-postgres-app.git
+git clone https://github.com/atlanhq/atlan-postgres-app.git
 
 # ssh
-git clone git@github.com:atlanhq/phoenix-postgres-app.git
+git clone git@github.com:atlanhq/atlan-postgres-app.git
 
 # github cli
-gh repo clone atlanhq/phoenix-postgres-app
+gh repo clone atlanhq/atlan-postgres-app
 ```
 
 ## 2. Install Atlan PaaS CLI

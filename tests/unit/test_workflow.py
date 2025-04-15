@@ -1,9 +1,10 @@
 from datetime import timedelta
 from typing import Any, AsyncGenerator, Dict, List, TypeVar
-from unittest.mock import MagicMock
 from urllib.parse import quote_plus
 
 import pytest
+from application_sdk.common.utils import read_sql_files
+from application_sdk.handlers.sql import SQLHandler
 from hypothesis import given
 from hypothesis import strategies as st
 from pyatlan.model import assets
@@ -16,8 +17,6 @@ from app.activities.metadata_extraction.postgres import (
     PostgresMetadataExtractionActivities,
 )
 from app.clients import PostgreSQLClient
-from app.const import PROCEDURE_EXTRACTION_SQL
-from app.handlers import PostgresWorkflowHandler
 from app.transformers.atlas import PostgresAtlasTransformer, PostgresTable
 
 # Type variables for activity results
@@ -26,6 +25,9 @@ ActivityResult = List[Dict[str, str]]
 
 # Custom strategies for PostgreSQL testing
 postgres_auth_types = st.sampled_from(["basic", "iam_user", "iam_role"])
+
+# Read queries from SQL files
+queries = read_sql_files(queries_prefix="app/sql")
 
 # Strategy for extra fields in credentials
 postgres_extra_strategy = st.one_of(
@@ -207,36 +209,20 @@ def test_postgres_client_connection_string_errors(invalid_credentials):
 
 
 @given(st.data())
-def test_postgres_workflow_handler_sql_queries(data):
-    """Test PostgresWorkflowHandler SQL query attributes"""
-    from app.const import FILTER_METADATA_SQL, TABLES_CHECK_SQL
-
-    handler = PostgresWorkflowHandler(sql_client=MagicMock())
-    assert handler.metadata_sql == FILTER_METADATA_SQL
-    assert handler.tables_check_sql == TABLES_CHECK_SQL
-
-
-@given(st.data())
 def test_postgres_activities_sql_queries(data):
     """Test PostgresActivities SQL query attributes"""
-    from app.const import (
-        COLUMN_EXTRACTION_SQL,
-        DATABASE_EXTRACTION_SQL,
-        SCHEMA_EXTRACTION_SQL,
-        TABLE_EXTRACTION_SQL,
-    )
 
     activities = PostgresMetadataExtractionActivities(
         sql_client_class=PostgreSQLClient,
-        handler_class=PostgresWorkflowHandler,
+        handler_class=SQLHandler,
         transformer_class=PostgresAtlasTransformer,
     )
 
-    assert activities.fetch_database_sql == DATABASE_EXTRACTION_SQL
-    assert activities.fetch_schema_sql == SCHEMA_EXTRACTION_SQL
-    assert activities.fetch_table_sql == TABLE_EXTRACTION_SQL
-    assert activities.fetch_column_sql == COLUMN_EXTRACTION_SQL
-    assert activities.fetch_procedure_sql == PROCEDURE_EXTRACTION_SQL
+    assert activities.fetch_database_sql == queries["DATABASE_EXTRACTION"]
+    assert activities.fetch_schema_sql == queries["SCHEMA_EXTRACTION"]
+    assert activities.fetch_table_sql == queries["TABLE_EXTRACTION"]
+    assert activities.fetch_column_sql == queries["COLUMN_EXTRACTION"]
+    assert activities.fetch_procedure_sql == queries["PROCEDURE_EXTRACTION"]
 
 
 @given(table_data=postgres_table_strategy)

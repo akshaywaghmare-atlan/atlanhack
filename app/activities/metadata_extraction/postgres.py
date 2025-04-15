@@ -4,31 +4,16 @@ from application_sdk.activities.common.utils import auto_heartbeater
 from application_sdk.activities.metadata_extraction.sql import (
     SQLMetadataExtractionActivities,
 )
-from application_sdk.common.utils import prepare_query
+from application_sdk.common.utils import prepare_query, read_sql_files
 from application_sdk.inputs.sql_query import SQLQueryInput
 from application_sdk.outputs.parquet import ParquetOutput
 from temporalio import activity
 
-from app.const import (
-    COLUMN_EXTRACTION_SQL,
-    COLUMN_EXTRACTION_TEMP_TABLE_REGEX_SQL,
-    DATABASE_EXTRACTION_SQL,
-    PROCEDURE_EXTRACTION_SQL,
-    SCHEMA_EXTRACTION_SQL,
-    TABLE_EXTRACTION_SQL,
-    TABLE_EXTRACTION_TEMP_TABLE_REGEX_SQL,
-)
+queries = read_sql_files(queries_prefix="app/sql")
 
 
 class PostgresMetadataExtractionActivities(SQLMetadataExtractionActivities):
-    fetch_database_sql = DATABASE_EXTRACTION_SQL
-    fetch_schema_sql = SCHEMA_EXTRACTION_SQL
-    fetch_table_sql = TABLE_EXTRACTION_SQL
-    fetch_column_sql = COLUMN_EXTRACTION_SQL
-    fetch_procedure_sql = PROCEDURE_EXTRACTION_SQL
-
-    tables_extraction_temp_table_regex_sql = TABLE_EXTRACTION_TEMP_TABLE_REGEX_SQL
-    column_extraction_temp_table_regex_sql = COLUMN_EXTRACTION_TEMP_TABLE_REGEX_SQL
+    fetch_procedure_sql = queries["PROCEDURE_EXTRACTION"]
 
     @activity.defn
     @auto_heartbeater

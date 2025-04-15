@@ -353,34 +353,25 @@ class NewDatabaseMetadataExtractionWorkflow(SQLMetadataExtractionWorkflow):
             heartbeat_timeout=self.default_heartbeat_timeout,
         )
 
+        fetch_functions = self.get_fetch_functions()
         fetch_and_transforms = [
-            self.fetch_and_transform(
-                self.activities_cls.fetch_databases,
-                workflow_args,
-                retry_policy,
-            ),
-            self.fetch_and_transform(
-                self.activities_cls.fetch_schemas,
-                workflow_args,
-                retry_policy,
-            ),
-            self.fetch_and_transform(
-                self.activities_cls.fetch_tables,
-                workflow_args,
-                retry_policy,
-            ),
-            self.fetch_and_transform(
-                self.activities_cls.fetch_columns,
-                workflow_args,
-                retry_policy,
-            ),
-            self.fetch_and_transform(
-                self.activities_cls.fetch_procedures,
-                workflow_args,
-                retry_policy,
-            ),
+            self.fetch_and_transform(fetch_function, workflow_args, retry_policy)
+            for fetch_function in fetch_functions
         ]
         await asyncio.gather(*fetch_and_transforms)
+
+    def get_fetch_functions(
+        self,
+    ) -> List[Callable[[Dict[str, Any]], Coroutine[Any, Any, Dict[str, Any]]]]:
+        """Get the fetch functions for the Postgres metadata extraction workflow.
+
+        Returns:
+            List[Callable[[Dict[str, Any]], Coroutine[Any, Any, Dict[str, Any]]]]: A list of fetch operations.
+        """
+        base_functions = super().get_fetch_functions()
+        return base_functions + [
+            self.activities_cls.fetch_procedures,
+        ]
 
     @staticmethod
     def get_activities(

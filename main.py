@@ -2,13 +2,13 @@ import asyncio
 
 from application_sdk.application.fastapi import Application, HttpWorkflowTrigger
 from application_sdk.clients.utils import get_workflow_client
+from application_sdk.handlers.sql import SQLHandler
 from application_sdk.worker import Worker
 
 from app.activities.metadata_extraction.postgres import (
     PostgresMetadataExtractionActivities,
 )
 from app.clients import PostgreSQLClient
-from app.handlers import PostgresWorkflowHandler
 from app.transformers.atlas import PostgresAtlasTransformer
 from app.workflows.metadata_extraction.postgres import (
     PostgresMetadataExtractionWorkflow,
@@ -24,7 +24,7 @@ async def main():
     # requires a sql client for source connectivity, handler for preflight checks, transformer for atlas mapping
     activities = PostgresMetadataExtractionActivities(
         sql_client_class=PostgreSQLClient,
-        handler_class=PostgresWorkflowHandler,
+        handler_class=SQLHandler,
         transformer_class=PostgresAtlasTransformer,
     )
 
@@ -40,7 +40,7 @@ async def main():
 
     # setup application server. serves the UI, and handles the various triggers
     app = Application(
-        handler=PostgresWorkflowHandler(sql_client=PostgreSQLClient()),
+        handler=SQLHandler(sql_client=PostgreSQLClient()),
         workflow_client=workflow_client,
     )
 

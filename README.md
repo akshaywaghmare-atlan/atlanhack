@@ -6,7 +6,7 @@
 
 [![Checked with pyright](https://microsoft.github.io/pyright/img/pyright_badge.svg)](https://microsoft.github.io/pyright/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![Tests](https://github.com/atlanhq/phoenix-postgres-app/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/atlanhq/phoenix-postgres-app/actions/workflows/unit-tests.yml)
+[![Tests](https://github.com/atlanhq/atlan-postgres-app/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/atlanhq/atlan-postgres-app/actions/workflows/unit-tests.yml)
 
 PostgreSQL application is designed to interact with a PostgreSQL database and perform actions on it. The application is built using the [Atlan Python Application SDK](https://github.com/atlanhq/application-sdk) and is intended to run on the Atlan Platform.
 
@@ -28,16 +28,22 @@ This application has two components:
 
 https://github.com/user-attachments/assets/0ce63557-7c62-4491-96b9-1134a1ceadd6
 
+## Component Structure
+
+- `app/activities`: Workflow activities implementation
+- `app/clients`: Database client implementations
+- `app/handlers`: Request and workflow handlers
+- `app/transformers`: Metadata transformation logic
+- `app/workflows`: Workflow definitions
+- `app/queries`: SQL query templates
+
 ## Features
 
 1. Extract metadata from a Postgres database, transform and push to an object store
-2. Supports Adhoc SQL queries on Postgres
-3. OTel integration for metrics, traces and logs
-4. _(In development)Supports mining query history from Postgres_
-5. _(In development)Supports metadata(including tag) sync between Atlan and Postgres_
-6. _(In development)Supports data profiling on Postgres_
-7. _(In development)Supports data quality checks on Postgres_
-8. _(In development)Supports data lineage on Postgres_
+2. FastAPI-based REST API interface
+3. OpenTelemetry integration for metrics, traces and logs
+4. IAM Authentication support
+
 
 ### Note on IAM Authentication
 
