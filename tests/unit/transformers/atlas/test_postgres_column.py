@@ -4,7 +4,7 @@ from typing import Any, Dict, List
 
 import pytest
 
-from app.transformers.atlas import PostgresAtlasTransformer
+from app.transformers.atlas import SQLAtlasTransformer
 
 column_attributes = [
     "qualifiedName",
@@ -55,7 +55,7 @@ def expected_data(resources_dir: str) -> Dict[str, Any]:
 
 @pytest.fixture
 def transformer():
-    return PostgresAtlasTransformer(connector_name="postgres", tenant_id="default")
+    return SQLAtlasTransformer(connector_name="postgres", tenant_id="default")
 
 
 def assert_attributes(
@@ -77,7 +77,7 @@ def assert_attributes(
 
 
 def test_column_variation_1(
-    transformer: PostgresAtlasTransformer,
+    transformer: SQLAtlasTransformer,
     raw_data: Dict[str, Any],
     expected_data: Dict[str, Any],
 ):
@@ -119,7 +119,7 @@ def test_column_variation_1(
 
 
 def test_column_variation_2(
-    transformer: PostgresAtlasTransformer,
+    transformer: SQLAtlasTransformer,
     raw_data: Dict[str, Any],
     expected_data: Dict[str, Any],
 ):

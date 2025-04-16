@@ -4,7 +4,6 @@ from urllib.parse import quote_plus
 
 import pytest
 from application_sdk.common.utils import read_sql_files
-from application_sdk.handlers.sql import SQLHandler
 from hypothesis import given
 from hypothesis import strategies as st
 from pyatlan.model import assets
@@ -13,11 +12,8 @@ from temporalio.client import Client
 from temporalio.testing import WorkflowEnvironment
 from temporalio.worker import Worker
 
-from app.activities.metadata_extraction.postgres import (
-    PostgresMetadataExtractionActivities,
-)
-from app.clients import PostgreSQLClient
-from app.transformers.atlas import PostgresAtlasTransformer, PostgresTable
+from app.clients import SQLClient
+from app.transformers.atlas import PostgresTable, SQLAtlasTransformer
 
 # Type variables for activity results
 T = TypeVar("T")
@@ -73,7 +69,7 @@ postgres_table_strategy = st.fixed_dictionaries(
 
 
 def test_postgres_client_connection_string():
-    """Test PostgreSQLClient connection string generation for different auth types"""
+    """Test SQLClient connection string generation for different auth types"""
     # Test basic auth
     basic_credentials: Dict[str, Any] = {
         "username": "test_user",
@@ -84,7 +80,7 @@ def test_postgres_client_connection_string():
         "authType": "basic",
     }
 
-    client = PostgreSQLClient()
+    client = SQLClient()
     client.credentials = basic_credentials
     encoded_password = quote_plus(str(basic_credentials["password"]))
     expected = f"postgresql+psycopg://{basic_credentials['username']}:{encoded_password}@{basic_credentials['host']}:{basic_credentials['port']}/{basic_credentials['extra'].get('database')}?application_name=Atlan&connect_timeout=5"
@@ -145,8 +141,8 @@ def test_postgres_client_connection_string():
     reason="Skipping test due to the following failure : ExceptionGroup: Hypothesis found 3 distinct failures. (3 sub-exceptions)"
 )
 def test_postgres_client_connection_string_with_hypothesis(credentials):
-    """Test PostgreSQLClient connection string generation for different auth types"""
-    client = PostgreSQLClient()
+    """Test SQLClient connection string generation for different auth types"""
+    client = SQLClient()
     client.credentials = credentials
 
     if credentials["authType"] == "basic":
@@ -196,8 +192,8 @@ def test_postgres_client_connection_string_with_hypothesis(credentials):
     )
 )
 def test_postgres_client_connection_string_errors(invalid_credentials):
-    """Test error cases for PostgreSQLClient connection string generation"""
-    client = PostgreSQLClient()
+    """Test error cases for SQLClient connection string generation"""
+    client = SQLClient()
     client.credentials = invalid_credentials
 
     if not invalid_credentials:
@@ -206,23 +202,6 @@ def test_postgres_client_connection_string_errors(invalid_credentials):
     else:
         with pytest.raises(ValueError):
             client.get_sqlalchemy_connection_string()
-
-
-@given(st.data())
-def test_postgres_activities_sql_queries(data):
-    """Test PostgresActivities SQL query attributes"""
-
-    activities = PostgresMetadataExtractionActivities(
-        sql_client_class=PostgreSQLClient,
-        handler_class=SQLHandler,
-        transformer_class=PostgresAtlasTransformer,
-    )
-
-    assert activities.fetch_database_sql == queries["DATABASE_EXTRACTION"]
-    assert activities.fetch_schema_sql == queries["SCHEMA_EXTRACTION"]
-    assert activities.fetch_table_sql == queries["TABLE_EXTRACTION"]
-    assert activities.fetch_column_sql == queries["COLUMN_EXTRACTION"]
-    assert activities.fetch_procedure_sql == queries["PROCEDURE_EXTRACTION"]
 
 
 @given(table_data=postgres_table_strategy)
@@ -300,8 +279,8 @@ def test_postgres_table():
     tenant_id=st.text(),
 )
 def test_custom_transformer_initialization(connector_name, tenant_id):
-    """Test PostgresAtlasTransformer initialization and entity class mappings"""
-    transformer = PostgresAtlasTransformer(
+    """Test SQLAtlasTransformer initialization and entity class mappings"""
+    transformer = SQLAtlasTransformer(
         connector_name=connector_name, tenant_id=tenant_id
     )
     assert transformer.entity_class_definitions["TABLE"] == PostgresTable

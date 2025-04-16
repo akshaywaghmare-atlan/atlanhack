@@ -34,3 +34,4 @@ class DatabaseTypeMetadataExtractionWorkflow(SQLMetadataExtractionWorkflow):
         # 3. Execute preflight checks
         # 4. Run parallel extraction activities
         # 5. Transform and store results
+```

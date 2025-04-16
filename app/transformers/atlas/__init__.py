@@ -98,7 +98,7 @@ class PostgresColumn(Column):
         }
 
 
-class PostgresAtlasTransformer(AtlasTransformer):
+class SQLAtlasTransformer(AtlasTransformer):
     def __init__(self, connector_name: str, tenant_id: str, **kwargs: Any):
         super().__init__(connector_name, tenant_id, **kwargs)
 

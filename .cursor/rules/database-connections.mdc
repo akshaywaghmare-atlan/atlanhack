@@ -13,7 +13,7 @@ This document explains how database connections are established and managed in t
 
 ### Base SQL Client
 
-The application extends `AsyncSQLClient` from the Application SDK to create database-specific client implementations. The base client handles:
+The application extends `AsyncBaseSQLClient` from the Application SDK to create database-specific client implementations. The base client handles:
 
 - Connection pooling
 - Async connection management
@@ -22,10 +22,9 @@ The application extends `AsyncSQLClient` from the Application SDK to create data
 
 ### Database-Specific Clients
 
-Each supported database has its own client implementation in `app/clients/{database_type}/__init__.py`, for example:
+Each supported database has its own client implementation in `app/clients/__init__.py`, for example:
 
-- `PostgreSQLClient` in `app/clients/__init__.py` (currently directly in the clients directory)
-- Other database clients would follow the pattern `app/clients/{database_type}/__init__.py`
+- `SQLClient` in `app/clients/__init__.py` (currently directly in the clients directory)
 
 ## Connection String Generation
 
@@ -35,29 +34,39 @@ The framework uses a strategy pattern for generating connection strings based on
 2. **IAM User Authentication**: For cloud databases that support IAM users
 3. **IAM Role Authentication**: For cloud databases that support IAM roles
 
-Example from PostgreSQLClient:
+Example from SQLClient:
 
 ```python
 def get_sqlalchemy_connection_string(self) -> str:
-    authType = self.credentials.get("authType", "basic")  # Default to basic auth
+    """
+    Get the SQLAlchemy connection string for the SQL client
+    based on the auth type and source connection params.
 
-    connection_string = ""
+    Returns:
+        str: The SQLAlchemy connection string.
+    """
 
-    match authType:
-        case "iam_user":
-            connection_string = self.get_iam_user_connection_string()
-        case "iam_role":
-            connection_string = self.get_iam_role_connection_string()
-        case "basic":
-            connection_string = self.get_basic_connection_string()
-        case _:
-            raise ValueError(f"Invalid auth type: {authType}")
+    source_connection_params = {
+        "application_name": "Atlan",
+        "connect_timeout": 5,
+    }
 
-    for key, value in self.source_connection_params.items():
-        if "?" not in connection_string:
-            connection_string += "?"
-        else:
-            connection_string += "&"
-        connection_string += f"{key}={value}"
+    connection_string = (
+        "postgresql+psycopg://{username}:{password}@{host}:{port}/{database}"
+    )
 
+    extra = parse_credentials_extra(self.credentials)
+    database = extra.get("database")
+    connection_string = connection_string.format(
+        username=self.credentials["username"],
+        password=self.get_auth_token(),
+        host=self.credentials["host"],
+        port=self.credentials["port"],
+        database=database,
+    )
+
+    connection_string = self.add_source_connection_params(
+        connection_string, source_connection_params
+    )
     return connection_string
+```
