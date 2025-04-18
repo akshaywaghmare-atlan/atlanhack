@@ -199,8 +199,8 @@ workflows = ["dapr (>=1.14.0,<2.0.0)", "orjson (>=3.10.7,<4.0.0)", "temporalio (
 [package.source]
 type = "git"
 url = "git@github.com:atlanhq/application-sdk.git"
-reference = "1e545fb1edeb70fec689fb30e6c5ed34713a0613"
-resolved_reference = "1e545fb1edeb70fec689fb30e6c5ed34713a0613"
+reference = "ce77e80791573947ba9310666b1500e48d774e57"
+resolved_reference = "ce77e80791573947ba9310666b1500e48d774e57"
 
 [[package]]
 name = "attrs"
@@ -5083,4 +5083,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11.10"
-content-hash = "ee23e67c48319d236ea5b15a1fbfda320d65d982ed48b892c3b796130010ccea"
+content-hash = "caba3e5d0c9c98ac08ee40e7497c7f614f1bfd514b960a6d5e0be1e5ce1ac67b"
