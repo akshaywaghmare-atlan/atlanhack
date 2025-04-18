@@ -1,3 +1,20 @@
+/*
+ * File: extract_schema.sql
+ * Purpose: Extracts schema metadata from PostgreSQL database
+ * 
+ * Parameters:
+ *   {normalized_exclude_regex} - Regex pattern for schemas to exclude
+ *   {normalized_include_regex} - Regex pattern for schemas to include
+ *
+ * Returns: 
+ *   - Schema metadata including name, owner, and table/view counts
+ *   - Includes table and view counts per schema
+ *
+ * Notes:
+ *   - Excludes system schemas (pg_* and information_schema)
+ *   - Results are filtered by include/exclude regex patterns
+ *   - Ordered by schema name
+ */
 SELECT
     current_database() AS CATALOG_NAME,
     N.nspname AS SCHEMA_NAME,

@@ -1,3 +1,22 @@
+/*
+ * File: extract_procedure.sql
+ * Purpose: Extracts stored procedure metadata from PostgreSQL database
+ * 
+ * Parameters:
+ *   {normalized_exclude_regex} - Regex pattern for schemas to exclude
+ *   {normalized_include_regex} - Regex pattern for schemas to include
+ *
+ * Returns: 
+ *   - Procedure metadata including:
+ *     - Procedure schema and name
+ *     - Source owner (creator)
+ *     - Procedure definition (source code)
+ *
+ * Notes:
+ *   - Excludes system schemas (information_schema, pg_catalog)
+ *   - Excludes system procedures (rdsdb user)
+ *   - Results filtered by include/exclude regex patterns
+ */
 SELECT
     current_database() AS PROCEDURE_CATALOG,
     N.nspname          AS PROCEDURE_SCHEMA,

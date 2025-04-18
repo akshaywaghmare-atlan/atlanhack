@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - develop
+      - nishrefactor # TODO: remove this after refactoring is done
     paths:
       - '**'
       - '!kurl-installer.yaml'
@@ -55,7 +56,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./Dockerfile
+          file: ./install/Dockerfile
           push: true
           platforms: linux/amd64
           tags: |
@@ -75,7 +76,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./Dockerfile.Argo
+          file: ./install/Dockerfile.Argo
           push: true
           platforms: linux/amd64
           tags: |

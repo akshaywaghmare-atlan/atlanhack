@@ -116,7 +116,7 @@ run-dev:
 # Run the application with profiling
 run-with-profile:
 	POETRY_PLUGIN_DOTENV_LOCATION=".env" \
-	poetry run scalene --profile-all --cli --outfile scalene.json --json main.py
+	poetry run scalene --profile-all --cli --outfile ./.github/scalene.json --json main.py
 
 # Run the application and dashboard
 run:

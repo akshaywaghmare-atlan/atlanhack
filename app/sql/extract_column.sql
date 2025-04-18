@@ -1,3 +1,27 @@
+/*
+ * File: extract_column.sql
+ * Purpose: Extracts detailed column metadata from PostgreSQL database
+ * 
+ * Parameters:
+ *   {normalized_exclude_regex} - Regex pattern for schemas to exclude
+ *   {normalized_include_regex} - Regex pattern for schemas to include
+ *   {temp_table_regex_sql} - Optional SQL for filtering temporary tables
+ *
+ * Returns: 
+ *   - Comprehensive column metadata including:
+ *     - Column names, data types, and positions
+ *     - Nullability and default values
+ *     - Auto-increment and identity properties
+ *     - Constraint information (primary key, foreign key, etc.)
+ *     - Column descriptions/remarks
+ *
+ * Notes:
+ *   - Only includes non-dropped columns with attnum > 0
+ *   - Excludes system schemas
+ *   - Complex type handling with special cases for various data types
+ *   - Includes constraint types and names for each column
+ *   - Results ordered by schema, table, and column position
+ */
 SELECT
     current_database() AS TABLE_CATALOG,
     n.nspname AS TABLE_SCHEMA,

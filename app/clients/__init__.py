@@ -3,13 +3,21 @@ from application_sdk.common.utils import parse_credentials_extra
 
 
 class SQLClient(BaseSQLClient):
+    """
+    This client handles connection string generation based on authentication
+    type and manages database connectivity using SQLAlchemy.
+    """
+
     def get_sqlalchemy_connection_string(self) -> str:
         """
-        Get the SQLAlchemy connection string for the SQL client
-        based on the auth type and source connection params.
-
+        Generate the SQLAlchemy connection string for SQL source connections.
+        
+        Builds a connection string using credential information stored in 
+        self.credentials. Automatically formats the string with appropriate 
+        parameters and authentication details.
+        
         Returns:
-            str: The SQLAlchemy connection string.
+            str: Formatted SQLAlchemy connection string for SQL source
         """
 
         source_connection_params = {
