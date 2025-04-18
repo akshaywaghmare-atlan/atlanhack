@@ -27,7 +27,7 @@ RUN pip install --upgrade pip && \
     pip install --no-cache-dir supervisor
 
 # Copy Supervisord configuration
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./install/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Set default environment variables for ports
 ENV ATLAN_APP_HTTP_PORT=8000
@@ -44,7 +44,7 @@ ENV ENABLE_OTLP_LOGS=true
 WORKDIR /application
 
 # Add entrypoint script
-COPY entrypoint.sh entrypoint.sh
+COPY ./install/entrypoint.sh entrypoint.sh
 RUN chmod +x entrypoint.sh
 
 # Start Supervisord

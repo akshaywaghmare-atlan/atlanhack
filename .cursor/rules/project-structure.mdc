@@ -1,0 +1,108 @@
+---
+description: Overview of project organization, key directories, and file structure patterns.
+globs:
+alwaysApply: false
+---
+# SQL App Project Structure
+
+This document provides an overview of the project structure for SQL metadata extraction applications built with the Atlan app framework.
+
+## Core Components
+
+### Main Application
+The entry point is `main.py`, which initializes the FastAPI application, registers workflows, and starts the server.
+
+### App Module
+The `app/` directory contains the core functionality, organized by database type:
+
+- `app/clients/` - Database clients for SQL connections
+  - `app/clients/<db-type>/` - Database-specific client implementations (mysql, postgres, etc.)
+
+- `app/handlers/` - SQL workflow handlers
+  - `app/handlers/<db-type>/` - Database-specific handler implementations
+
+- `app/activities/` - Temporal activities for metadata extraction
+  - `app/activities/metadata_extraction/` - Metadata extraction activities
+  - `app/activities/metadata_extraction/<db-type>/` - Database-specific extraction activities
+
+- `app/workflows/` - Temporal workflow definitions
+  - `app/workflows/metadata_extraction/` - Metadata extraction workflows
+  - `app/workflows/metadata_extraction/<db-type>/` - Database-specific workflow implementations
+
+- `app/transformers/` - Metadata transformers
+  - `app/transformers/atlas/` - Base Atlas transformers
+  - `app/transformers/atlas/<db-type>/` - Database-specific Atlas transformers
+
+- `app/const.py` - SQL queries and constants, may include database-specific queries
+
+### Frontend
+The `frontend/` directory contains the web UI:
+
+- `frontend/static/` - JavaScript and CSS files
+- `frontend/templates/` - HTML templates for the configuration interface
+
+### Tests
+The `tests/` directory contains test suites:
+
+- `tests/unit/` - Unit tests for individual components
+  - `tests/unit/transformers/` - Tests for transformers
+  - `tests/unit/transformers/<db-type>/` - Tests for database-specific transformers
+
+- `tests/e2e/` - End-to-end tests with real database connections
+  - `tests/e2e/test_<db-type>_workflow/` - Database-specific E2E tests
+
+### Documentation
+The `docs/` directory contains documentation:
+
+- `docs/ARCHITECTURE.md` - Architecture overview
+- `docs/DEVELOPMENT.md` - Development guide
+- `docs/QUICK_START.md` - Quick start guide
+- `docs/SETUP_MAC.md` - Setup instructions
+
+### Infrastructure
+- `Dockerfile` - Main application Docker image
+- `Dockerfile.Argo` - Argo workflow Docker image
+- `porter.yaml` - CNAB bundle definition
+- `supervisord.conf` - Process supervisor configuration
+- `entrypoint.sh` - Container entrypoint script
+
+### CI/CD
+The `.github/` directory contains GitHub Actions workflows:
+
+- `.github/workflows/` - CI/CD workflow definitions
+- `.github/scripts/` - Supporting scripts for CI/CD
+
+## Key Files
+
+- `main.py` - Application entry point
+- `app/clients/<db-type>/__init__.py` - Database-specific client implementations
+- `app/activities/metadata_extraction/<db-type>/__init__.py` - Database-specific extraction activities
+- `app/workflows/metadata_extraction/<db-type>/__init__.py` - Database-specific workflow implementations
+- `app/transformers/atlas/<db-type>/__init__.py` - Database-specific transformers
+- `app/const.py` - SQL queries for metadata extraction
+- `frontend/templates/index.html` - Main UI template
+- `frontend/static/script.js` - UI JavaScript functionality
+
+## Database-Specific Organization
+
+The application uses a modular structure that separates database-specific implementations:
+
+1. Each supported database type has its own subdirectory in the relevant component directories
+2. Database-specific SQL queries may be defined in dedicated constants files
+3. Common interfaces are implemented by database-specific classes
+4. The frontend adapts dynamically to the configured database type
+
+This organization allows adding support for new database types without modifying existing implementations.
+
+## File Organization by Layers
+
+The codebase is organized in layers with clear separation of concerns:
+
+1. **Client Layer** - Handles database connections and authentication
+2. **Handler Layer** - Manages workflow execution and SQL queries
+3. **Activity Layer** - Defines extraction activities for different metadata types
+4. **Transformer Layer** - Converts raw metadata to standardized format
+5. **Workflow Layer** - Orchestrates the end-to-end extraction process
+6. **Frontend Layer** - Provides user interface for configuration and execution
+
+Each layer contains database-specific implementations organized in appropriate subdirectories.

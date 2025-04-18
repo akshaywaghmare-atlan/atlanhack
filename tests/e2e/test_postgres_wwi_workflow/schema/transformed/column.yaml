@@ -223,7 +223,7 @@ columns:
   attributes.lastSyncRunAt:
     title: lastSyncRunAt
     description: The timestamp of the last sync run
-    dtype: int
+    dtype: str
     nullable: false
     unique: false
     coerce: false

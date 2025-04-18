@@ -2,16 +2,18 @@ import json
 import os
 from typing import Any, Dict, List
 
+FILE_NAME = ".github/scalene.json"
+
 
 def cleanup_scalene_json():
     """Clean up scalene.json to keep only metrics-related data."""
     try:
         # check if file exists first
-        if not os.path.exists("scalene.json"):
-            print("scalene.json does not exist")
+        if not os.path.exists(FILE_NAME):
+            print(f"{FILE_NAME} does not exist")
             return
 
-        with open("scalene.json", "r") as f:
+        with open(FILE_NAME, "r") as f:
             data = json.load(f)
 
         # Keep only essential metrics
@@ -51,15 +53,15 @@ def cleanup_scalene_json():
                     cleaned_data["files"][file_path] = {"functions": cleaned_functions}
 
         # Write cleaned data back to file
-        with open("scalene.json", "w") as f:
+        with open(FILE_NAME, "w") as f:
             json.dump(cleaned_data, f, indent=2)
 
-        print("Successfully cleaned up scalene.json")
+        print(f"Successfully cleaned up {FILE_NAME}")
 
     except FileNotFoundError:
-        print("scalene.json not found")
+        print(f"{FILE_NAME} not found")
     except Exception as e:
-        print(f"Error cleaning up scalene.json: {e}")
+        print(f"Error cleaning up {FILE_NAME}: {e}")
 
 
 if __name__ == "__main__":

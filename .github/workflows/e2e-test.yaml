@@ -242,7 +242,7 @@ jobs:
         sleep 10
 
         # First calculate metrics from current run's scalene.json
-        if [ -f scalene.json ]; then
+        if [ -f .github/scalene.json ]; then
           # Calculate Average CPU Usage upto 2 decimal places
           AVG_CPU=$(jq -r '
             [
@@ -253,7 +253,7 @@ jobs:
               (.n_cpu_percent_c + .n_cpu_percent_python + .n_sys_percent)
             ] |
             add / length
-          ' scalene.json | awk '{printf "%.2f\n", $1}')
+          ' .github/scalene.json | awk '{printf "%.2f\n", $1}')
 
           # Max CPU Usage upto 2 decimal places
           MAX_CPU=$(jq -r '
@@ -262,11 +262,11 @@ jobs:
             .value.functions[] |
             select(.n_cpu_percent_c != null and .n_cpu_percent_python != null and .n_sys_percent != null) |
             (.n_cpu_percent_c + .n_cpu_percent_python + .n_sys_percent)
-          ' scalene.json | sort -rn | head -n1 | awk '{printf "%.2f\n", $1}')
+          ' .github/scalene.json | sort -rn | head -n1 | awk '{printf "%.2f\n", $1}')
 
           MEMORY_USAGE=$(jq -r '
             .max_footprint_mb
-          ' scalene.json | awk '{printf "%.2f\n", $1}')
+          ' .github/scalene.json | awk '{printf "%.2f\n", $1}')
         else
           echo "Current scalene.json does not exist"
           AVG_CPU="N/A"
@@ -276,8 +276,8 @@ jobs:
 
         # Now fetch Main branch and calculate its metrics
         git fetch origin main
-        if git cat-file -e origin/main:scalene.json 2>/dev/null && \
-            git show origin/main:scalene.json > main_scalene.json; then
+        if git cat-file -e origin/main:.github/scalene.json 2>/dev/null && \
+            git show origin/main:.github/scalene.json > main_scalene.json; then
           # Calculate metrics for the main branch
           MAIN_AVG_CPU=$(jq -r '
             [
@@ -302,7 +302,7 @@ jobs:
             .max_footprint_mb
           ' main_scalene.json | awk '{printf "%.2f\n", $1}')
         else
-          echo "scalene.json does not exist in the main branch"
+          echo ".github/scalene.json does not exist in the main branch"
           MAIN_AVG_CPU="N/A"
           MAIN_MAX_CPU="N/A"
           MAIN_MEMORY_USAGE="N/A"

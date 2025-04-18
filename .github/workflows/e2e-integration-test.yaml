@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - develop
+      - nishrefactor # TODO: remove this after refactoring is done
   pull_request:
     types:
       - opened
@@ -11,6 +12,7 @@ on:
     branches:
       - main
       - develop
+      - nishrefactor # TODO: remove this after refactoring is done
   workflow_dispatch:
     inputs:
       distinct_id:
@@ -101,6 +103,8 @@ jobs:
     # Start the application
     - name: Start the application
       id: start_app
+      env:
+        ATLAN_SQL_SERVER_MIN_VERSION: "10.0"
       run: |
         make run-with-profile &
         sleep 20
@@ -111,6 +115,7 @@ jobs:
         E2E_POSTGRES_PORT: 5432
         E2E_POSTGRES_USERNAME: "postgres"
         E2E_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_DB_PASSWORD }}
+        ATLAN_SQL_SERVER_MIN_VERSION: "10.0"
       run: |
         poetry run coverage run -m pytest tests/e2e
 
@@ -121,7 +126,7 @@ jobs:
         sleep 10
 
         # Calculate metrics from current run's scalene.json
-        if [ -f scalene.json ]; then
+        if [ -f .github/scalene.json ]; then
           # Calculate Average CPU Usage upto 2 decimal places
           AVG_CPU=$(jq -r '
             [
@@ -132,7 +137,7 @@ jobs:
               (.n_cpu_percent_c + .n_cpu_percent_python + .n_sys_percent)
             ] |
             add / length
-          ' scalene.json | awk '{printf "%.2f\n", $1}')
+          ' .github/scalene.json | awk '{printf "%.2f\n", $1}')
 
           # Max CPU Usage upto 2 decimal places
           MAX_CPU=$(jq -r '
@@ -141,11 +146,11 @@ jobs:
             .value.functions[] |
             select(.n_cpu_percent_c != null and .n_cpu_percent_python != null and .n_sys_percent != null) |
             (.n_cpu_percent_c + .n_cpu_percent_python + .n_sys_percent)
-          ' scalene.json | sort -rn | head -n1 | awk '{printf "%.2f\n", $1}')
+          ' .github/scalene.json | sort -rn | head -n1 | awk '{printf "%.2f\n", $1}')
 
           MEMORY_USAGE=$(jq -r '
             .max_footprint_mb
-          ' scalene.json | awk '{printf "%.2f\n", $1}')
+          ' .github/scalene.json | awk '{printf "%.2f\n", $1}')
         else
           echo "Current scalene.json does not exist"
           AVG_CPU="N/A"

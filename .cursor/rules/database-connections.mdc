@@ -1,0 +1,72 @@
+---
+description: Documents how database connections are established and managed, covering authentication types, connection string generation, and client implementation patterns.
+globs:
+alwaysApply: false
+---
+# Database Connections Architecture
+
+## Overview
+
+This document explains how database connections are established and managed in this application framework. The architecture is designed to be modular, allowing different database types to be supported through a consistent interface.
+
+## Key Components
+
+### Base SQL Client
+
+The application extends `AsyncBaseSQLClient` from the Application SDK to create database-specific client implementations. The base client handles:
+
+- Connection pooling
+- Async connection management
+- Error handling
+- Query execution
+
+### Database-Specific Clients
+
+Each supported database has its own client implementation in `app/clients/__init__.py`, for example:
+
+- `SQLClient` in `app/clients/__init__.py` (currently directly in the clients directory)
+
+## Connection String Generation
+
+The framework uses a strategy pattern for generating connection strings based on authentication type:
+
+1. **Basic Authentication**: Username/password
+2. **IAM User Authentication**: For cloud databases that support IAM users
+3. **IAM Role Authentication**: For cloud databases that support IAM roles
+
+Example from SQLClient:
+
+```python
+def get_sqlalchemy_connection_string(self) -> str:
+    """
+    Get the SQLAlchemy connection string for the SQL client
+    based on the auth type and source connection params.
+
+    Returns:
+        str: The SQLAlchemy connection string.
+    """
+
+    source_connection_params = {
+        "application_name": "Atlan",
+        "connect_timeout": 5,
+    }
+
+    connection_string = (
+        "postgresql+psycopg://{username}:{password}@{host}:{port}/{database}"
+    )
+
+    extra = parse_credentials_extra(self.credentials)
+    database = extra.get("database")
+    connection_string = connection_string.format(
+        username=self.credentials["username"],
+        password=self.get_auth_token(),
+        host=self.credentials["host"],
+        port=self.credentials["port"],
+        database=database,
+    )
+
+    connection_string = self.add_source_connection_params(
+        connection_string, source_connection_params
+    )
+    return connection_string
+```
