@@ -140,7 +140,7 @@ def test_postgres_client_connection_string():
 @pytest.mark.skip(
     reason="Skipping test due to the following failure : ExceptionGroup: Hypothesis found 3 distinct failures. (3 sub-exceptions)"
 )
-def test_postgres_client_connection_string_with_hypothesis(credentials):
+def test_postgres_client_connection_string_with_hypothesis(credentials: Dict[str, Any]):
     """Test SQLClient connection string generation for different auth types"""
     client = SQLClient()
     client.credentials = credentials
@@ -191,7 +191,7 @@ def test_postgres_client_connection_string_with_hypothesis(credentials):
         ),
     )
 )
-def test_postgres_client_connection_string_errors(invalid_credentials):
+def test_postgres_client_connection_string_errors(invalid_credentials: Dict[str, Any]):
     """Test error cases for SQLClient connection string generation"""
     client = SQLClient()
     client.credentials = invalid_credentials
@@ -208,7 +208,7 @@ def test_postgres_client_connection_string_errors(invalid_credentials):
 @pytest.mark.skip(
     reason="Skipping test due to the following failure : ExceptionGroup: Hypothesis found 2 distinct failures. (2 sub-exceptions)"
 )
-def test_postgres_table_with_hypothesis(table_data):
+def test_postgres_table_with_hypothesis(table_data: Dict[str, Any]):
     """Test parsing different types of PostgreSQL tables"""
     result = PostgresTable.parse_obj(table_data)
 
@@ -217,13 +217,13 @@ def test_postgres_table_with_hypothesis(table_data):
     elif table_data["table_type"] == "VIEW":
         assert isinstance(result, assets.View)
         assert (
-            result.attributes.definition
+            result.definition
             == f"CREATE OR REPLACE VIEW {table_data['table_name']} AS {table_data['view_definition']}"
         )
     elif table_data["table_type"] == "MATERIALIZED VIEW":
         assert isinstance(result, assets.MaterialisedView)
         assert (
-            result.attributes.definition
+            result.definition
             == f"CREATE MATERIALIZED VIEW {table_data['table_name']} AS {table_data['view_definition']}"
         )
 
@@ -278,7 +278,7 @@ def test_postgres_table():
     connector_name=st.text(),
     tenant_id=st.text(),
 )
-def test_custom_transformer_initialization(connector_name, tenant_id):
+def test_custom_transformer_initialization(connector_name: str, tenant_id: str):
     """Test SQLAtlasTransformer initialization and entity class mappings"""
     transformer = SQLAtlasTransformer(
         connector_name=connector_name, tenant_id=tenant_id
@@ -352,7 +352,7 @@ class TestPostgresWorkflow:
     @pytest.fixture
     async def workflow_env(self) -> AsyncGenerator[Client, None]:
         """Create a test workflow environment."""
-        env = await WorkflowEnvironment.start_local()
+        env = await WorkflowEnvironment.start_local()  # type: ignore
         try:
             yield env.client
         finally:
