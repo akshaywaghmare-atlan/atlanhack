@@ -17,7 +17,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || contains(github.event.pull_request.labels.*.name, 'e2e-test-1m') || contains(github.event.pull_request.labels.*.name, 'e2e-test') }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v4.0.0
       with:
         token : ${{ secrets.ORG_PAT_GITHUB }}
 
@@ -36,15 +36,15 @@ jobs:
         sleep 5
 
     - name: Set up Python 3.11
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4.9.1
       with:
-        python-version: "3.11"
+        version: "3.11"
 
       #----------------------------------------------
       #  -----  install & configure poetry  -----
       #----------------------------------------------
     - name: Install Poetry
-      uses: snok/install-poetry@v1
+      uses: snok/install-poetry@v1.4.1
       with:
         version: 1.8.5
         virtualenvs-create: true
@@ -365,7 +365,7 @@ jobs:
 
     - name: Comment workflow status on Pull Request
       if: ${{ github.event_name == 'pull_request' }}
-      uses: mshick/add-pr-comment@v2
+      uses: mshick/add-pr-comment@v2.8.2
       with:
         message-id: "workflow_status"
         message-path: metrics.md
@@ -383,7 +383,7 @@ jobs:
 
     - name: Commit scalene.json file
       if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' }}
-      uses: stefanzweifel/git-auto-commit-action@v5
+      uses: stefanzweifel/git-auto-commit-action@v5.0.0
       with:
         commit_message: "[skip ci] chore: update scalene.json with latest performance metrics"
         file_pattern: "scalene.json"

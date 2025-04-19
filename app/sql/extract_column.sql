@@ -1,13 +1,13 @@
 /*
  * File: extract_column.sql
  * Purpose: Extracts detailed column metadata from PostgreSQL database
- * 
+ *
  * Parameters:
  *   {normalized_exclude_regex} - Regex pattern for schemas to exclude
  *   {normalized_include_regex} - Regex pattern for schemas to include
  *   {temp_table_regex_sql} - Optional SQL for filtering temporary tables
  *
- * Returns: 
+ * Returns:
  *   - Comprehensive column metadata including:
  *     - Column names, data types, and positions
  *     - Nullability and default values

@@ -1,12 +1,12 @@
 /*
  * File: extract_schema.sql
  * Purpose: Extracts schema metadata from PostgreSQL database
- * 
+ *
  * Parameters:
  *   {normalized_exclude_regex} - Regex pattern for schemas to exclude
  *   {normalized_include_regex} - Regex pattern for schemas to include
  *
- * Returns: 
+ * Returns:
  *   - Schema metadata including name, owner, and table/view counts
  *   - Includes table and view counts per schema
  *

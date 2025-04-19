@@ -36,7 +36,7 @@ jobs:
         id: get_version
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v3.0.0
 
       - name: Setup Porter
         uses: getporter/gh-action@v0.1.3

@@ -1,7 +1,7 @@
 /*
  * File: extract_temp_table_regex_table.sql
  * Purpose: SQL fragment for filtering tables by name pattern
- * 
+ *
  * Parameters:
  *   {exclude_table_regex} - Regex pattern for table names to exclude
  *

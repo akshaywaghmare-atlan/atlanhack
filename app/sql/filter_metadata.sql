@@ -1,7 +1,7 @@
 /*
  * File: filter_metadata.sql
  * Purpose: Retrieves basic schema information for metadata filtering
- * 
+ *
  * This query returns a list of schema names from the current database,
  * excluding system schemas. Used for initial metadata discovery and filtering.
  *
