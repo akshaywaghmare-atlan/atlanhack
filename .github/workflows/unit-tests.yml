@@ -35,7 +35,7 @@ jobs:
           version: "3.11"
 
       - name: Setup AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4.0.0
+        uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722 # v4.1.0 https://github.com/aws-actions/configure-aws-credentials/releases/tag/v4.1.0
         with:
           aws-region: ap-south-1
           role-to-assume: arn:aws:iam::733936409301:role/kryptonite-store_FullAccess
@@ -48,7 +48,7 @@ jobs:
       #  -----  install & configure poetry  -----
       #----------------------------------------------
       - name: Install Poetry
-        uses: snok/install-poetry@v1.4.1
+        uses: snok/install-poetry@76e04a911780d5b312d89783f7b1cd627778900a # v1.4.1 https://github.com/snok/install-poetry/releases/tag/v1.4.1
         with:
           version: 1.8.5
           virtualenvs-create: true
@@ -74,7 +74,7 @@ jobs:
           poetry run coverage report --fail-under=60
 
       - name: Comment Coverage Report on PR
-        uses: orgoro/coverage@v3.2
+        uses: orgoro/coverage@3f13a558c5af7376496aa4848bf0224aead366ac # v3.2 https://github.com/orgoro/coverage/releases/tag/v3.2
         with:
           coverageFile: coverage.xml
           token: ${{ secrets.GITHUB_TOKEN }}

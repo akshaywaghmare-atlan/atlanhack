@@ -59,7 +59,7 @@ jobs:
       #  -----  install & configure poetry  -----
       #----------------------------------------------
     - name: Install Poetry
-      uses: snok/install-poetry@v1.4.1
+      uses: snok/install-poetry@76e04a911780d5b312d89783f7b1cd627778900a # v1.4.1 https://github.com/snok/install-poetry/releases/tag/v1.4.1
       with:
         version: 1.8.5
         virtualenvs-create: true
@@ -180,7 +180,7 @@ jobs:
 
     - name: Comment integration test profiling status on Pull Request
       if: ${{ github.event_name == 'pull_request' }}
-      uses: mshick/add-pr-comment@v2.8.2
+      uses: mshick/add-pr-comment@b8f338c590a895d50bcbfa6c5859251edc8952fc # v2.8.2 https://github.com/mshick/add-pr-comment/releases/tag/v2.8.2
       with:
         message-id: "integration_test_profiling"
         message-path: metrics.md
