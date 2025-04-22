@@ -1,7 +1,7 @@
 /*
  * File: client_version.sql
  * Purpose: Retrieves PostgreSQL server version information
- * 
+ *
  * This query returns the full version string of the connected PostgreSQL server,
  * including version number, platform, and build information.
  *

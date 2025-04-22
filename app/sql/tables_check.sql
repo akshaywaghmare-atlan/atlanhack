@@ -1,7 +1,7 @@
 /*
  * File: tables_check.sql
  * Purpose: Counts accessible tables matching filter criteria
- * 
+ *
  * Parameters:
  *   {normalized_exclude_regex} - Regex pattern for schemas to exclude
  *   {normalized_include_regex} - Regex pattern for schemas to include

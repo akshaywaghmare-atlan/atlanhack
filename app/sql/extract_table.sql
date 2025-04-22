@@ -1,13 +1,13 @@
 /*
  * File: extract_table.sql
  * Purpose: Extracts detailed table and view metadata from PostgreSQL database
- * 
+ *
  * Parameters:
  *   {normalized_exclude_regex} - Regex pattern for schemas to exclude
  *   {normalized_include_regex} - Regex pattern for schemas to include
  *   {temp_table_regex_sql} - Optional SQL for filtering temporary tables
  *
- * Returns: 
+ * Returns:
  *   - Comprehensive table metadata including:
  *     - Table names, schemas, and types (table, view, materialized view)
  *     - Row and column counts
@@ -16,7 +16,7 @@
  *     - Table remarks/descriptions
  *
  * Notes:
- *   - Only includes regular tables, partitioned tables, foreign tables, 
+ *   - Only includes regular tables, partitioned tables, foreign tables,
  *     views, and materialized views (relkind IN ('r','p','v','m','f'))
  *   - Excludes system schemas
  *   - Complex row count estimation based on table statistics

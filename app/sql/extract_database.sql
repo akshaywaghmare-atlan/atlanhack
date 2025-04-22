@@ -1,11 +1,11 @@
 /*
  * File: extract_database.sql
  * Purpose: Extracts basic database metadata from the current PostgreSQL database
- * 
+ *
  * This query retrieves fundamental database information including database name
  * and all associated metadata from the pg_database system catalog.
  *
- * Returns: 
+ * Returns:
  *   - Database metadata including name and system properties
  *
  * Notes:

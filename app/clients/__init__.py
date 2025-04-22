@@ -11,11 +11,11 @@ class SQLClient(BaseSQLClient):
     def get_sqlalchemy_connection_string(self) -> str:
         """
         Generate the SQLAlchemy connection string for SQL source connections.
-        
-        Builds a connection string using credential information stored in 
-        self.credentials. Automatically formats the string with appropriate 
+
+        Builds a connection string using credential information stored in
+        self.credentials. Automatically formats the string with appropriate
         parameters and authentication details.
-        
+
         Returns:
             str: Formatted SQLAlchemy connection string for SQL source
         """
