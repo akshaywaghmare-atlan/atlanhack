@@ -100,9 +100,10 @@ This will install and set up Python 3.11, which is required for running the proj
 Poetry is a tool for dependency management and packaging in Python. Install it with:
 
 ```bash
-curl -sSL https://install.python-poetry.org | python -
+pip install poetry==1.8.5
 ```
-This command downloads and runs the Poetry installer script.
+> [!NOTE]
+> We use a specific version of Poetry to avoid any issues with the project's private dependencies (application-sdk).
 
 [Poetry documentation](https://python-poetry.org/docs/)
 
@@ -124,7 +125,7 @@ This allows you to interact with Temporal from the command line.
 Dapr (Distributed Application Runtime) simplifies microservice development. Install it with:
 
 ```
-brew install dapr/tap/dapr-cli
+curl -fsSL https://raw.githubusercontent.com/dapr/cli/master/install/install.sh | /bin/bash -s 1.14.1
 dapr init --slim
 ```
 These commands install the Dapr CLI and initialize it in slim mode.

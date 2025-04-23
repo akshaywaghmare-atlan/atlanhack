@@ -30,12 +30,9 @@ https://github.com/user-attachments/assets/0ce63557-7c62-4491-96b9-1134a1ceadd6
 
 ## Component Structure
 
-- `app/activities`: Workflow activities implementation
 - `app/clients`: Database client implementations
-- `app/handlers`: Request and workflow handlers
-- `app/transformers`: Metadata transformation logic
-- `app/workflows`: Workflow definitions
-- `app/queries`: SQL query templates
+- `app/transformers`: Metadata transformation logic (refer [RDBMS models](https://developer.atlan.com/models/rdbms/))
+- `app/sql`: SQL query templates
 
 ## Features
 
@@ -56,8 +53,8 @@ This application generates new IAM authentication tokens on-demand for each conn
 ## Extending this application to other SQL sources
 
 1. Make sure you add the required SQLAlchemy dialect using poetry. For ex. to add Snowflake dialect, `poetry add snowflake-sqlalchemy`
-2. Update SQL queries in [`const.py`](app/const.py) file
-3. Update the SQLAlchemy connection string generation in the [`workflow.py`](app/workflow.py) file
+2. Update SQL queries in [`sql`](app/sql) directory
+3. Update the DB_CONFIG in the [`app/clients`](app/clients) directory
 4. Run the application using the development guide
 5. Update the tests in the [`tests`](tests) directory
 
