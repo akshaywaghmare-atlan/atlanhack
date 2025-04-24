@@ -35,9 +35,10 @@ jobs:
 
       - name: Get SHA of the branch
         id: get_sha
+        env:
+          BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
         run: |
-          branch_name=${{ steps.extract_branch.outputs.branch }}
-          sha=$(git rev-parse "refs/heads/$branch_name")
+          sha=$(git rev-parse "refs/heads/$BRANCH_NAME")
           echo "GIT_SHA: $sha"
           echo "sha=${sha}" >> $GITHUB_OUTPUT
 
