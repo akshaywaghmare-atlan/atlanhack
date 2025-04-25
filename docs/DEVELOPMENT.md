@@ -23,42 +23,7 @@ _If you are using the Atlan CLI to create a new application, you can skip this s
 
 ### Development Tools
 _If you are using the Atlan CLI to create a new application, you can skip this section._
-- Before you begin, please follow the [environment setup guide](./SETUP_MAC.md) to ensure all required dependencies are installed.
-
-### Start the dependencies
-
-```bash
-# Start required services (Temporal and Dapr)
-make start-deps
-```
-
-## Run the application
-
-```bash
-# In a new terminal, start the application
-make run
-```
-
-The application will be available at:
-- Application UI: http://localhost:8000
-- Temporal UI: http://localhost:8233/namespaces/default/workflows
-
-## Development Commands
-
-```bash
-# Run the application with hot reload
-make run-hot-reload
-
-# Run the application with the dev environment
-make run-dev
-
-# Run with profiling enabled
-make run-with-profile
-
-# Stop all services (Temporal, Dapr, and application)
-make stop-all
-```
-
+- Setup the local development environment via the [setup guide](./setup)
 
 ## Development with VSCode or Cursor
 1. Follow the above steps until you have the dependencies running.

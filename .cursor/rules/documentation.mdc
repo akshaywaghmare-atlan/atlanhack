@@ -3,7 +3,7 @@ description:
 globs:
 alwaysApply: true
 ---
-# Documentation for Atlan APps
+# Documentation for Atlan Apps
 
 Detailed instructions and examples for creating high-quality Atlan app documentation. This expanded ruleset provides concrete templates, examples, and best practices for each document type following the Docs-as-Code methodology. Reference this guide when you need specific formatting guidance, document structure templates, or persona-focused writing strategies.
 

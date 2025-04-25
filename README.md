@@ -18,7 +18,6 @@ This application has two components:
 ## Table of contents
 
 - [Getting Started](#getting-started)
-- [Quick Start Guide](./docs/QUICK_START.md)
 - [Features](#features)
 - [Extending this application to other SQL sources](#extending-this-application-to-other-sql-sources)
 - [Development](#development)
@@ -27,6 +26,22 @@ This application has two components:
 ## Getting Started
 
 https://github.com/user-attachments/assets/0ce63557-7c62-4491-96b9-1134a1ceadd6
+
+To get started with the PostgreSQL Application, follow the setup guide for your operating system:
+
+### Clone the repository
+
+```bash
+git clone https://github.com/atlanhq/atlan-postgres-app.git
+```
+
+### Follow the setup guide
+
+- [Automatic Setup](./.cursor/rules/setup.mdc) - Automatically detects your OS and provides the appropriate guide
+- [macOS Setup Guide](./docs/setup/MAC.md)
+- [Linux Setup Guide](./docs/setup/LINUX.md)
+- [Windows Setup Guide](./docs/setup/WINDOWS.md)
+
 
 ## Component Structure
 
@@ -60,7 +75,6 @@ This application generates new IAM authentication tokens on-demand for each conn
 
 ## Development
 
-- Setup the local development environment on [Mac](./docs/SETUP_MAC.md)
 - [Development and Quickstart Guide](./docs/DEVELOPMENT.md)
 - This application is just an SQL application implementation of Atlan's [Python Application SDK](https://github.com/atlanhq/application-sdk)
   - Please refer to the [examples](https://github.com/atlanhq/application-sdk/tree/main/examples) in the SDK to see how to use the SDK to build different applications on the Atlan Platform.

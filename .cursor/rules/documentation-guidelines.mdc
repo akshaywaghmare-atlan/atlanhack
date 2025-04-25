@@ -159,7 +159,6 @@ High-level introduction to the concept.
 - User interface guides
 - Feature tutorials
 - Use case examples
-- Quick start guides
 
 ## Metadata Requirements
 
@@ -282,8 +281,6 @@ This document provides details on all configuration options available for settin
 
 ## See Also
 
-* [Salesforce Connector Setup Guide](mdc:../how-to-guides/configure-salesforce-connector.md)
-* [Troubleshooting Salesforce Connection Issues](mdc:../troubleshooting/salesforce-connection-issues.md)
 ```
 
 ## Best Practices

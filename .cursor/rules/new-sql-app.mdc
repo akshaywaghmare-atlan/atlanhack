@@ -1,0 +1,63 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+# Description
+
+This guide talks about how to navigate the request for supporting a new SQL source and the resources to refer for the same.
+
+## Points to consider
+- An app's responsibility is just to extract metadata, transform and dump on the object store - refer to this example @.venv/src/application-sdk/examples/application_sql.py
+
+
+## Key Components
+- `application_sdk/`: Core SDK implementation
+- `components/`: Reusable components
+- `examples/`: Example implementations and usage patterns
+- `tests/`: Test suite
+- `docs/`: Documentation
+
+## Technology Stack
+- **Language**: Python
+- **Package Management**: Poetry
+- **Testing Framework**: Pytest
+- **Code Quality**: Pre-commit hooks
+- **Documentation**: Markdown
+
+## Application-SDK Project Structure
+```
+application-sdk/
+├── application_sdk/     # Core SDK implementation
+├── components/          # Reusable components
+├── docs/               # Documentation
+├── examples/           # Example implementations
+├── tests/              # Test suite
+├── .github/            # GitHub workflows and configurations
+├── poetry.lock         # Lock file for dependencies
+├── pyproject.toml      # Project configuration and dependencies
+├── Makefile           # Build and development commands
+└── README.md          # Project readme
+```
+
+Documentation for application-sdk
+- application-sdk docs are available at @.venv/src/application-sdk/docs
+- if the docs are not available, guide the user to setup the development environemnt using @setup.mdc
+
+- core concepts of application-sdk are available at @.venv/src/application-sdk/docs/docs/concepts
+    - Guide for extending workflows can be found at @.venv/src/application-sdk/docs/docs/concepts/workflows
+    - Guide for extending activities can be found at @.venv/src/application-sdk/docs/docs/concepts/activities
+    - Guide for using worker can be found at @.venv/src/application-sdk/docs/docs/concepts/worker
+    - Guide for extending application can be found at @.venv/src/application-sdk/docs/docs/concepts/application
+    - Guide for extending handlers can be found at @.venv/src/application-sdk/docs/docs/concepts/handlers
+    - Guide for setting up database connections are available at @.venv/src/application-sdk/docs/docs/concepts/clients
+
+A few additional resource
+- reference to coherent usage of the above components can be seen in the examples available at @.venv/src/application-sdk/examples
+- documentation for utilities are available at:
+    - @.venv/src/application-sdk/docs/docs/concepts/common
+    - @.venv/src/application-sdk/docs/docs/concepts/inputs
+    - @.venv/src/application-sdk/docs/docs/concepts/outputs
+
+

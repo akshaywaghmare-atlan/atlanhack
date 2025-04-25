@@ -46,9 +46,6 @@ start-deps:
 
 # Install dependencies
 install:
-	# Setup Mac dependencies
-	./docs/scripts/setup_mac.sh
-
 	# Configure git to use https instead of ssh or git
 	@if git ls-remote git@github.com:atlanhq/application-sdk.git > /dev/null 2>&1; then \
 		echo "Git is configured to use SSH Protocol"; \
