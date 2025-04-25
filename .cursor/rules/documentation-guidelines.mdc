@@ -159,7 +159,6 @@ High-level introduction to the concept.
 - User interface guides
 - Feature tutorials
 - Use case examples
-- Quick start guides
 
 ## Metadata Requirements
 
@@ -279,12 +278,6 @@ This document provides details on all configuration options available for settin
 - **Extract Field-level Descriptions**: Toggle to include field descriptions
 - **Extract Object Relationships**: Toggle to generate relationship links
 - **Maximum Concurrency**: Number of parallel API requests (1-10)
-
-## See Also
-
-* [Salesforce Connector Setup Guide](mdc:../how-to-guides/configure-salesforce-connector.md)
-* [Troubleshooting Salesforce Connection Issues](mdc:../troubleshooting/salesforce-connection-issues.md)
-```
 
 ## Best Practices
 

@@ -46,8 +46,6 @@ start-deps:
 
 # Install dependencies
 install:
-	# Setup Mac dependencies
-	./docs/scripts/setup_mac.sh
 	# Configure git to use https instead of ssh or git
 	@if git ls-remote git@github.com:atlanhq/application-sdk.git > /dev/null 2>&1; then \
 		echo "Git is configured to use SSH Protocol"; \
@@ -58,6 +56,7 @@ install:
 		echo "Git is not configured to use SSH or Git Protocol. Please configure Git to use SSH or Git Protocol."; \
 		exit 1; \
 	fi
+
 	# Configure poetry to use project-specific virtualenv
 	poetry config virtualenvs.in-project true
 	poetry config experimental.system-git-client true

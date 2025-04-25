@@ -1,6 +1,6 @@
 from datetime import timedelta
 from typing import Any, AsyncGenerator, Dict, List, TypeVar
-from urllib.parse import quote_plus
+from urllib.parse import parse_qs, quote_plus, urlparse
 
 import pytest
 from application_sdk.common.utils import read_sql_files
@@ -83,9 +83,24 @@ def test_postgres_client_connection_string():
     client = SQLClient()
     client.credentials = basic_credentials
     encoded_password = quote_plus(str(basic_credentials["password"]))
-    expected = f"postgresql+psycopg://{basic_credentials['username']}:{encoded_password}@{basic_credentials['host']}:{basic_credentials['port']}/{basic_credentials['extra'].get('database')}?application_name=Atlan&connect_timeout=5"
+
+    # Generate the connection strings
     result = client.get_sqlalchemy_connection_string()
-    assert result == expected
+    expected = f"postgresql+psycopg://{basic_credentials['username']}:{encoded_password}@{basic_credentials['host']}:{basic_credentials['port']}/{basic_credentials['extra'].get('database')}?application_name=Atlan&connect_timeout=5"
+
+    # Parse URLs to compare parts separately
+    result_parts = urlparse(result)
+    expected_parts = urlparse(expected)
+
+    # Compare non-query parts
+    assert result_parts.scheme == expected_parts.scheme
+    assert result_parts.netloc == expected_parts.netloc
+    assert result_parts.path == expected_parts.path
+
+    # Compare query parameters as sets
+    result_params = parse_qs(result_parts.query)
+    expected_params = parse_qs(expected_parts.query)
+    assert result_params == expected_params
 
     # Test missing credentials
     with pytest.raises(KeyError):

@@ -1,5 +1,4 @@
 from application_sdk.clients.sql import BaseSQLClient
-from application_sdk.common.utils import parse_credentials_extra
 
 
 class SQLClient(BaseSQLClient):
@@ -8,38 +7,11 @@ class SQLClient(BaseSQLClient):
     type and manages database connectivity using SQLAlchemy.
     """
 
-    def get_sqlalchemy_connection_string(self) -> str:
-        """
-        Generate the SQLAlchemy connection string for SQL source connections.
-
-        Builds a connection string using credential information stored in
-        self.credentials. Automatically formats the string with appropriate
-        parameters and authentication details.
-
-        Returns:
-            str: Formatted SQLAlchemy connection string for SQL source
-        """
-
-        source_connection_params = {
-            "application_name": "Atlan",
+    DB_CONFIG = {
+        "template": "postgresql+psycopg://{username}:{password}@{host}:{port}/{database}",
+        "required": ["username", "password", "host", "port", "database"],
+        "defaults": {
             "connect_timeout": 5,
-        }
-
-        connection_string = (
-            "postgresql+psycopg://{username}:{password}@{host}:{port}/{database}"
-        )
-
-        extra = parse_credentials_extra(self.credentials)
-        database = extra.get("database")
-        connection_string = connection_string.format(
-            username=self.credentials["username"],
-            password=self.get_auth_token(),
-            host=self.credentials["host"],
-            port=self.credentials["port"],
-            database=database,
-        )
-
-        connection_string = self.add_source_connection_params(
-            connection_string, source_connection_params
-        )
-        return connection_string
+            "application_name": "Atlan",
+        },
+    }
