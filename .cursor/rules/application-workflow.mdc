@@ -1,0 +1,37 @@
+---
+description: Details the Temporal workflow architecture, including workflow definition, activity execution, parallelization, and error handling.
+globs:
+alwaysApply: false
+---
+# Application Workflow Architecture
+
+## Overview
+
+This document explains the workflow architecture in the application framework, using Temporal for workflow orchestration and execution.
+
+## Key Components
+
+### Workflow Engine
+
+- **Temporal**: Workflow engine providing durability and observability
+- **Workers**: Execute workflows and activities
+- **Workflow Classes**: Define workflow logic and activity orchestration
+- **Activities**: Individual task units executed by workflows
+
+### Workflow Definition Pattern
+
+All workflows follow a similar pattern:
+
+```python
+@workflow.defn
+class DatabaseTypeMetadataExtractionWorkflow(SQLMetadataExtractionWorkflow):
+    activities_cls = DatabaseTypeMetadataExtractionActivities
+
+    @workflow.run
+    async def run(self, workflow_config: Dict[str, Any]):
+        # 1. Extract configuration
+        # 2. Configure retry policies
+        # 3. Execute preflight checks
+        # 4. Run parallel extraction activities
+        # 5. Transform and store results
+```

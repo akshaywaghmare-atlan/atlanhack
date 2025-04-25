@@ -1,7 +1,7 @@
 ---
 description:
 globs:
-alwaysApply: false
+alwaysApply: true
 ---
 # Atlan PostgreSQL App Project Structure
 
@@ -9,9 +9,9 @@ This rule outlines the structure of the Atlan PostgreSQL App codebase.
 
 ## Core Application (`app/`)
 The `app/` directory contains the core logic for the application:
-- **`app/activities/`**: Contains business logic and task execution units, particularly for [metadata extraction](mdc:app/activities/metadata_extraction/__init__.py).
-- **`app/clients/`**: Handles database connectivity, extending `BaseSQLClient`. See the [client implementation](mdc:app/clients/__init__.py).
-- **`app/handlers/`**: Manages request processing and triggers workflows. See the [PostgresSQL handler](mdc:app/handlers/__init__.py).
+- **`app/activities/`**: gic and task execution units, particularly for [metadata extraction](mdc:appmetadata_extraction/__init__.py).
+- **`app/clients/`**: Handles database ctending `BaseSQLClient`. See the [client implementation](mdc:app/clients/__init__.py).
+-request processing and triggers workflows. See the [PostgresSQL handler](mdc:app/handlers/__init__.py).
 - **`app/transformers/`**: Contains data transformation logic, including specific transformations for [Atlas entities](mdc:app/transformers/atlas/__init__.py).
 - **`app/workflows/`**: Defines and orchestrates the application's processes, such as [metadata extraction workflows](mdc:app/workflows/metadata_extraction/__init__.py).
 
@@ -31,7 +31,7 @@ Documentation for application-sdk
 
 A few additional resource
 - reference to coherent usage of the above components can be seen in the examples available at @.venv/src/application-sdk/examples
-- documentation for utilities are available at:
+- documentation for utili:
     - @.venv/src/application-sdk/docs/docs/concepts/common
     - @.venv/src/application-sdk/docs/docs/concepts/inputs
     - @.venv/src/application-sdk/docs/docs/concepts/outputs
@@ -40,17 +40,17 @@ A few additional resource
 ## Documentation (`docs/`)
 Contains all project documentation, including:
 - **`docs/images/`**: Images and diagrams used in documentation.
-- **`docs/setup/`**: Guides for setting up and installing the application.
+- **`docs/setup/`**: Guides for setting up and installing on.
 - The main overview can be found in [CODEBASE_OVERVIEW.md](mdc:CODEBASE_OVERVIEW.md).
 
 ## Frontend (`frontend/`)
 Holds the user interface components:
-- **`frontend/static/`**: Static assets like JavaScript and CSS files.
+- **`fronteic/`**: Static assets like JavaScript and CSS files.
 - **`frontend/templates/`**: HTML templates for the web interface.
 
 ## Tests (`tests/`)
-Contains the test suite for the application:
-- **`tests/e2e/`**: End-to-end tests simulating full user workflows.
+Contains the test suite fplication:
+- -to-end tests simulating full user workflows.
 - **`tests/unit/`**: Unit tests focusing on individual components, like [transformers](mdc:tests/unit/transformers/__init__.py).
 
 ## Configuration and Entry Point
@@ -60,4 +60,3 @@ Contains the test suite for the application:
 - **`Makefile`**: Contains commands for building, testing, and running the application ([Makefile](mdc:Makefile)).
 
 Refer to [CODEBASE_OVERVIEW.md](mdc:CODEBASE_OVERVIEW.md) for a more detailed architectural breakdown.
-

@@ -279,10 +279,6 @@ This document provides details on all configuration options available for settin
 - **Extract Object Relationships**: Toggle to generate relationship links
 - **Maximum Concurrency**: Number of parallel API requests (1-10)
 
-## See Also
-
-```
-
 ## Best Practices
 
 1. **User Focus**: Always write with your target persona in mind
