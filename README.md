@@ -27,15 +27,8 @@ This application has two components:
 
 https://github.com/user-attachments/assets/0ce63557-7c62-4491-96b9-1134a1ceadd6
 
+
 To get started with the PostgreSQL Application, follow the setup guide for your operating system:
-
-### Clone the repository
-
-```bash
-git clone https://github.com/atlanhq/atlan-postgres-app.git
-```
-
-### Follow the setup guide
 
 - [Automatic Setup](./.cursor/rules/setup.mdc) - Automatically detects your OS and provides the appropriate guide
 - [macOS Setup Guide](./docs/setup/MAC.md)

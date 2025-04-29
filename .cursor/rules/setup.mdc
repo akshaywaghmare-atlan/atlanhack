@@ -3,52 +3,18 @@ description: This rule is triggered when the app developer requests to setup the
 globs:
 alwaysApply: false
 ---
-# Atlan PostgreSQL App Setup
+# Project Setup Rule
 
 This guide automatically detects your operating system and provides the appropriate setup instructions to get the Atlan PostgreSQL App running.
 
-## Automatic OS Detection
 
-```bash
-#!/bin/bash
+## Guidelines (IMPORTANT)
 
-# Detect operating system
-detect_os() {
-  case "$(uname -s)" in
-    Darwin*)
-      echo "Detected macOS"
-      open docs/setup/MAC.md
-      ;;
-    Linux*)
-      echo "Detected Linux"
-      if command -v xdg-open > /dev/null; then
-        xdg-open docs/setup/LINUX.md
-      else
-        echo "Please open docs/setup/LINUX.md in your browser or text editor"
-      fi
-      ;;
-    CYGWIN*|MINGW*|MSYS*)
-      echo "Detected Windows"
-      start docs/setup/WINDOWS.md
-      ;;
-    *)
-      echo "Unknown operating system"
-      echo "Please manually open one of the following setup guides:"
-      echo "- docs/setup/MAC.md (for macOS)"
-      echo "- docs/setup/LINUX.md (for Linux)"
-      echo "- docs/setup/WINDOWS.md (for Windows)"
-      ;;
-  esac
-}
-
-# Run the detection
-detect_os
-```
-
-## Guidelines
-
-- When asked to setup the environment, do not ask the user to read the instructions and do it. YOU DO IT INSTEAD.
-- Always check what part of the setup step is already done (example: if the required version of python already exists, inform and proceed. If not, proceed with installing it)
+- Before installing anything new, make sure to check if the specific version for the component already exists.
+    - Example: Start by installing the correct version of python via pyenv if the version of python doesn't exist in system.
+    - Versions must match the exact semver. Also mention this while laying out the plan.
+- Always check what part of the setup step is already done (example: if the required version of python already exists, inform and proceed.)
+- You must not perform any other operation than the ones mentioned in the guides (eg: brew install python@3.11, follow pyenv installation instead), unless you are troubleshooting an issue.
 
 
 ## Manual Selection
