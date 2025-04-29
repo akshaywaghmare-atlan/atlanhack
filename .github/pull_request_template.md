@@ -1,5 +1,3 @@
-## Pull Request Template
-
 ### Changelog
 <!-- Provide a clear and concise description of the changes in this PR in bullet points -->
 
