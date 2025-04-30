@@ -10,14 +10,23 @@ from app.transformers.atlas import SQLAtlasTransformer
 
 
 async def main():
+    # Initialize the application
     application = BaseSQLMetadataExtractionApplication(
         name=APPLICATION_NAME,
-        sql_client_class=SQLClient,
+        client_class=SQLClient,
         transformer_class=SQLAtlasTransformer,
     )
 
+    # Setup the workflow
     await application.setup_workflow()
+
+    # Start the worker
+    await application.start_worker()
+
+    # Setup the application server
     await application.setup_server()
+
+    # Start the application server
     await application.start_server()
 
 
