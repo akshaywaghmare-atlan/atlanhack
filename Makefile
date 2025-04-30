@@ -101,10 +101,10 @@ run-all:
 	@echo "Starting marketplace app..."
 	$(MAKE) run-marketplace
 	@echo "Starting local application..."
-	$(MAKE) run-app
+	$(MAKE) run
 
 # Run the application
-run-app:
+run:
 	POETRY_PLUGIN_DOTENV_LOCATION=".env" \
 	poetry run python main.py
 
@@ -117,10 +117,6 @@ run-with-profile:
 	POETRY_PLUGIN_DOTENV_LOCATION=".env" \
 	poetry run scalene --profile-all --cli --outfile ./.github/scalene.json --json main.py
 
-# Run the application and dashboard
-run:
-	@echo "Starting local application..."
-	$(MAKE) run-app
 
 run-hot-reload:
 	@echo "Starting local application with hot-reload..."
@@ -128,7 +124,7 @@ run-hot-reload:
 		--patterns="*.py" \
 		--recursive \
 		--directory="." \
-		-- make run-app
+		-- make run
 
 # Stop all services
 stop-all:
