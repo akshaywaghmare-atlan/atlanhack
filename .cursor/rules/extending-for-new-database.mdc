@@ -1,0 +1,708 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# Extending for New Database Types
+
+## Overview
+
+This guide provides a comprehensive walkthrough for adding support for a new SQL database type to the application framework. The framework is designed with extensibility in mind, allowing for consistent implementation patterns across different database systems.
+
+## Required Components
+
+When adding a new database type, you'll need to implement the following components:
+
+1. **Database Client** - Handles connection string generation and authentication
+2. **SQL Queries** - Database-specific SQL for metadata extraction
+3. **Workflow Handler** - Processes database-specific workflow requests
+4. **Metadata Extraction Activities** - Database-specific activities for metadata extraction
+5. **Atlas Transformers** - Transforms database metadata to Atlas format
+6. **Frontend Support** - UI components for the new database type
+
+## Implementation Steps
+
+### 1. Create Database Client
+
+Create a client class that extends the base `AsyncBaseSQLClient` class:
+
+```python
+# app/clients/__init__.py
+
+from application_sdk.clients.sql import AsyncBaseSQLClient
+from application_sdk.common.aws_utils import (
+    generate_aws_rds_token_with_iam_role,
+    generate_aws_rds_token_with_iam_user,
+)
+
+from utils.utils import parse_credentials_extra
+
+class NewDatabaseClient(AsyncBaseSQLClient):
+    # Database-specific connection parameters
+    source_connection_params = {
+        "application_name": "Atlan",
+        "connect_timeout": 5,
+    }
+
+    def get_sqlalchemy_connection_string(self) -> str:
+        """Generate SQLAlchemy connection string based on auth type"""
+        auth_type = self.credentials.get("authType", "basic")  # Default to basic
+
+        match auth_type:
+            case "basic":
+                return self.get_basic_connection_string()
+            case "iam_user":
+                return self.get_iam_user_connection_string()
+            case "iam_role":
+                return self.get_iam_role_connection_string()
+            case _:
+                raise ValueError(f"Invalid auth type: {auth_type}")
+
+    def get_basic_connection_string(self) -> str:
+        """Generate connection string for basic authentication"""
+        extra = parse_credentials_extra(self.credentials)
+        username = self.credentials["username"]
+        password = self.credentials["password"]
+        host = self.credentials["host"]
+        port = self.credentials.get("port", 1234)  # Default port for your database
+        database = extra.get("database")
+        if not database:
+            raise ValueError("database is required for basic authentication")
+
+        return f"database_dialect+driver://{username}:{password}@{host}:{port}/{database}"
+
+    def get_iam_user_connection_string(self) -> str:
+        """Generate connection string for IAM user authentication (if supported)"""
+        # Implementation for IAM user authentication
+        pass
+
+    def get_iam_role_connection_string(self) -> str:
+        """Generate connection string for IAM role authentication (if supported)"""
+        # Implementation for IAM role authentication
+        pass
+```
+
+### 2. Define SQL Queries
+
+Create a constants file with SQL queries specific to your database type:
+
+```python
+# app/{database_type}/const.py
+
+# Define SQL queries for metadata extraction
+DATABASE_EXTRACTION_SQL = """
+-- SQL query to extract database metadata specific to your database type
+SELECT
+    name as database_name,
+    -- other relevant columns
+FROM sys.databases
+WHERE name = DB_NAME()
+"""
+
+SCHEMA_EXTRACTION_SQL = """
+-- SQL query to extract schema metadata
+SELECT
+    DB_NAME() AS catalog_name,
+    schema_name AS schema_name,
+    -- other relevant columns
+FROM information_schema.schemata
+WHERE schema_name NOT IN ('information_schema', 'sys')
+    AND concat(DB_NAME(), concat('.', schema_name)) !~ '{normalized_exclude_regex}'
+    AND concat(DB_NAME(), concat('.', schema_name)) ~ '{normalized_include_regex}'
+ORDER BY schema_name
+"""
+
+TABLE_EXTRACTION_SQL = """
+-- SQL query to extract table metadata
+SELECT
+    DB_NAME() AS table_catalog,
+    s.name AS table_schema,
+    t.name AS table_name,
+    -- other table attributes
+FROM sys.tables t
+JOIN sys.schemas s ON t.schema_id = s.schema_id
+WHERE s.name NOT IN ('information_schema', 'sys')
+    AND concat(DB_NAME(), concat('.', s.name)) !~ '{normalized_exclude_regex}'
+    AND concat(DB_NAME(), concat('.', s.name)) ~ '{normalized_include_regex}'
+    {temp_table_regex_sql}
+ORDER BY s.name, t.name
+"""
+
+COLUMN_EXTRACTION_SQL = """
+-- SQL query to extract column metadata
+SELECT
+    DB_NAME() AS table_catalog,
+    s.name AS table_schema,
+    t.name AS table_name,
+    c.name AS column_name,
+    -- other column attributes
+FROM sys.columns c
+JOIN sys.tables t ON c.object_id = t.object_id
+JOIN sys.schemas s ON t.schema_id = s.schema_id
+WHERE s.name NOT IN ('information_schema', 'sys')
+    AND concat(DB_NAME(), concat('.', s.name)) !~ '{normalized_exclude_regex}'
+    AND concat(DB_NAME(), concat('.', s.name)) ~ '{normalized_include_regex}'
+    {temp_table_regex_sql}
+ORDER BY s.name, t.name, c.column_id
+"""
+
+PROCEDURE_EXTRACTION_SQL = """
+-- SQL query to extract procedure metadata
+SELECT
+    DB_NAME() AS procedure_catalog,
+    s.name AS procedure_schema,
+    p.name AS procedure_name,
+    -- other procedure attributes
+FROM sys.procedures p
+JOIN sys.schemas s ON p.schema_id = s.schema_id
+WHERE s.name NOT IN ('information_schema', 'sys')
+    AND concat(DB_NAME(), concat('.', s.name)) !~ '{normalized_exclude_regex}'
+    AND concat(DB_NAME(), concat('.', s.name)) ~ '{normalized_include_regex}'
+ORDER BY s.name, p.name
+"""
+
+# Define additional constants for regex replacements
+TABLE_EXTRACTION_TEMP_TABLE_REGEX_SQL = "AND t.name !~ '{exclude_table_regex}'"
+COLUMN_EXTRACTION_TEMP_TABLE_REGEX_SQL = "AND t.name !~ '{exclude_table_regex}'"
+FILTER_METADATA_SQL = """
+-- SQL query to filter metadata
+SELECT
+    DB_NAME() AS catalog_name,
+    schema_name
+FROM information_schema.schemata
+WHERE schema_name NOT IN ('information_schema', 'sys')
+"""
+TABLES_CHECK_SQL = """
+-- SQL query to check tables
+SELECT count(*)
+FROM sys.tables t
+JOIN sys.schemas s ON t.schema_id = s.schema_id
+WHERE concat(DB_NAME(), concat('.', s.name)) !~ '{normalized_exclude_regex}'
+    AND concat(DB_NAME(), concat('.', s.name)) ~ '{normalized_include_regex}'
+    AND s.name NOT IN ('information_schema', 'sys')
+    {temp_table_regex_sql}
+"""
+TABLES_CHECK_TEMP_TABLE_REGEX_SQL = "AND t.name !~ '{exclude_table_regex}'"
+```
+
+### 3. Create Workflow Handler
+
+Implement a workflow handler for the new database type:
+
+```python
+# app/handlers/{database_type}/__init__.py
+
+from application_sdk.handlers.sql import SQLHandler
+
+from app.{database_type}.const import (
+    FILTER_METADATA_SQL,
+    TABLES_CHECK_SQL,
+    TABLES_CHECK_TEMP_TABLE_REGEX_SQL,
+)
+
+
+class NewDatabaseWorkflowHandler(SQLHandler):
+    """
+    Handler class for New Database workflows
+    """
+
+    metadata_sql = FILTER_METADATA_SQL
+    tables_check_sql = TABLES_CHECK_SQL
+    temp_table_regex_sql = TABLES_CHECK_TEMP_TABLE_REGEX_SQL
+```
+
+### 4. Create Metadata Extraction Activities
+
+Implement metadata extraction activities for the new database type:
+
+```python
+# app/activities/metadata_extraction/{database_type}.py
+
+import pandas as pd
+from application_sdk.activities.common.utils import auto_heartbeater
+from application_sdk.activities.metadata_extraction.sql import (
+    SQLMetadataExtractionActivities,
+)
+from application_sdk.decorators import transform
+from application_sdk.inputs.sql_query import SQLQueryInput
+from application_sdk.outputs.json import JsonOutput
+from temporalio import activity
+
+from app.clients.{database_type} import NewDatabaseClient
+from app.{database_type}.const import (
+    COLUMN_EXTRACTION_SQL,
+    COLUMN_EXTRACTION_TEMP_TABLE_REGEX_SQL,
+    DATABASE_EXTRACTION_SQL,
+    PROCEDURE_EXTRACTION_SQL,
+    SCHEMA_EXTRACTION_SQL,
+    TABLE_EXTRACTION_SQL,
+    TABLE_EXTRACTION_TEMP_TABLE_REGEX_SQL,
+)
+from app.handlers.{database_type} import NewDatabaseWorkflowHandler
+from app.transformers.atlas.{database_type} import NewDatabaseAtlasTransformer
+
+
+class NewDatabaseMetadataExtractionActivities(SQLMetadataExtractionActivities):
+    """
+    Activities for New Database metadata extraction
+    """
+
+    fetch_database_sql = DATABASE_EXTRACTION_SQL
+    fetch_schema_sql = SCHEMA_EXTRACTION_SQL
+    fetch_table_sql = TABLE_EXTRACTION_SQL
+    fetch_column_sql = COLUMN_EXTRACTION_SQL
+    fetch_procedure_sql = PROCEDURE_EXTRACTION_SQL
+
+    tables_extraction_temp_table_regex_sql = TABLE_EXTRACTION_TEMP_TABLE_REGEX_SQL
+    column_extraction_temp_table_regex_sql = COLUMN_EXTRACTION_TEMP_TABLE_REGEX_SQL
+
+    sql_client_class = NewDatabaseClient
+    handler_class = NewDatabaseWorkflowHandler
+    transformer_class = NewDatabaseAtlasTransformer
+
+    @activity.defn
+    @auto_heartbeater
+    @transform(
+        batch_input=SQLQueryInput(query="fetch_procedure_sql"),
+        raw_output=JsonOutput(output_suffix="/raw/extras-procedure"),
+    )
+    async def fetch_procedures(
+        self, batch_input: pd.DataFrame, raw_output: JsonOutput, **kwargs
+    ):
+        await raw_output.write_batched_dataframe(batch_input)
+        return await raw_output.get_statistics(typename="extras-procedure")
+
+    # Implement additional database-specific activities as needed
+```
+
+### 5. Create Metadata Extraction Workflow
+
+Implement a metadata extraction workflow for the new database type:
+
+```python
+# app/workflows/metadata_extraction/{database_type}.py
+
+import asyncio
+import os
+from datetime import timedelta
+from typing import Any, Callable, Dict, List
+
+from application_sdk.common.logger_adaptors import get_logger
+from application_sdk.inputs.statestore import StateStoreInput
+from application_sdk.workflows.metadata_extraction.sql import (
+    SQLMetadataExtractionWorkflow,
+)
+from temporalio import workflow
+from temporalio.common import RetryPolicy
+
+from app.activities.metadata_extraction.{database_type} import (
+    NewDatabaseMetadataExtractionActivities,
+)
+
+logger = get_logger(__name__)
+
+DEFAULT_HEARTBEAT_TIMEOUT = timedelta(
+    seconds=int(os.getenv("ATLAN_HEARTBEAT_TIMEOUT", 120))  # 2 minutes
+)
+DEFAULT_START_TO_CLOSE_TIMEOUT = timedelta(
+    seconds=int(os.getenv("ATLAN_START_TO_CLOSE_TIMEOUT", 2 * 60 * 60))  # 2 hours
+)
+
+
+@workflow.defn
+class NewDatabaseMetadataExtractionWorkflow(SQLMetadataExtractionWorkflow):
+    """
+    Workflow for extracting metadata from New Database
+    """
+
+    activities_cls = NewDatabaseMetadataExtractionActivities
+
+    default_heartbeat_timeout = DEFAULT_HEARTBEAT_TIMEOUT
+    default_start_to_close_timeout = DEFAULT_START_TO_CLOSE_TIMEOUT
+
+    @workflow.run
+    async def run(self, workflow_config: Dict[str, Any]):
+        """
+        Run the workflow.
+
+        :param workflow_args: The workflow arguments.
+        """
+        workflow_id = workflow_config["workflow_id"]
+        workflow_args: Dict[str, Any] = StateStoreInput.extract_configuration(
+            workflow_id
+        )
+
+        workflow_run_id = workflow.info().run_id
+        workflow_args["workflow_run_id"] = workflow_run_id
+
+        workflow.logger.info(f"Starting extraction workflow for {workflow_id}")
+        retry_policy = RetryPolicy(
+            maximum_attempts=6,
+            backoff_coefficient=2,
+        )
+
+        output_prefix = workflow_args["output_prefix"]
+        output_path = f"{output_prefix}/{workflow_id}/{workflow_run_id}"
+        workflow_args["output_path"] = output_path
+
+        await workflow.execute_activity_method(
+            self.activities_cls.preflight_check,
+            workflow_args,
+            retry_policy=retry_policy,
+            start_to_close_timeout=self.default_start_to_close_timeout,
+            heartbeat_timeout=self.default_heartbeat_timeout,
+        )
+
+        fetch_functions = self.get_fetch_functions()
+        fetch_and_transforms = [
+            self.fetch_and_transform(fetch_function, workflow_args, retry_policy)
+            for fetch_function in fetch_functions
+        ]
+        await asyncio.gather(*fetch_and_transforms)
+
+    def get_fetch_functions(self) -> List[Callable[[Dict[str, Any]], Coroutine[Any, Any, Dict[str, Any]]]]:
+        """Get the fetch functions for the SQL metadata extraction workflow.
+
+        Returns:
+            List[Callable[[Dict[str, Any]], Coroutine[Any, Any, Dict[str, Any]]]]: A list of fetch operations.
+        """
+        return [
+            self.activities_cls.fetch_databases,
+            self.activities_cls.fetch_schemas,
+            self.activities_cls.fetch_tables,
+            self.activities_cls.fetch_columns,
+        ]
+
+    @staticmethod
+    def get_activities(
+        activities: NewDatabaseMetadataExtractionActivities,
+    ) -> List[Callable[..., Any]]:
+        return [
+            activities.preflight_check,
+            activities.fetch_databases,
+            activities.fetch_schemas,
+            activities.fetch_tables,
+            activities.fetch_columns,
+            activities.fetch_procedures,
+            activities.transform_data,
+        ]
+```
+
+### 6. Create Atlas Transformers
+
+Implement Atlas transformers for the new database type:
+
+```python
+# app/transformers/atlas/{database_type}/__init__.py
+
+from typing import Any, Dict
+
+from application_sdk.transformers.atlas import AtlasTransformer
+from application_sdk.transformers.atlas.sql import Column, Procedure, Table
+
+
+class NewDatabaseTable(Table):
+    @classmethod
+    def get_attributes(cls, obj: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Transform database-specific table metadata to Atlas format
+        """
+        assert "table_name" in obj, "table_name cannot be None"
+        assert "table_type" in obj, "table_type cannot be None"
+
+        entity_data = super().get_attributes(obj)
+        table_attributes = entity_data.get("attributes", {})
+        table_custom_attributes = entity_data.get("custom_attributes", {})
+
+        # Add database-specific attributes and transformations
+        # For example:
+        table_custom_attributes["engine"] = obj.get("engine", "")
+        table_custom_attributes["collation"] = obj.get("collation", "")
+
+        # Handle specific table types
+        if obj.get("table_type") == "VIEW":
+            view_definition = "CREATE VIEW {view_name} AS {query}"
+            table_attributes["definition"] = view_definition.format(
+                view_name=obj.get("table_name", ""),
+                query=obj.get("view_definition", ""),
+            )
+
+        return {
+            **entity_data,
+            "attributes": table_attributes,
+            "custom_attributes": table_custom_attributes,
+            "entity_class": NewDatabaseTable,
+        }
+
+
+class NewDatabaseColumn(Column):
+    @classmethod
+    def get_attributes(cls, obj: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Transform database-specific column metadata to Atlas format
+        """
+        entity_data = super().get_attributes(obj)
+        column_attributes = entity_data.get("attributes", {})
+        column_custom_attributes = entity_data.get("custom_attributes", {})
+
+        # Add database-specific attributes and transformations
+        # For example:
+        column_custom_attributes["data_precision"] = obj.get("numeric_precision", None)
+        column_custom_attributes["data_scale"] = obj.get("numeric_scale", None)
+
+        # Map constraint types
+        if obj.get("constraint_type") == "PRIMARY KEY":
+            column_attributes["is_primary"] = True
+        elif obj.get("constraint_type") == "FOREIGN KEY":
+            column_attributes["is_foreign"] = True
+
+        return {
+            **entity_data,
+            "attributes": column_attributes,
+            "custom_attributes": column_custom_attributes,
+            "entity_class": NewDatabaseColumn,
+        }
+
+
+class NewDatabaseProcedure(Procedure):
+    @classmethod
+    def get_attributes(cls, obj: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Transform database-specific procedure metadata to Atlas format
+        """
+        entity_data = super().get_attributes(obj)
+        procedure_attributes = entity_data.get("attributes", {})
+        procedure_custom_attributes = entity_data.get("custom_attributes", {})
+
+        # Add database-specific attributes and transformations
+        # For example:
+        procedure_attributes["definition"] = obj.get("procedure_definition", "")
+        procedure_custom_attributes["procedure_type"] = obj.get("procedure_type", "")
+
+        return {
+            **entity_data,
+            "attributes": procedure_attributes,
+            "custom_attributes": procedure_custom_attributes,
+            "entity_class": NewDatabaseProcedure,
+        }
+
+
+class NewDatabaseAtlasTransformer(AtlasTransformer):
+    def __init__(self, connector_name: str, tenant_id: str, **kwargs: Any):
+        super().__init__(connector_name, tenant_id, **kwargs)
+
+        # Register entity transformers
+        self.entity_class_definitions["TABLE"] = NewDatabaseTable
+        self.entity_class_definitions["COLUMN"] = NewDatabaseColumn
+        self.entity_class_definitions["EXTRAS-PROCEDURE"] = NewDatabaseProcedure
+```
+
+### 7. Update Application Entrypoint
+
+Update `main.py` to register the new database type:
+
+```python
+# main.py
+
+from app.activities.metadata_extraction.{database_type} import (
+    NewDatabaseMetadataExtractionActivities,
+)
+from app.clients.{database_type} import NewDatabaseClient
+from app.handlers.{database_type} import NewDatabaseWorkflowHandler
+from app.transformers.atlas.{database_type} import NewDatabaseAtlasTransformer
+from app.workflows.metadata_extraction.{database_type} import (
+    NewDatabaseMetadataExtractionWorkflow,
+)
+
+# ... existing imports ...
+
+async def initialize_and_start():
+    # Creating resources
+    sql_client = NewDatabaseClient()
+    temporal_client = TemporalClient(application_name=ATLAN_APPLICATION_NAME)
+    await temporal_client.load()
+
+    # Creating controllers
+    handler = NewDatabaseWorkflowHandler(sql_client=sql_client)
+
+    activities = NewDatabaseMetadataExtractionActivities(
+        sql_client_class=NewDatabaseClient,
+        handler_class=NewDatabaseWorkflowHandler,
+        transformer_class=NewDatabaseAtlasTransformer,
+    )
+
+    # Creating workflow
+    worker: Worker = Worker(
+        temporal_client=temporal_client,
+        workflow_classes=[NewDatabaseMetadataExtractionWorkflow],
+        temporal_activities=NewDatabaseMetadataExtractionWorkflow.get_activities(
+            activities
+        ),
+        passthrough_modules=["application_sdk", "pandas", "os", "app"],
+        max_concurrent_activities=MAX_CONCURRENT_ACTIVITIES,
+    )
+
+    # Creating FastAPI application
+    fast_api_app = FastAPIApplication(
+        handler=handler,
+        temporal_client=temporal_client,
+    )
+
+    fast_api_app.register_workflow(
+        NewDatabaseMetadataExtractionWorkflow,
+        triggers=[HttpWorkflowTrigger(endpoint="/start", methods=["POST"])],
+    )
+
+    # ... rest of the initialization ...
+```
+
+### 8. Update Frontend Components
+
+Add frontend support for the new database type:
+
+1. Add database logo (SVG) to `docs/images/{database_type}_logo.svg`
+2. Update frontend templates and CSS to support the new database type
+3. Add database-specific form fields to the connection form
+
+### 9. Test Your Implementation
+
+Create tests for your implementation:
+
+1. **Unit Tests**: Test individual components like transformers and client connection string generation
+2. **E2E Tests**: Test the complete extraction workflow using a database instance
+
+Example unit test for the database client:
+
+```python
+# tests/unit/{database_type}/test_client.py
+
+import pytest
+
+from app.clients.{database_type} import NewDatabaseClient
+
+def test_new_database_client_connection_string():
+    """Test NewDatabaseClient connection string generation for different auth types"""
+
+    # Test basic auth
+    basic_credentials = {
+        "username": "test_user",
+        "password": "test_pass",
+        "host": "localhost",
+        "port": "1234",
+        "extra": {"database": "test_db"},
+        "authType": "basic",
+    }
+
+    client = NewDatabaseClient()
+    client.credentials = basic_credentials
+    result = client.get_sqlalchemy_connection_string()
+    expected = "database_dialect+driver://test_user:test_pass@localhost:1234/test_db?application_name=Atlan&connect_timeout=5"
+    assert result == expected
+
+    # Test more cases...
+```
+
+Example E2E test for the metadata extraction workflow:
+
+```python
+# tests/e2e/test_{database_type}_workflow/test_{database_type}_workflow.py
+
+import unittest
+
+from application_sdk.test_utils.e2e.base import BaseTest
+
+class TestNewDatabaseWorkflow(unittest.TestCase, BaseTest):
+    """E2E tests for New Database workflow"""
+
+    def test_health_check(self):
+        """Test health check endpoint"""
+        # Implementation...
+
+    def test_auth(self):
+        """Test authentication"""
+        # Implementation...
+
+    def test_metadata(self):
+        """Test metadata extraction"""
+        # Implementation...
+
+    def test_data_validation(self):
+        """Test data validation"""
+        # Implementation...
+```
+
+## Database-Specific Considerations
+
+### Authentication Methods
+
+Different databases support different authentication methods:
+
+- **Basic Auth**: Username/password (supported by all databases)
+- **IAM Authentication**: For cloud-managed databases like RDS
+- **Kerberos**: For enterprise deployments
+- **Certificate-based**: Some databases like PostgreSQL support client certificates
+
+### SQL Dialect Differences
+
+Each database has its own SQL dialect with unique syntax:
+
+- **System Catalogs**: Different databases store metadata in different system tables/views
+- **Data Types**: Type mapping differs between databases
+- **Temporary Tables**: Different naming conventions for temporary tables
+- **Special Objects**: Some databases have unique objects like MySQL events or SQL Server CLR procedures
+
+### Connection Parameters
+
+Database-specific connection parameters:
+
+- **Connection Pooling**: Some databases benefit from specific pooling settings
+- **SSL/TLS**: Certificate verification modes differ between databases
+- **Performance Settings**: Query timeouts, fetch sizes, etc.
+- **Character Encoding**: Default encodings vary by database
+
+## Example: MySQL Implementation
+
+Here's a simplified example of adding MySQL support:
+
+```python
+# app/clients/mysql/__init__.py
+
+class MySQLClient(AsyncBaseSQLClient):
+    source_connection_params = {
+        "charset": "utf8mb4",
+        "use_unicode": "true",
+        "autocommit": "true",
+    }
+
+    def get_basic_connection_string(self):
+        # MySQL-specific connection string
+        return f"mysql+pymysql://{username}:{password}@{host}:{port}/{database}"
+
+# app/mysql/const.py
+
+# MySQL-specific SQL queries
+DATABASE_EXTRACTION_SQL = """
+SELECT DATABASE() as database_name, @@version as version;
+"""
+
+# app/transformers/atlas/mysql/__init__.py
+
+class MySQLTable(Table):
+    @classmethod
+    def get_attributes(cls, obj: Dict[str, Any]) -> Dict[str, Any]:
+        # MySQL-specific transformations
+        entity_data = super().get_attributes(obj)
+        table_custom_attributes = entity_data.get("custom_attributes", {})
+        table_custom_attributes["engine"] = obj.get("engine", "InnoDB")
+        # ...
+```
+
+## Best Practices
+
+1. **Follow Existing Patterns**: Use existing database implementations as templates
+2. **Use Database-Specific Types**: Map database types to appropriate Atlas types
+3. **Handle Edge Cases**: Account for database-specific features and limitations
+4. **Write Comprehensive Tests**: Test all aspects of the implementation
+5. **Document Differences**: Document any database-specific behavior
+6. **Optimize Queries**: Ensure SQL queries are optimized for the specific database
+7. **Error Handling**: Implement database-specific error handling

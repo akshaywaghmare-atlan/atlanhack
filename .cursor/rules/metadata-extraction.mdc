@@ -1,0 +1,105 @@
+---
+description: Explains the metadata extraction process, including workflows, activities, SQL queries, and transformation of extracted metadata.
+globs:
+alwaysApply: false
+---
+# metadata-extraction.mdc
+
+```markdown
+# Metadata Extraction Architecture
+
+## Overview
+
+This document explains the metadata extraction workflow in this application framework. The architecture is designed to extract metadata from various SQL database sources, transform it to a common format, and output it for downstream consumption.
+
+## Key Components
+
+### Metadata Extraction Workflow
+
+The main workflow class is defined for each database type:
+- `PostgresMetadataExtractionWorkflow` in `app/workflows/metadata_extraction/postgres.py`
+- Other database workflows would follow the pattern `app/workflows/metadata_extraction/{database_type}.py`
+
+The workflow orchestrates the execution of metadata extraction activities, handling parallelization, error handling, and retries.
+
+### Metadata Extraction Activities
+
+Database-specific activities are defined in:
+- `PostgresMetadataExtractionActivities` in `app/activities/metadata_extraction/postgres.py`
+- Other database activities would follow the pattern `app/activities/metadata_extraction/{database_type}.py`
+
+These activities define the SQL queries to extract various metadata types:
+- Databases
+- Schemas
+- Tables
+- Columns
+- Procedures
+- And potentially other database objects
+
+### SQL Queries
+
+SQL queries for metadata extraction are defined as constants in:
+- `app/const.py` for PostgreSQL
+- Database-specific query files would follow the pattern `app/{database_type}/const.py`
+
+Example queries include:
+- `DATABASE_EXTRACTION_SQL`
+- `SCHEMA_EXTRACTION_SQL`
+- `TABLE_EXTRACTION_SQL`
+- `COLUMN_EXTRACTION_SQL`
+- `PROCEDURE_EXTRACTION_SQL`
+
+### Atlas Transformers
+
+After extraction, metadata is transformed into a common model using transformers:
+- `PostgresAtlasTransformer` in `app/transformers/atlas/__init__.py`
+- Other database transformers would follow the pattern `app/transformers/atlas/{database_type}/__init__.py`
+
+## Workflow Execution
+
+The metadata extraction process follows these steps:
+
+1. **Preflight Checks**: Verify connection and permissions
+2. **Parallel Extraction**: Extract different metadata types concurrently
+   - Database metadata
+   - Schema metadata
+   - Table metadata
+   - Column metadata
+   - Procedure metadata
+3. **Transformation**: Convert database-specific metadata to common format
+4. **Output**: Store the transformed metadata
+
+Example workflow execution:
+
+```python
+@workflow.run
+async def run(self, workflow_config: Dict[str, Any]):
+    # Setup workflow execution
+    workflow_id = workflow_config["workflow_id"]
+    workflow_args = StateStoreInput.extract_configuration(workflow_id)
+    workflow_run_id = workflow.info().run_id
+
+    # Configure retry policy
+    retry_policy = RetryPolicy(maximum_attempts=6, backoff_coefficient=2)
+
+    # Set output path
+    output_prefix = workflow_args["output_prefix"]
+    output_path = f"{output_prefix}/{workflow_id}/{workflow_run_id}"
+    workflow_args["output_path"] = output_path
+
+    # Preflight check
+    await workflow.execute_activity_method(
+        self.activities_cls.preflight_check,
+        workflow_args,
+        retry_policy=retry_policy,
+        start_to_close_timeout=self.default_start_to_close_timeout,
+        heartbeat_timeout=self.default_heartbeat_timeout,
+    )
+
+    # Execute parallel extraction activities
+    fetch_functions = self.get_fetch_functions()
+    fetch_and_transforms = [
+        self.fetch_and_transform(fetch_function, workflow_args, retry_policy)
+        for fetch_function in fetch_functions
+    ]
+    await asyncio.gather(*fetch_and_transforms)
