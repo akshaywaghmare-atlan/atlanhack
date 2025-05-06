@@ -62,8 +62,6 @@ jobs:
           tags: |
             ghcr.io/atlanhq/${{ github.event.repository.name }}-${{ steps.get_lowercase_branch.outputs.lowercase_branch }}:latest
             ghcr.io/atlanhq/${{ github.event.repository.name }}-${{ steps.get_lowercase_branch.outputs.lowercase_branch }}:${{ steps.get_version.outputs.version }}
-          secrets: |
-            PRIVATE_REPO_ACCESS_TOKEN=${{ secrets.ORG_PAT_GITHUB }}
           build-args: |
             ACCESS_TOKEN_USR=$GITHUB_ACTOR
             ACCESS_TOKEN_PWD=${{ secrets.ORG_PAT_GITHUB }}
@@ -82,8 +80,6 @@ jobs:
           tags: |
             ghcr.io/atlanhq/${{ github.event.repository.name }}-argo-${{ steps.get_lowercase_branch.outputs.lowercase_branch }}:latest
             ghcr.io/atlanhq/${{ github.event.repository.name }}-argo-${{ steps.get_lowercase_branch.outputs.lowercase_branch }}:${{ steps.get_version.outputs.version }}
-          secrets: |
-            PRIVATE_REPO_ACCESS_TOKEN=${{ secrets.ORG_PAT_GITHUB }}
           build-args: |
             BASE_IMAGE=ghcr.io/atlanhq/${{ github.event.repository.name }}-${{ steps.get_lowercase_branch.outputs.lowercase_branch }}:latest
             ACCESS_TOKEN_USR=$GITHUB_ACTOR
@@ -108,8 +104,6 @@ jobs:
       #     tags: |
       #       ${{ secrets.HARBOR_URL }}/applications/${{ github.event.repository.name }}:${{ steps.get_branch.outputs.branch }}-${{ steps.get_version.outputs.version }}
       #       ${{ secrets.HARBOR_URL }}/applications/${{ github.event.repository.name }}:${{ steps.get_branch.outputs.branch }}-latest
-      #     secrets: |
-      #       PRIVATE_REPO_ACCESS_TOKEN=${{ secrets.ORG_PAT_GITHUB }}
       #   env:
       #     DOCKER_CLIENT_TIMEOUT: 300
       #     COMPOSE_HTTP_TIMEOUT: 300
