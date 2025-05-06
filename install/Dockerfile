@@ -10,7 +10,7 @@ ENV PIP_DEFAULT_TIMEOUT=100 \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \
     POETRY_VIRTUALENVS_CREATE=1 \
     POETRY_CACHE_DIR=/tmp/poetry_cache/$TARGETARCH \
-    POETRY_VERSION=1.8.5
+    POETRY_VERSION=2.1.3
 
 # Install OS build dependencies
 RUN microdnf upgrade -y && \
@@ -41,12 +41,8 @@ RUN ln -s /usr/bin/python3.12 /usr/local/bin/python && \
 RUN pip install --upgrade pip && \
     pip install "poetry==$POETRY_VERSION"
 
-# Use the secret during build
-RUN --mount=type=secret,id=PRIVATE_REPO_ACCESS_TOKEN \
-    export PRIVATE_REPO_ACCESS_TOKEN=$(cat /run/secrets/PRIVATE_REPO_ACCESS_TOKEN) && \
-    if [ ! -z "$PRIVATE_REPO_ACCESS_TOKEN" ]; then \
-        git config --global url."https://${PRIVATE_REPO_ACCESS_TOKEN}@github.com/".insteadOf "git@github.com:"; \
-    fi
+# Configure git to use https instead of ssh
+RUN git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
 
 WORKDIR /application
 

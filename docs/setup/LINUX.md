@@ -14,6 +14,7 @@ This guide will help you set up the Atlan PostgreSQL App on Linux (Ubuntu/Debian
 ## Prerequisites
 
 Before starting, ensure you have:
+
 - Terminal access
 - Sudo privileges (for installing software)
 - Internet connection
@@ -54,12 +55,12 @@ pyenv global 3.11.10
 python --version  # Should show Python 3.11.10
 ```
 
-### 3. Install Poetry 1.8.5
+### 3. Install Poetry 2.1.3
 
 Poetry manages Python dependencies and project environments:
 
 ```bash
-pip install poetry==1.8.5
+pip install poetry==2.1.3
 ```
 
 ### 4. Install Temporal CLI
@@ -93,7 +94,7 @@ Set up Poetry to use project-specific virtualization and Git:
 
 ```bash
 poetry config virtualenvs.in-project true
-poetry config experimental.system-git-client true
+poetry config system-git-client true
 ```
 
 ### 7. Install Project Dependencies
@@ -139,6 +140,7 @@ Your application should now be running. You can access:
 ## Troubleshooting
 
 ### Python Installation Issues
+
 - If pyenv fails to install Python, make sure you have all the required dependencies:
   ```bash
   sudo apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
@@ -147,12 +149,14 @@ Your application should now be running. You can access:
   ```
 
 ### Poetry Installation Issues
+
 - If Poetry fails to install, try the alternative method:
   ```bash
   curl -sSL https://install.python-poetry.org | python -
   ```
 
 ### Dependency Installation Errors
+
 - If `make install` fails, check your Git access:
   ```bash
   # Configure Git to use HTTPS instead of SSH
@@ -160,6 +164,7 @@ Your application should now be running. You can access:
   ```
 
 ### Port Conflicts
+
 - If you see errors about ports already in use, check for running processes:
   ```bash
   sudo netstat -tunlp | grep 8000  # Check if port 8000 is in use

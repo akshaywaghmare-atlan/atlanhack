@@ -14,6 +14,7 @@ This guide will help you set up the Atlan PostgreSQL App on Windows.
 ## Prerequisites
 
 Before starting, ensure you have:
+
 - PowerShell access (run as Administrator)
 - Internet connection
 - Windows 10 or higher
@@ -37,7 +38,7 @@ Download and install Python from the official website:
    python --version  # Should show Python 3.11.10
    ```
 
-### 2. Install Poetry 1.8.5
+### 2. Install Poetry 2.1.3
 
 Install Poetry using PowerShell:
 
@@ -50,10 +51,10 @@ $env:Path += ";$env:APPDATA\Python\Scripts"
 [Environment]::SetEnvironmentVariable("Path", $env:Path, [System.EnvironmentVariableTarget]::User)
 
 # Install specific version
-poetry self update 1.8.5
+poetry self update 2.1.3
 
 # Verify installation
-poetry --version  # Should show Poetry 1.8.5
+poetry --version  # Should show Poetry 2.1.3
 ```
 
 ### 3. Install Temporal CLI
@@ -111,7 +112,7 @@ Set up Poetry configuration:
 
 ```powershell
 poetry config virtualenvs.in-project true
-poetry config experimental.system-git-client true
+poetry config system-git-client true
 ```
 
 ### 7. Install Project Dependencies
@@ -164,6 +165,7 @@ Your application should now be running. You can access:
 ## Troubleshooting
 
 ### Python Installation Issues
+
 - Ensure PATH is correctly set:
   ```powershell
   $env:Path += ";C:\Python311;C:\Python311\Scripts"
@@ -171,6 +173,7 @@ Your application should now be running. You can access:
   ```
 
 ### Poetry Installation Issues
+
 - If Poetry command is not found, manually add it to your PATH:
   ```powershell
   $env:Path += ";$env:APPDATA\Python\Scripts"
@@ -178,15 +181,18 @@ Your application should now be running. You can access:
   ```
 
 ### Dependency Installation Errors
+
 - If Git access fails, check that you've configured it to use HTTPS:
   ```powershell
   git config --global url."https://github.com/".insteadOf "git@github.com:"
   ```
 
 ### Permissions Issues
+
 - If you encounter permission errors, run PowerShell as Administrator
 
 ### Make Command Not Found
+
 - If make is not found, confirm Chocolatey install:
   ```powershell
   choco install make -y
