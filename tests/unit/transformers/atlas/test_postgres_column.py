@@ -83,7 +83,7 @@ def test_column_variation_1(
 ):
     """Test column transformation with custom attributes"""
 
-    transformed_data = transformer.transform_metadata(
+    transformed_data = transformer.transform_row(
         "COLUMN",
         raw_data["postgres_column_1"],
         "test_workflow_id",
@@ -125,7 +125,7 @@ def test_column_variation_2(
 ):
     """Test column transformation with custom attributes"""
 
-    transformed_data = transformer.transform_metadata(
+    transformed_data = transformer.transform_row(
         "COLUMN",
         raw_data["postgres_column_2"],
         "test_workflow_id",

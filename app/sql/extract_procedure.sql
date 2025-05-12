@@ -22,7 +22,8 @@ SELECT
     N.nspname          AS PROCEDURE_SCHEMA,
     P.proname          AS PROCEDURE_NAME,
     B.usename          AS SOURCE_OWNER,
-    P.prosrc           AS procedure_definition
+    P.prosrc           AS procedure_definition,
+    NULL               AS procedure_type
 FROM  pg_catalog.pg_namespace N
     JOIN pg_catalog.pg_proc P ON pronamespace = N.oid
     JOIN pg_user B ON B.usesysid = P.proowner
