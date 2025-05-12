@@ -166,7 +166,7 @@ trio = ["trio (>=0.26.1)"]
 
 [[package]]
 name = "atlan-application-sdk"
-version = "0.1.1rc1"
+version = "0.1.1rc2"
 description = "Python Application SDK is a Python library for developing applications on the Atlan Platform"
 optional = false
 python-versions = "^3.11"
@@ -205,8 +205,8 @@ workflows = ["dapr (>=1.14.0,<2.0.0)", "orjson (>=3.10.18,<4.0.0)", "temporalio 
 [package.source]
 type = "git"
 url = "ssh://git@github.com/atlanhq/application-sdk.git"
-reference = "6440a147ddc9e3a27891777fa8b82e813c48c752"
-resolved_reference = "6440a147ddc9e3a27891777fa8b82e813c48c752"
+reference = "v0.1.1rc2"
+resolved_reference = "990524384e39ae6cc923d8f015966f3be153a477"
 
 [[package]]
 name = "attrs"
@@ -5281,4 +5281,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11.10"
-content-hash = "1fc1d47b2b33cb4a194a3403af64efcc047d9df298ab7a4c1ff2d45a6a9bbc7d"
+content-hash = "6238ea7dfa723fc31677ce4c069ff47ac129f107c85947c26d2cd5373bde9a0b"
