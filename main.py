@@ -4,9 +4,9 @@ from application_sdk.application.metadata_extraction.sql import (
     BaseSQLMetadataExtractionApplication,
 )
 from application_sdk.constants import APPLICATION_NAME
+from application_sdk.transformers.query import QueryBasedTransformer
 
 from app.clients import SQLClient
-from app.transformers.atlas import SQLAtlasTransformer
 
 
 async def main():
@@ -14,7 +14,7 @@ async def main():
     application = BaseSQLMetadataExtractionApplication(
         name=APPLICATION_NAME,
         client_class=SQLClient,
-        transformer_class=SQLAtlasTransformer,
+        transformer_class=QueryBasedTransformer,  # type: ignore
     )
 
     # Setup the workflow

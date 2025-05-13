@@ -58,7 +58,13 @@ SELECT
     T.is_insertable_into AS IS_INSERTABLE_INTO,
     T.is_typed AS IS_TYPED,
     T.commit_action AS COMMIT_ACTION,
-    D.description AS REMARKS
+    D.description AS REMARKS,
+    0 AS size_bytes, -- Added to make it compatible with atlas typedef
+    NULL AS location, -- Added to make it compatible with atlas typedef
+    NULL AS file_format_type, -- Added to make it compatible with atlas typedef
+    NULL AS stage_region, -- Added to make it compatible with atlas typedef
+    NULL AS engine, -- Added to make it compatible with atlas typedef
+    NULL AS ref_generation -- Added to make it compatible with atlas typedef
 FROM pg_class C
 LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
 LEFT JOIN pg_description D ON (C.oid = D.objoid AND D.objsubid = 0  and D.classoid = 'pg_class'::regclass)

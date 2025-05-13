@@ -11,4 +11,4 @@
  * Notes:
  *   - Scoped to the current database (current_database())
  */
-SELECT d.*, d.datname as database_name FROM pg_database d WHERE datname = current_database();
+SELECT d.*, d.datname as database_name, 0 as schema_count FROM pg_database d WHERE datname = current_database();

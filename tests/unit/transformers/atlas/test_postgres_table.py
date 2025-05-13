@@ -88,7 +88,7 @@ def test_table_variation_1_transformation(
 ):
     """Test the transformation of regular tables"""
 
-    transformed_data = transformer.transform_metadata(
+    transformed_data = transformer.transform_row(
         "TABLE",
         raw_data["table_variation_1"],
         "test_workflow_id",
