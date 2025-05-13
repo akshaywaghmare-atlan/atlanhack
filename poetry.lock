@@ -166,7 +166,7 @@ trio = ["trio (>=0.26.1)"]
 
 [[package]]
 name = "atlan-application-sdk"
-version = "0.1.1rc2"
+version = "0.1.1rc3"
 description = "Python Application SDK is a Python library for developing applications on the Atlan Platform"
 optional = false
 python-versions = "^3.11"
@@ -205,8 +205,8 @@ workflows = ["dapr (>=1.14.0,<2.0.0)", "orjson (>=3.10.18,<4.0.0)", "temporalio 
 [package.source]
 type = "git"
 url = "ssh://git@github.com/atlanhq/application-sdk.git"
-reference = "v0.1.1rc2"
-resolved_reference = "990524384e39ae6cc923d8f015966f3be153a477"
+reference = "v0.1.1rc3"
+resolved_reference = "c35f780e85c9f9620469c3c850cf1a61d6596cd0"
 
 [[package]]
 name = "attrs"
@@ -292,18 +292,18 @@ uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
 name = "boto3"
-version = "1.38.13"
+version = "1.38.14"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "boto3-1.38.13-py3-none-any.whl", hash = "sha256:668400d13889d2d2fcd66ce785cc0b0fc040681f58a9c7f67daa9149a52b6c63"},
-    {file = "boto3-1.38.13.tar.gz", hash = "sha256:6633bce2b73284acce1453ca85834c7c5a59e0dbcce1170be461cc079bdcdfcf"},
+    {file = "boto3-1.38.14-py3-none-any.whl", hash = "sha256:44bc15285104683cd25dfb60abc5aac65b75d9e79b06f43094d18ed5c2739302"},
+    {file = "boto3-1.38.14.tar.gz", hash = "sha256:2cba851374c9b15facd6e7fe3adf7988c216537182d2c139e96da5c101f4cbcf"},
 ]
 
 [package.dependencies]
-botocore = ">=1.38.13,<1.39.0"
+botocore = ">=1.38.14,<1.39.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.12.0,<0.13.0"
 
@@ -312,14 +312,14 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.38.13"
+version = "1.38.14"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "botocore-1.38.13-py3-none-any.whl", hash = "sha256:de29fee43a1f02787fb5b3756ec09917d5661ed95b2b2d64797ab04196f69e14"},
-    {file = "botocore-1.38.13.tar.gz", hash = "sha256:22feee15753cd3f9f7179d041604078a1024701497d27b22be7c6707e8d13ccb"},
+    {file = "botocore-1.38.14-py3-none-any.whl", hash = "sha256:3125ed92e9ee6137c28fd32c56934a531a372346a7b13cb86de4328d7629e156"},
+    {file = "botocore-1.38.14.tar.gz", hash = "sha256:8ac91de6c33651a5c699268f1d22fadd5e99f370230dbea97d29e4164de4e5f2"},
 ]
 
 [package.dependencies]
@@ -1599,14 +1599,14 @@ zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
 name = "hypothesis"
-version = "6.131.15"
+version = "6.131.16"
 description = "A library for property-based testing"
 optional = false
 python-versions = ">=3.9"
 groups = ["test"]
 files = [
-    {file = "hypothesis-6.131.15-py3-none-any.whl", hash = "sha256:e02e67e9f3cfd4cd4a67ccc03bf7431beccc1a084c5e90029799ddd36ce006d7"},
-    {file = "hypothesis-6.131.15.tar.gz", hash = "sha256:11849998ae5eecc8c586c6c98e47677fcc02d97475065f62768cfffbcc15ef7a"},
+    {file = "hypothesis-6.131.16-py3-none-any.whl", hash = "sha256:574e0ebc28e469a891c2c4fcc092ed7d5da81255b84505b599e6768b39d7ca61"},
+    {file = "hypothesis-6.131.16.tar.gz", hash = "sha256:4953b8dbb79ae3399c4243b1799b3286c7809d08457269274f77581aef8b7048"},
 ]
 
 [package.dependencies]
@@ -3858,14 +3858,14 @@ jupyter = ["ipywidgets (>=7.5.1,<9)"]
 
 [[package]]
 name = "rich-toolkit"
-version = "0.14.5"
+version = "0.14.6"
 description = "Rich toolkit for building command-line applications"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "rich_toolkit-0.14.5-py3-none-any.whl", hash = "sha256:2fe9846ecbf5d0cdf236c7f43452b68d9da1436a81594aba6b79b3c48b05703b"},
-    {file = "rich_toolkit-0.14.5.tar.gz", hash = "sha256:1cb7a3fa0bdbf35793460708664f3f797e8b18cedec9cd41a7e6125e4bc6272b"},
+    {file = "rich_toolkit-0.14.6-py3-none-any.whl", hash = "sha256:764f3a5f9e4b539ce805596863299e8982599514906dc5e3ccc2d390ef74c301"},
+    {file = "rich_toolkit-0.14.6.tar.gz", hash = "sha256:9dbd40e83414b84e828bf899115fff8877ce5951b73175f44db142902f07645d"},
 ]
 
 [package.dependencies]
@@ -5281,4 +5281,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11.10"
-content-hash = "6238ea7dfa723fc31677ce4c069ff47ac129f107c85947c26d2cd5373bde9a0b"
+content-hash = "ae6589b85358b5f0d568597f973af63caf5043c0548c9c9ffa380f17f3b6d383"
