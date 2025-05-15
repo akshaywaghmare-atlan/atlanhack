@@ -11,12 +11,13 @@ python = "^3.11.10"
 fastapi = {extras = ["standard"], version = "^0.115.0"}
 pytest-asyncio = "^0.24.0"
 # use local application-sdk repository for development
-# application-sdk = { path = "../application-sdk/", develop = true, extras = ["workflows", "iam_auth", "sqlalchemy", "tests", "daft"]}
+# atlan-application-sdk = { path = "../application-sdk/", develop = true, extras = ["workflows", "iam_auth", "sqlalchemy", "tests", "daft"]}
 # use remote application-sdk repository
-atlan-application-sdk = {git = "git@github.com:atlanhq/application-sdk.git", tag = "v0.1.1rc3", extras = ["workflows", "iam_auth", "sqlalchemy", "tests", "daft"]}
+atlan-application-sdk = {git = "git@github.com:atlanhq/application-sdk.git", rev = "9222293853dca4fef709f390c804bc253ee779e8", extras = ["workflows", "iam_auth", "sqlalchemy", "tests", "daft"]}
 psycopg = {extras = ["binary"], version = "^3.2.3"}
 jinja2 = "^3.1.2"
 poetry-plugin-dotenv = "^2.8.0"
+sqlalchemy-cratedb = "^0.41.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.8.0"
