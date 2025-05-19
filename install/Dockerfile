@@ -36,9 +36,6 @@ RUN ln -s /usr/bin/python3.12 /usr/local/bin/python && \
 RUN pip install --upgrade pip && \
     pip install "uv==0.7.3"
 
-# Configure git to use https instead of ssh
-RUN git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
-
 WORKDIR /application
 
 # Copy dependency files

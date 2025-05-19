@@ -43,6 +43,10 @@ ENV ENABLE_OTLP_LOGS=true
 # Workdir for the agent
 WORKDIR /application
 
+RUN uv run poe download-components
+RUN mkdir -p /application/components
+COPY . /application/components
+
 # Add entrypoint script
 COPY ./install/entrypoint.sh entrypoint.sh
 RUN chmod +x entrypoint.sh
