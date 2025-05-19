@@ -5,12 +5,7 @@ ARG TARGETARCH
 
 ENV PIP_DEFAULT_TIMEOUT=100 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_NO_CACHE_DIR=1 \
-    POETRY_NO_INTERACTION=1 \
-    POETRY_VIRTUALENVS_IN_PROJECT=1 \
-    POETRY_VIRTUALENVS_CREATE=1 \
-    POETRY_CACHE_DIR=/tmp/poetry_cache/$TARGETARCH \
-    POETRY_VERSION=2.1.3
+    PIP_NO_CACHE_DIR=1
 
 # Install OS build dependencies
 RUN microdnf upgrade -y && \
@@ -37,20 +32,23 @@ RUN microdnf install -y python3.12 python3.12-pip && \
 RUN ln -s /usr/bin/python3.12 /usr/local/bin/python && \
     ln -s /usr/bin/pip3.12 /usr/local/bin/pip
 
-# Upgrade pip and install Poetry
+# Install uv (and pip for compatibility)
 RUN pip install --upgrade pip && \
-    pip install "poetry==$POETRY_VERSION"
+    pip install "uv==0.7.3"
 
 # Configure git to use https instead of ssh
 RUN git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
 
 WORKDIR /application
 
-# Install Python dependencies
-COPY ./pyproject.toml ./poetry.lock ./
+# Copy dependency files
+COPY ./README.md ./pyproject.toml ./uv.lock ./
 
-# The cache directory makes rebuilding a docker image if pyproject.toml changes near instant
-RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root --without dev,test --no-interaction --no-ansi
+# Install Python dependencies using uv into .venv
+RUN uv sync --all-extras
+
+# Or, if you want only main dependencies (no dev/test):
+# RUN uv venv .venv && .venv/bin/uv pip install -r <(uv pip compile pyproject.toml)
 
 # Runtime Stage
 FROM registry.access.redhat.com/ubi8/ubi-minimal AS runtime

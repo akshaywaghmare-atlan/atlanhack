@@ -33,16 +33,13 @@ _If you are using the Atlan CLI to create a new application, you can skip this s
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Main with Poetry",
+            "name": "Python: Main with uv",
             "type": "python",
             "request": "launch",
-            "module": "poetry",
+            "module": "uv",
             "args": ["run", "python", "main.py"],
             "console": "integratedTerminal",
-            "justMyCode": true,
-            "env": {
-                "POETRY_PLUGIN_DOTENV_LOCATION": ".env"
-            }
+            "justMyCode": true
         },
         {
             "name": "Python: Debug Unit Tests",

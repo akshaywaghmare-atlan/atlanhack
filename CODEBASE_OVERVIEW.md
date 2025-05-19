@@ -35,7 +35,6 @@
 │       └── transformers/
 ├── .env                    # Environment variables (gitignored)
 ├── main.py                # Application entry point
-├── Makefile              # Build and development commands
 ├── pyproject.toml        # Project configuration
 └── README.md             # Project documentation
 ```
@@ -208,7 +207,7 @@ async def setup_workflow():
 ### 6. Development Workflow
 
 #### A. Local Setup
-1. Install dependencies (Poetry)
+1. Install dependencies (uv)
 2. Configure environment
 3. Start local services
 4. Run application

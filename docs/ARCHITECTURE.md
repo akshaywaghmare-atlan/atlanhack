@@ -42,11 +42,6 @@ Extracted metadata is transformed into Atlas format, supporting:
   - Worker configuration
   - FastAPI application setup
 - `pyproject.toml` - Project configuration and dependencies
-- `Makefile` - Build and development automation commands:
-  - Environment setup
-  - Service management
-  - Development tools
-  - Testing and linting
 
 ### App Directory (`app/`)
 - `clients/` - Database client implementations
@@ -70,7 +65,7 @@ Contains the web interface for:
 - Metadata visualization
 
 ## Development Tools
-- Poetry for dependency management
+- uv for dependency management
 - Pre-commit hooks for code quality
 - Pytest for testing
 - Ruff and Pyright for linting and type checking
