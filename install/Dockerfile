@@ -1,80 +1,28 @@
-# Builder stage
-FROM registry.access.redhat.com/ubi8/ubi-minimal AS builder
+# Install uv
+FROM python:3.11-slim
 
-ARG TARGETARCH
+# Install git (and optionally build-essential if you have other build dependencies)
+# Note: this is required for uv's git-based dependency resolution to work
+RUN apt-get update && apt-get install -y git curl && rm -rf /var/lib/apt/lists/*
 
-ENV PIP_DEFAULT_TIMEOUT=100 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_NO_CACHE_DIR=1 \
-    POETRY_NO_INTERACTION=1 \
-    POETRY_VIRTUALENVS_IN_PROJECT=1 \
-    POETRY_VIRTUALENVS_CREATE=1 \
-    POETRY_CACHE_DIR=/tmp/poetry_cache/$TARGETARCH \
-    POETRY_VERSION=2.1.3
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Install OS build dependencies
-RUN microdnf upgrade -y && \
-    microdnf install -y \
-    git \
-    openssh-clients \
-    gcc \
-    gcc-c++ \
-    make \
-    python3.12-devel \
-    openssl-devel \
-    bzip2-devel \
-    libffi-devel \
-    zlib-devel \
-    wget \
-    findutils \
-    && microdnf clean all
+# Change the working directory to the `app` directory
+WORKDIR /app
 
-# Install Python 3.12 and pip 3.12
-RUN microdnf install -y python3.12 python3.12-pip && \
-    microdnf clean all
+# Install dependencies
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=README.md,target=README.md \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml
 
-# Create symlink for python3 to point to python3.12
-RUN ln -s /usr/bin/python3.12 /usr/local/bin/python && \
-    ln -s /usr/bin/pip3.12 /usr/local/bin/pip
+# Copy the project into the image
+ADD . /app
 
-# Upgrade pip and install Poetry
-RUN pip install --upgrade pip && \
-    pip install "poetry==$POETRY_VERSION"
-
-# Configure git to use https instead of ssh
-RUN git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
-
-WORKDIR /application
-
-# Install Python dependencies
-COPY ./pyproject.toml ./poetry.lock ./
-
-# The cache directory makes rebuilding a docker image if pyproject.toml changes near instant
-RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root --without dev,test --no-interaction --no-ansi
-
-# Runtime Stage
-FROM registry.access.redhat.com/ubi8/ubi-minimal AS runtime
-
-WORKDIR /application
-
-# Set environment for virtual environment
-ENV VIRTUAL_ENV=/application/.venv \
-    PATH="/application/.venv/bin:$PATH"
-
-# Copy the virtual environment from the builder
-COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
-
-# Enable AppStream repository and install Python and other necessary runtime packages
-RUN microdnf upgrade -y && \
-    microdnf install -y \
-    python3.12 \
-    && microdnf clean all
-
-# Create symlink for python3 to point to python3.12
-RUN ln -s /usr/bin/python3.12 /usr/local/bin/python
-
-# Copy the rest of the code
-COPY . /application
+# Sync the project
+RUN uv venv .venv
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --extra dev --locked --no-install-project
 
 # Set the entrypoint
-ENTRYPOINT ["python", "/application/main.py"]
+ENTRYPOINT ["python", "/app/main.py"]

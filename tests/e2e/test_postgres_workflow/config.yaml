@@ -59,7 +59,7 @@ expected_api_responses:
         "versionCheck":
           {
             "success": true,
-            "successMessage": "Client version 15.4 meets minimum required version $ATLAN_SQL_SERVER_MIN_VERSION",
+            "successMessage": "Client version 15.10 meets minimum required version $ATLAN_SQL_SERVER_MIN_VERSION",
             "failureMessage": "",
           },
       }

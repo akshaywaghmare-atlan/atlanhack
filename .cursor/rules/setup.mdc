@@ -30,7 +30,7 @@ If the automatic detection doesn't work, please open the appropriate guide based
 The Atlan PostgreSQL App requires the following components regardless of operating system:
 
 1. Python 3.11.10
-2. Poetry 2.1.3
+2. uv 0.7.3
 3. Temporal CLI
 4. DAPR CLI 1.14.1
 5. Project dependencies

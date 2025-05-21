@@ -9,7 +9,7 @@ alwaysApply: true
 This guide talks about how to navigate the request for supporting a new SQL source and the resources to refer for the same.
 
 ## Points to consider
-- An app's responsibility is just to extract metadata, transform and dump on the object store - refer to this example @.venv/src/application-sdk/examples/application_sql.py
+- An app's responsibility is just to extract metadata, transform and dump on the object store - refer to this example https://github.com/atlanhq/application-sdk/blob/main/examples/application_sql.py
 
 
 ## Key Components
@@ -21,7 +21,7 @@ This guide talks about how to navigate the request for supporting a new SQL sour
 
 ## Technology Stack
 - **Language**: Python
-- **Package Management**: Poetry
+- **Package Management**: uv
 - **Testing Framework**: Pytest
 - **Code Quality**: Pre-commit hooks
 - **Documentation**: Markdown
@@ -29,35 +29,34 @@ This guide talks about how to navigate the request for supporting a new SQL sour
 ## Application-SDK Project Structure
 ```
 application-sdk/
-├── application_sdk/     # Core SDK implementation
-├── components/          # Reusable components
+├── application_sdk/    # Core SDK implementation
+├── components/         # Reusable components
 ├── docs/               # Documentation
 ├── examples/           # Example implementations
 ├── tests/              # Test suite
 ├── .github/            # GitHub workflows and configurations
-├── poetry.lock         # Lock file for dependencies
+├── uv.lock             # Lock file for dependencies
 ├── pyproject.toml      # Project configuration and dependencies
-├── Makefile           # Build and development commands
-└── README.md          # Project readme
+└── README.md           # Project readme
 ```
 
 Documentation for application-sdk
-- application-sdk docs are available at @.venv/src/application-sdk/docs
+- application-sdk docs are available at https://github.com/atlanhq/application-sdk/blob/main/docs
 - if the docs are not available, guide the user to setup the development environemnt using @setup.mdc
 
-- core concepts of application-sdk are available at @.venv/src/application-sdk/docs/docs/concepts
-    - Guide for extending workflows can be found at @.venv/src/application-sdk/docs/docs/concepts/workflows
-    - Guide for extending activities can be found at @.venv/src/application-sdk/docs/docs/concepts/activities
-    - Guide for using worker can be found at @.venv/src/application-sdk/docs/docs/concepts/worker
-    - Guide for extending application can be found at @.venv/src/application-sdk/docs/docs/concepts/application
-    - Guide for extending handlers can be found at @.venv/src/application-sdk/docs/docs/concepts/handlers
-    - Guide for setting up database connections are available at @.venv/src/application-sdk/docs/docs/concepts/clients
+- core concepts of application-sdk are available at @https://github.com/atlanhq/application-sdk/blob/main/docs/docs/
+    - Guide for extending workflows can be found at @https://github.com/atlanhq/application-sdk/blob/main/docs/docs/concepts/workflows.md
+    - Guide for extending activities can be found at @https://github.com/atlanhq/application-sdk/blob/main/docs/docs/activities.md
+    - Guide for using worker can be found at @https://github.com/atlanhq/application-sdk/blob/main/docs/docs/worker.md
+    - Guide for extending application can be found at @https://github.com/atlanhq/application-sdk/blob/main/docs/docs/application.md
+    - Guide for extending handlers can be found at @https://github.com/atlanhq/application-sdk/blob/main/docs/docs/handlers.md
+    - Guide for setting up database connections are available at @https://github.com/atlanhq/application-sdk/blob/main/docs/docs/clients.md
 
 A few additional resource
-- reference to coherent usage of the above components can be seen in the examples available at @.venv/src/application-sdk/examples
+- reference to coherent usage of the above components can be seen in the examples available at https://github.com/atlanhq/application-sdk/blob/main/examples
 - documentation for utilities are available at:
-    - @.venv/src/application-sdk/docs/docs/concepts/common
-    - @.venv/src/application-sdk/docs/docs/concepts/inputs
-    - @.venv/src/application-sdk/docs/docs/concepts/outputs
+    - https://github.com/atlanhq/application-sdk/blob/main/docs/docs/concepts/common.md
+    - https://github.com/atlanhq/application-sdk/blob/main/docs/docs/concepts/inputs.md
+    - https://github.com/atlanhq/application-sdk/blob/main/docs/docs/concepts/outputs.md
 
 

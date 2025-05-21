@@ -18,23 +18,23 @@ The `app/` directory contains the core logic for the application:
 ## Resources
 
 Documentation for application-sdk
-- application-sdk docs are available at @.venv/src/application-sdk/docs
+- application-sdk docs are available at https://github.com/atlanhq/application-sdk/blob/main/docs
 - if the docs are not available, guide the user to setup the development environemnt using @setup.mdc
 
-- core concepts of application-sdk are available at @.venv/src/application-sdk/docs/docs/concepts
-    - Guide for extending workflows can be found at @.venv/src/application-sdk/docs/docs/concepts/workflows
-    - Guide for extending activities can be found at @.venv/src/application-sdk/docs/docs/concepts/activities
-    - Guide for using worker can be found at @.venv/src/application-sdk/docs/docs/concepts/worker
-    - Guide for extending application can be found at @.venv/src/application-sdk/docs/docs/concepts/application
-    - Guide for extending handlers can be found at @.venv/src/application-sdk/docs/docs/concepts/handlers
-    - Guide for setting up database connections are available at @.venv/src/application-sdk/docs/docs/concepts/clients
+- core concepts of application-sdk are available at https://github.com/atlanhq/application-sdk/blob/main/docs/docs/concepts.md
+    - Guide for extending workflows can be found at https://github.com/atlanhq/application-sdk/blob/main/docs/docs/concepts/workflows.md
+    - Guide for extending activities can be found at https://github.com/atlanhq/application-sdk/blob/main/docs/docs/concepts/activities.md
+    - Guide for using worker can be found at https://github.com/atlanhq/application-sdk/blob/main/docs/docs/concepts/worker.md
+    - Guide for extending application can be found at https://github.com/atlanhq/application-sdk/blob/main/docs/docs/concepts/application.md
+    - Guide for extending handlers can be found at https://github.com/atlanhq/application-sdk/blob/main/docs/docs/concepts/handlers.md
+    - Guide for setting up database connections are available at https://github.com/atlanhq/application-sdk/blob/main/docs/docs/concepts/clients.md
 
 A few additional resource
-- reference to coherent usage of the above components can be seen in the examples available at @.venv/src/application-sdk/examples
+- reference to coherent usage of the above components can be seen in the examples available at https://github.com/atlanhq/application-sdk/blob/main/examples
 - documentation for utili:
-    - @.venv/src/application-sdk/docs/docs/concepts/common
-    - @.venv/src/application-sdk/docs/docs/concepts/inputs
-    - @.venv/src/application-sdk/docs/docs/concepts/outputs
+    - https://github.com/atlanhq/application-sdk/blob/main/docs/docs/concepts/common.md
+    - https://github.com/atlanhq/application-sdk/blob/main/docs/docs/concepts/inputs.md
+    - https://github.com/atlanhq/application-sdk/blob/main/docs/docs/concepts/outputs.md
 
 
 ## Documentation (`docs/`)
@@ -55,8 +55,7 @@ Contains the test suite fplication:
 
 ## Configuration and Entry Point
 - **`main.py`**: The main [entry point](mdc:main.py) for the FastAPI application.
-- **`pyproject.toml`**: Defines project dependencies and configuration using [Poetry](mdc:pyproject.toml).
+- **`pyproject.toml`**: Defines project dependencies and configuration using uv.
 - **`.env`**: Stores environment-specific variables (should be gitignored).
-- **`Makefile`**: Contains commands for building, testing, and running the application ([Makefile](mdc:Makefile)).
 
 Refer to [CODEBASE_OVERVIEW.md](mdc:CODEBASE_OVERVIEW.md) for a more detailed architectural breakdown.
