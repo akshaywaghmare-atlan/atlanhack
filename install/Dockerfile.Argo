@@ -4,23 +4,8 @@ ARG BASE_IMAGE
 # Use BASE_IMAGE
 FROM ${BASE_IMAGE}
 
-# necessary runtime packages
-RUN microdnf upgrade -y && \
-    microdnf install -y \
-    tar \
-    which \
-    gzip \
-    && microdnf clean all
-
 # Install Dapr CLI with the specified version
 RUN curl -fsSL https://raw.githubusercontent.com/dapr/cli/master/install/install.sh | DAPR_INSTALL_DIR="/usr/local/bin" /bin/bash -s 1.14.1
-
-# Remove temporary tools
-RUN microdnf remove -y \
-    tar \
-    gzip \
-    && rm -rf /tmp/* \
-    && microdnf clean all
 
 # Install Supervisor
 RUN pip install --upgrade pip && \
@@ -39,13 +24,11 @@ ENV ATLAN_DAPR_METRICS_PORT=3100
 ENV OTEL_PYTHON_EXCLUDED_URLS="/telemetry/.*,/system/.*"
 ENV ENABLE_OTLP_LOGS=true
 
+# Set working directory for the application
+WORKDIR /app
 
-# Workdir for the agent
-WORKDIR /application
-
+# Download DAPR components
 RUN uv run poe download-components
-RUN mkdir -p /application/components
-COPY . /application/components
 
 # Add entrypoint script
 COPY ./install/entrypoint.sh entrypoint.sh

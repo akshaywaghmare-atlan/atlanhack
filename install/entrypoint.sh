@@ -25,7 +25,7 @@ echo "APP_HTTP_HOST=${ATLAN_APP_HTTP_HOST}"
 
 # Create necessary directories
 log "Creating necessary directories for logs and supervisor configurations..."
-mkdir -p /var/log/supervisor /var/log/dapr /var/log/application || error "Failed to create necessary directories."
+mkdir -p /var/log/supervisor /var/log/dapr /var/log/app || error "Failed to create necessary directories."
 
 # Initialize Dapr
 log "Initializing Dapr runtime and dashboard..."
