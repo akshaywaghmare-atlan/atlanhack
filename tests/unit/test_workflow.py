@@ -3,6 +3,7 @@ from typing import Any, AsyncGenerator, Dict, List, TypeVar
 from urllib.parse import parse_qs, quote_plus, urlparse
 
 import pytest
+from application_sdk.common.error_codes import CommonError
 from application_sdk.common.utils import read_sql_files
 from hypothesis import given
 from hypothesis import strategies as st
@@ -117,8 +118,11 @@ def test_postgres_client_connection_string():
         "extra": {"database": "test_db"},
     }
     client.credentials = invalid_credentials
-    with pytest.raises(ValueError):
+    with pytest.raises(CommonError) as exc_info:
         client.get_sqlalchemy_connection_string()
+    assert str(exc_info.value).startswith(
+        "ATLAN-COMMON-400-01: Credentials parse error"
+    )
 
     # Test missing required fields for IAM user auth
     incomplete_iam_user = {
@@ -215,8 +219,11 @@ def test_postgres_client_connection_string_errors(invalid_credentials: Dict[str,
         with pytest.raises(KeyError):
             client.get_sqlalchemy_connection_string()
     else:
-        with pytest.raises(ValueError):
+        with pytest.raises(CommonError) as exc_info:
             client.get_sqlalchemy_connection_string()
+        assert str(exc_info.value).startswith(
+            "ATLAN-COMMON-400-01: Credentials parse error"
+        )
 
 
 @given(table_data=postgres_table_strategy)
