@@ -83,4 +83,4 @@ fail_under = 60
 
 [tool.uv.sources]
 # atlan-application-sdk = { path = "../application-sdk", editable = true }
-atlan-application-sdk = { git = "https://github.com/atlanhq/application-sdk", rev = "d9b4caf8f32251977dcd7d712ed5790821acf91c" }
+atlan-application-sdk = { git = "https://github.com/atlanhq/application-sdk", rev = "9846ff9e8bc34471f16aa3e060fcd4194ed9a5d1" }

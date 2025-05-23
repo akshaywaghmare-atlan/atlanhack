@@ -118,8 +118,8 @@ wheels = [
 
 [[package]]
 name = "atlan-application-sdk"
-version = "0.1.1rc5"
-source = { git = "https://github.com/atlanhq/application-sdk?rev=d9b4caf8f32251977dcd7d712ed5790821acf91c#d9b4caf8f32251977dcd7d712ed5790821acf91c" }
+version = "0.1.1rc6"
+source = { git = "https://github.com/atlanhq/application-sdk?rev=9846ff9e8bc34471f16aa3e060fcd4194ed9a5d1#9846ff9e8bc34471f16aa3e060fcd4194ed9a5d1" }
 dependencies = [
     { name = "duckdb" },
     { name = "duckdb-engine" },
@@ -185,7 +185,7 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "atlan-application-sdk", extras = ["daft", "iam-auth", "sqlalchemy", "tests", "workflows", "pandas"], git = "https://github.com/atlanhq/application-sdk?rev=d9b4caf8f32251977dcd7d712ed5790821acf91c" },
+    { name = "atlan-application-sdk", extras = ["daft", "iam-auth", "sqlalchemy", "tests", "workflows", "pandas"], git = "https://github.com/atlanhq/application-sdk?rev=9846ff9e8bc34471f16aa3e060fcd4194ed9a5d1" },
     { name = "coverage", marker = "extra == 'test'", specifier = ">=7.6.1" },
     { name = "hypothesis", marker = "extra == 'test'", specifier = ">=6.98.8" },
     { name = "isort", marker = "extra == 'dev'", specifier = ">=5.13.2" },
