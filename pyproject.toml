@@ -8,7 +8,7 @@ license = "Apache-2.0"
 readme = "README.md"
 dependencies = [
     # TODO: Add a local application-sdk dependency
-    "atlan-application-sdk[daft,iam-auth,sqlalchemy,tests,workflows,pandas]",
+    "atlan-application-sdk[daft,iam-auth,sqlalchemy,tests,workflows,pandas]==0.1.1rc6",
     "psycopg[binary]>=3.2.3",
     "jinja2>=3.1.2",
 ]
@@ -81,6 +81,6 @@ exclude_lines = [
 ]
 fail_under = 60
 
-[tool.uv.sources]
+# [tool.uv.sources]
 # atlan-application-sdk = { path = "../application-sdk", editable = true }
-atlan-application-sdk = { git = "https://github.com/atlanhq/application-sdk", rev = "d9b4caf8f32251977dcd7d712ed5790821acf91c" }
+# atlan-application-sdk = { git = "https://github.com/atlanhq/application-sdk", rev = "e9cfa7aa7c555253059f8c5b1cd01cdb276c2491" }

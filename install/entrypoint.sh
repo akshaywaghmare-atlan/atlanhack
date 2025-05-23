@@ -43,6 +43,9 @@ if [[ -z "$SUPERVISORD_PATH" ]]; then
 fi
 log "Supervisord binary found at $SUPERVISORD_PATH."
 
+log "Activating virtual environment..."
+source .venv/bin/activate
+
 # Start Supervisor to manage all processes
 log "Starting supervisord with configuration file /etc/supervisor/conf.d/supervisord.conf..."
 exec "$SUPERVISORD_PATH" -c /etc/supervisor/conf.d/supervisord.conf || error "Failed to start supervisord."
