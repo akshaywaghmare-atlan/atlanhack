@@ -96,9 +96,7 @@ SELECT
     NULL AS IS_PARTITION, -- Added for compatibility with Atlas transformer
     NULL AS NUMERIC_SCALE, -- Added for compatibility with Atlas transformer
     0 AS MAX_LENGTH, -- Added for compatibility with Atlas transformer
-    NULL AS IS_SELF_REFERENCING, -- Added for compatibility with Atlas transformer
-    NULL AS NUMERIC_PRECISION, -- Added for compatibility with Atlas transformer
-    NULL AS CHARACTER_OCTET_LENGTH -- Added for compatibility with Atlas transformer
+    NULL AS IS_SELF_REFERENCING -- Added for compatibility with Atlas transformer
 
 FROM
     pg_catalog.pg_attribute a
