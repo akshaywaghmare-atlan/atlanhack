@@ -1,7 +1,7 @@
-from application_sdk.clients.sql import BaseSQLClient
+from application_sdk.clients.sql import AsyncBaseSQLClient
 
 
-class SQLClient(BaseSQLClient):
+class SQLClient(AsyncBaseSQLClient):
     """
     This client handles connection string generation based on authentication
     type and manages database connectivity using SQLAlchemy.
