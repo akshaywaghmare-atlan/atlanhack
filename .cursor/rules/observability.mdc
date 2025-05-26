@@ -81,7 +81,7 @@ The SDK provides helpers for standardized logging integrated with Temporal workf
         # Some operation
         pass
     except Exception as e:
-        logger.error(error_code=ApiError.UNKNOWN_ERROR.code, "Operation failed", exc_info=True)
+        logger.error("Operation failed", error_code=ApiError.UNKNOWN_ERROR.code, exc_info=True)
     ```
 
 
