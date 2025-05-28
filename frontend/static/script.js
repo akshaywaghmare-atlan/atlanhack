@@ -197,11 +197,17 @@ async function performConnectionTest() {
   const host = document.getElementById("host").value;
   const port = document.getElementById("port").value;
   const database = document.getElementById("database").value;
+  const sqlalchemyUrl = document.getElementById("sqlalchemy-url").value;
+
+  let extra = { database };
+  if (sqlalchemyUrl) {
+    extra.compiled_url = `postgresql+psycopg://${sqlalchemyUrl}`;
+  }
 
   let payload = {
     host,
     port,
-    extra: { database },
+    extra,
     authType: currentAuthType,
   };
 
@@ -308,12 +314,18 @@ async function fetchMetadata() {
     const host = document.getElementById("host").value;
     const port = document.getElementById("port").value;
     const database = document.getElementById("database").value;
+    const sqlalchemyUrl = document.getElementById("sqlalchemy-url").value;
+
+    let extra = { database };
+    if (sqlalchemyUrl) {
+      extra.compiled_url = `postgresql+psycopg://${sqlalchemyUrl}`;
+    }
 
     let payload = {
       host,
       port,
       database,
-      extra: { database },
+      extra,
       authType: currentAuthType,
       type: "all",
     };
@@ -676,11 +688,17 @@ async function runPreflightChecks() {
     const host = document.getElementById("host").value;
     const port = document.getElementById("port").value;
     const database = document.getElementById("database").value;
+    const sqlalchemyUrl = document.getElementById("sqlalchemy-url").value;
+
+    let extra = { database };
+    if (sqlalchemyUrl) {
+      extra.compiled_url = `postgresql+psycopg://${sqlalchemyUrl}`;
+    }
 
     let credentials = {
       host,
       port,
-      extra: { database },
+      extra,
       authType: currentAuthType,
       type: "all",
     };
@@ -808,11 +826,17 @@ async function handleRunWorkflow() {
       const host = document.getElementById("host").value;
       const port = document.getElementById("port").value;
       const database = document.getElementById("database").value;
+      const sqlalchemyUrl = document.getElementById("sqlalchemy-url").value;
+
+      let extra = { database };
+      if (sqlalchemyUrl) {
+        extra.compiled_url = `postgresql+psycopg://${sqlalchemyUrl}`;
+      }
 
       let credentials = {
         host,
         port,
-        extra: { database },
+        extra,
         authType: currentAuthType,
         type: "all",
       };

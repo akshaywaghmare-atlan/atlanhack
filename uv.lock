@@ -118,7 +118,7 @@ wheels = [
 
 [[package]]
 name = "atlan-application-sdk"
-version = "0.1.1rc6"
+version = "0.1.1rc8"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "duckdb" },
@@ -132,9 +132,9 @@ dependencies = [
     { name = "python-dotenv" },
     { name = "uvloop" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/17/e8/1e295943320bfa90aa51fdd2c3881d6c11c2bdbfffbb827e03ac11678358/atlan_application_sdk-0.1.1rc6.tar.gz", hash = "sha256:773a2be573c3a8ac8d886a1a8a3e1faeed2398ad26b904d73ee4e1c41155fc68", size = 853923, upload-time = "2025-05-22T08:19:02.609Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5f/a0/5fe3de747af6cb7ccaadd84ff40c03e2b8aad1f9cd956900272cb1ba1cd8/atlan_application_sdk-0.1.1rc8.tar.gz", hash = "sha256:94cdf5f680c3874eb92a3dcf9c1cb04459abe1787625ce560b4115facb5d4797", size = 853817, upload-time = "2025-05-28T05:57:50.705Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4c/86/b3efecd095c54ff5516de3bc1c6319158681bc5d60486232b7767a36b855/atlan_application_sdk-0.1.1rc6-py3-none-any.whl", hash = "sha256:509a2dc832dc340769138a1bf7ee7d54eaf40e2bf5bb6535f5308817b9e2165a", size = 180205, upload-time = "2025-05-22T08:19:01.29Z" },
+    { url = "https://files.pythonhosted.org/packages/0a/a8/3b53550c84d9a090d4327e3c041af62ef1cd469a613af30a09a6c18dbdf9/atlan_application_sdk-0.1.1rc8-py3-none-any.whl", hash = "sha256:4a3216fd178ac8d41b5ee2aa8ca6176fd8a7707dc8adaf48a30d4204c7b146bf", size = 179930, upload-time = "2025-05-28T05:57:49.226Z" },
 ]
 
 [package.optional-dependencies]
@@ -189,7 +189,7 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "atlan-application-sdk", extras = ["daft", "iam-auth", "sqlalchemy", "tests", "workflows", "pandas"], specifier = "==0.1.1rc6" },
+    { name = "atlan-application-sdk", extras = ["daft", "iam-auth", "sqlalchemy", "tests", "workflows", "pandas"], specifier = "==0.1.1rc8" },
     { name = "coverage", marker = "extra == 'test'", specifier = ">=7.6.1" },
     { name = "hypothesis", marker = "extra == 'test'", specifier = ">=6.98.8" },
     { name = "isort", marker = "extra == 'dev'", specifier = ">=5.13.2" },
