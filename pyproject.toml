@@ -8,7 +8,7 @@ license = "Apache-2.0"
 readme = "README.md"
 dependencies = [
     # TODO: Add a local application-sdk dependency
-    "atlan-application-sdk[daft,iam-auth,sqlalchemy,tests,workflows,pandas]==0.1.1rc8",
+    "atlan-application-sdk[daft,iam-auth,sqlalchemy,tests,workflows,pandas]==0.1.1rc10",
     "psycopg[binary]>=3.2.3",
     "jinja2>=3.1.2",
 ]
@@ -31,7 +31,7 @@ test = [
 ]
 
 [tool.poe.tasks]
-download-components = "python scripts/download_components.py --ref v0.1.1rc6"
+download-components = "python scripts/download_components.py --ref v0.1.1rc10"
 
 # Dapr and Temporal service tasks
 start-dapr = "dapr run --enable-api-logging --log-level debug --app-id app --app-port 3000 --dapr-http-port 3500 --dapr-grpc-port 50001 --dapr-http-max-request-size 1024 --resources-path components"
