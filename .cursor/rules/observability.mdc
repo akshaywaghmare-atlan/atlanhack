@@ -3,11 +3,6 @@ description:
 globs:
 alwaysApply: false
 ---
----
-description:
-globs:
-alwaysApply: false
----
 # Observability Guidelines for Atlan Apps
 
 ## Overview
