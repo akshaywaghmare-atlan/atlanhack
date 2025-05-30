@@ -202,4 +202,3 @@ While the SDK doesn't provide a dedicated metrics component, follow standard pra
 - correct : `logging.error("Failed to process request", exc_info=True)`
 - correct : `logging.exception("Unexpected error occurred")`
 - wrong : `logging.error(str(e))` — Missing stack trace
-

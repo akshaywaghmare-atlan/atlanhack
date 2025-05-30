@@ -4,11 +4,22 @@ from application_sdk.application.metadata_extraction.sql import (
     BaseSQLMetadataExtractionApplication,
 )
 from application_sdk.constants import APPLICATION_NAME
+from application_sdk.observability.decorators.observability_decorator import (
+    observability,
+)
+from application_sdk.observability.logger_adaptor import get_logger
+from application_sdk.observability.metrics_adaptor import get_metrics
+from application_sdk.observability.traces_adaptor import get_traces
 from application_sdk.transformers.query import QueryBasedTransformer
 
 from app.clients import SQLClient
 
+logger = get_logger(__name__)
+metrics = get_metrics()
+traces = get_traces()
 
+
+@observability(logger=logger, metrics=metrics, traces=traces)
 async def main():
     # Initialize the application
     application = BaseSQLMetadataExtractionApplication(
