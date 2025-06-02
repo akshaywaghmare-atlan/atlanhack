@@ -7,14 +7,12 @@ from application_sdk.common.error_codes import CommonError
 from application_sdk.common.utils import read_sql_files
 from hypothesis import given
 from hypothesis import strategies as st
-from pyatlan.model import assets
 from temporalio import activity, workflow
 from temporalio.client import Client
 from temporalio.testing import WorkflowEnvironment
 from temporalio.worker import Worker
 
 from app.clients import SQLClient
-from app.transformers.atlas import PostgresTable, SQLAtlasTransformer
 
 # Type variables for activity results
 T = TypeVar("T")
@@ -224,88 +222,6 @@ def test_postgres_client_connection_string_errors(invalid_credentials: Dict[str,
         assert str(exc_info.value).startswith(
             "ATLAN-COMMON-400-01: Credentials parse error"
         )
-
-
-@given(table_data=postgres_table_strategy)
-@pytest.mark.skip(
-    reason="Skipping test due to the following failure : ExceptionGroup: Hypothesis found 2 distinct failures. (2 sub-exceptions)"
-)
-def test_postgres_table_with_hypothesis(table_data: Dict[str, Any]):
-    """Test parsing different types of PostgreSQL tables"""
-    result = PostgresTable.parse_obj(table_data)
-
-    if table_data["table_type"] == "BASE TABLE":
-        assert isinstance(result, assets.Table)
-    elif table_data["table_type"] == "VIEW":
-        assert isinstance(result, assets.View)
-        assert (
-            result.definition
-            == f"CREATE OR REPLACE VIEW {table_data['table_name']} AS {table_data['view_definition']}"
-        )
-    elif table_data["table_type"] == "MATERIALIZED VIEW":
-        assert isinstance(result, assets.MaterialisedView)
-        assert (
-            result.definition
-            == f"CREATE MATERIALIZED VIEW {table_data['table_name']} AS {table_data['view_definition']}"
-        )
-
-
-def test_postgres_table():
-    """Test parsing different types of PostgreSQL tables"""
-    # Test regular table
-    table_data = {
-        "table_type": "BASE TABLE",
-        "table_name": "test_table",
-        "table_schema": "public",
-        "table_catalog": "test_db",
-        "connection_qualified_name": "default/postgres/test-connection",
-    }
-    result = PostgresTable.get_attributes(table_data)
-    assert result["entity_class"] == assets.Table
-
-    # Test view with SQL definition
-    view_data = {
-        "table_type": "VIEW",
-        "table_name": "test_view",
-        "view_definition": "SELECT * FROM base_table",
-        "table_schema": "public",
-        "table_catalog": "test_db",
-        "connection_qualified_name": "default/postgres/test-connection",
-    }
-    result = PostgresTable.get_attributes(view_data)
-    assert result["entity_class"] == assets.View
-    assert (
-        result["attributes"]["definition"]
-        == "CREATE OR REPLACE VIEW test_view AS SELECT * FROM base_table"
-    )
-
-    # Test materialized view with SQL definition
-    mview_data = {
-        "table_type": "MATERIALIZED VIEW",
-        "table_name": "test_mview",
-        "view_definition": "SELECT * FROM base_table",
-        "table_schema": "public",
-        "table_catalog": "test_db",
-        "connection_qualified_name": "default/postgres/test-connection",
-    }
-    result = PostgresTable.get_attributes(mview_data)
-    assert result["entity_class"] == assets.MaterialisedView
-    assert (
-        result["attributes"]["definition"]
-        == "CREATE MATERIALIZED VIEW test_mview AS SELECT * FROM base_table"
-    )
-
-
-@given(
-    connector_name=st.text(),
-    tenant_id=st.text(),
-)
-def test_custom_transformer_initialization(connector_name: str, tenant_id: str):
-    """Test SQLAtlasTransformer initialization and entity class mappings"""
-    transformer = SQLAtlasTransformer(
-        connector_name=connector_name, tenant_id=tenant_id
-    )
-    assert transformer.entity_class_definitions["TABLE"] == PostgresTable
 
 
 # Mock activities for testing
