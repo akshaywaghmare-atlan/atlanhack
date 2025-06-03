@@ -44,3 +44,5 @@ gh_secret
 
 # env
 .env.dev
+
+components
