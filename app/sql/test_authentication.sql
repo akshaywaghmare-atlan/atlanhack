@@ -9,4 +9,4 @@
  *
  * Returns: Single row with value 1 on success
  */
-SELECT 1;
+SELECT 1

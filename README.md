@@ -1,38 +1,18 @@
-<p align="center">
-  <img src="./docs/images/postgres_logo.svg" alt="PostgreSQL Logo" width="200" height="auto">
-</p>
+# Atlan Trino App
 
-# PostgreSQL Application
+This application is built using the Atlan Application SDK to extract metadata from Trino databases.
 
-[![Checked with pyright](https://microsoft.github.io/pyright/img/pyright_badge.svg)](https://microsoft.github.io/pyright/)
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![Tests](https://github.com/atlanhq/atlan-postgres-app/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/atlanhq/atlan-postgres-app/actions/workflows/unit-tests.yml)
+## Prerequisites
 
-PostgreSQL application is designed to interact with a PostgreSQL database and perform actions on it. The application is built using the [Atlan Python Application SDK](https://github.com/atlanhq/application-sdk) and is intended to run on the Atlan Platform.
+1. Python 3.11.10 or higher
+2. uv 0.7.3 or higher
 
-This application has two components:
+## Setup
 
-- FastAPI server that exposes REST API to interact with the application.
-- A workflow that runs on the Atlan platform that extracts metadata from a Postgres database, transforms it and pushes it to an object store.
-
-https://github.com/user-attachments/assets/0ce63557-7c62-4491-96b9-1134a1ceadd6
-
-## Table of contents
-
-- [Usage](#usage)
-- [Features](#features)
-- [Extending this application to other SQL sources](#extending-this-application-to-other-sql-sources)
-- [Development](#development)
-- [Architecture](./docs/ARCHITECTURE.md)
-
-## Usage
-
-### Setting up your environment
-
-1. Clone the repository:
+1. Clone this repository:
    ```bash
-   git clone https://github.com/atlanhq/atlan-postgres-app.git
-   cd atlan-postgres-app
+   git clone <repository-url>
+   cd atlan-trino-app
    ```
 
 2. Follow the setup instructions for your platform:
@@ -69,30 +49,20 @@ https://github.com/user-attachments/assets/0ce63557-7c62-4491-96b9-1134a1ceadd6
 
 ## Features
 
-1. Extract metadata from a Postgres database, transform and push to an object store
+1. Extract metadata from a Trino database, transform and push to an object store
 2. FastAPI-based REST API interface
 3. OpenTelemetry integration for metrics, traces and logs
-4. IAM Authentication support
 
+## Configuration
 
-### Note on IAM Authentication
+The application requires the following environment variables:
 
-This application generates new IAM authentication tokens on-demand for each connection string creation, rather than using SQLAlchemy's refresh token strategy. This approach is chosen because:
-
-1. IAM tokens expire if no connection is created within 15 minutes of token creation
-2. Our implementation creates the engine and connection immediately after token generation
-3. Connection strings are generated on-demand, ensuring fresh tokens for each new connection
+- `TRINO_HOST`: Trino server host (default: localhost)
+- `TRINO_PORT`: Trino server port (default: 8081)
+- `TRINO_USER`: Trino username (default: admin)
+- `TRINO_CATALOG`: Trino catalog name (default: system)
+- `TRINO_SCHEMA`: Trino schema name (default: information_schema)
 
 ## Extending this application to other SQL sources
 
 1. Make sure you add the required SQLAlchemy dialect using uv. For ex. to add Snowflake dialect, `uv add snowflake-sqlalchemy`
-2. Update SQL queries in [`sql`](app/sql) directory
-3. Update the DB_CONFIG in the [`app/clients`](app/clients) directory
-4. Run the application using the development guide
-5. Update the tests in the [`tests`](tests) directory
-
-## Development
-
-- [Development and Quickstart Guide](./docs/DEVELOPMENT.md)
-- This application is just an SQL application implementation of Atlan's [Python Application SDK](https://github.com/atlanhq/application-sdk)
-  - Please refer to the [examples](https://github.com/atlanhq/application-sdk/tree/main/examples) in the SDK to see how to use the SDK to build different applications on the Atlan Platform.

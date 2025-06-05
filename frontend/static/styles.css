@@ -1,10 +1,15 @@
 :root {
-    --primary-color: #293c54;
+    --primary-color: #DD00A1; /* Trino's primary pink color */
     --primary-hover: #36465a;  /* A slightly darker shade for hover states */
-    --secondary-color: #6B7280;
-    --border-color: #E5E7EB;
-    --background-color: #F9FAFB;
-    --success-color: #10B981;
+    --secondary-color: #0D0A0B; /* Trino's dark color */
+    --accent-color: #00B4E5; /* Trino's blue accent */
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --error-color: #dc3545;
+    --text-color: #333;
+    --border-color: #ddd;
+    --background-color: #f8f9fa;
+    --white: #fff;
 }
 
 * {
@@ -27,11 +32,19 @@ body {
 }
 
 .header {
+    background: var(--secondary-color);
+    color: var(--white);
+    padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
-    padding: 0.5rem 0;
+    border-bottom: 4px solid var(--primary-color);
+}
+
+.logo {
+    width: 50px;
+    height: auto;
+    margin-right: 1rem;
 }
 
 .logo-container {
@@ -165,22 +178,22 @@ input[type="password"] {
 
 .btn-primary {
     background-color: var(--primary-color);
-    color: white;
+    color: var(--white);
     border: none;
 }
 
 .btn-primary:hover {
-    background-color: var(--primary-hover);
+    background-color: #BB0089; /* Darker shade of Trino pink */
 }
 
 .btn-secondary {
-    background-color: white;
-    border: 1px solid var(--border-color);
-    color: var(--secondary-color);
+    background-color: var(--accent-color);
+    color: var(--white);
+    border: none;
 }
 
 .btn-secondary:hover {
-    background-color: var(--background-color);
+    background-color: #0095BD; /* Darker shade of Trino blue */
 }
 
 .btn-outline {

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PostgreSQL App</title>
+    <title>Trino App</title>
     <link
       rel="icon"
       type="image/png"
@@ -43,17 +43,17 @@
       <header class="header">
         <div class="logo-container">
           <img
-            src="https://www.postgresql.org/media/img/about/press/elephant.png"
-            alt="PostgreSQL Logo"
+            src="https://trino.io/assets/trino.png"
+            alt="Trino Logo"
             class="logo"
             width="100"
             height="100"
           />
-          <h1>PostgreSQL App</h1>
+          <h1>Trino App</h1>
         </div>
         <div class="doc-link">
           <a
-            href="https://ask.atlan.com/hc/en-us/articles/6329557275793-How-to-crawl-PostgreSQL"
+            href="https://trino.io/docs/current/"
             target="_blank"
             class="doc-link-button"
           >
@@ -111,11 +111,12 @@
             <div class="form-group">
               <label>SQLAlchemy URL</label>
               <div class="input-with-prefix">
-                <span class="prefix">postgresql+psycopg://</span>
+                <span class="prefix">trino://</span>
                 <input
                   type="text"
                   id="sqlalchemy-url"
-                  placeholder="username:password@hostname:port/database?sslmode=require&max_retries=2"
+                  placeholder="username:password@hostname:port/catalog/schema"
+                  value="admin@localhost:8081/system/information_schema"
                 />
               </div>
             </div>
@@ -126,12 +127,13 @@
                 <input
                   type="text"
                   id="host"
-                  placeholder="[database-identifier].[unique-identifier].[aws-region].rds"
+                  placeholder="trino.example.com"
+                  value="localhost"
                 />
               </div>
               <div class="input-wrapper" style="width: 100px">
                 <label>Port *</label>
-                <input type="text" id="port" value="5432" />
+                <input type="text" id="port" value="8081" />
               </div>
             </div>
 
@@ -140,12 +142,6 @@
               <div class="button-group">
                 <button class="btn btn-primary" data-auth-type="basic">
                   Basic
-                </button>
-                <button class="btn btn-secondary" data-auth-type="iam_user">
-                  IAM User
-                </button>
-                <button class="btn btn-secondary" data-auth-type="iam_role">
-                  IAM Role
                 </button>
               </div>
             </div>
@@ -156,82 +152,39 @@
                 <div class="form-group horizontal">
                   <div class="input-wrapper flex-half">
                     <label>Username *</label>
-                    <input type="text" id="username" value="postgres" />
+                    <input type="text" id="username" value="admin" />
                   </div>
                   <div class="input-wrapper flex-half">
                     <label>Password *</label>
                     <input
                       type="password"
                       id="password"
-                      placeholder="Password"
+                      value=""
+                      placeholder="Leave empty for local Trino"
                     />
                   </div>
-                </div>
-              </div>
-
-              <!-- IAM User Auth Section -->
-              <div id="iam_user-auth" class="auth-section">
-                <div class="form-group horizontal">
-                  <div class="input-wrapper flex-half">
-                    <label>Access Key ID *</label>
-                    <input
-                      type="text"
-                      id="access-key-id"
-                      placeholder="Access Key ID"
-                    />
-                  </div>
-                  <div class="input-wrapper flex-half">
-                    <label>Secret Access Key *</label>
-                    <input
-                      type="password"
-                      id="secret-access-key"
-                      placeholder="Secret Access Key"
-                    />
-                  </div>
-                  <div class="input-wrapper flex-half">
-                    <label>Region *</label>
-                    <input type="text" id="region" value="ap-south-1" />
-                  </div>
-                </div>
-
-                <div class="input-wrapper flex-half"></div>
-                <label>Username *</label>
-                <input type="text" id="username" value="postgres" />
-              </div>
-              <!-- IAM Role Auth Section -->
-              <div id="iam_role-auth" class="auth-section">
-                <div class="form-group">
-                  <div class="input-wrapper flex-half">
-                    <label>Role ARN *</label>
-                    <input
-                      type="text"
-                      id="role-arn"
-                      placeholder="arn:aws:iam::123456789012:role/example-role"
-                    />
-                  </div>
-                  <div class="horizontal">
-                    <div class="input-wrapper flex-half">
-                      <label>External ID *</label>
-                      <input
-                        type="text"
-                        id="external-id"
-                        placeholder="External ID"
-                      />
-                    </div>
-                  </div>
-                  <label>Username *</label>
-                  <input type="text" id="username" value="postgres" />
-                </div>
-                <div class="input-wrapper flex-half">
-                  <label>Region *</label>
-                  <input type="text" id="region" value="ap-south-1" />
                 </div>
               </div>
             </div>
 
             <div class="form-group">
-              <label>Database *</label>
-              <input type="text" id="database" value="postgres" />
+              <label>Catalog *</label>
+              <input 
+                type="text" 
+                id="catalog" 
+                placeholder="system" 
+                value="system"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Schema *</label>
+              <input 
+                type="text" 
+                id="schema" 
+                placeholder="information_schema" 
+                value="information_schema"
+              />
             </div>
 
             <button
@@ -294,7 +247,7 @@
                     class="dropdown-header"
                     onclick="toggleDropdown('excludeMetadata')"
                   >
-                    <span>Select databases and schemas</span>
+                    <span>Select catalogs and schemas</span>
                     <span class="dropdown-arrow">▼</span>
                   </div>
                   <div class="dropdown-content">
@@ -309,7 +262,7 @@
                     class="dropdown-header"
                     onclick="toggleDropdown('includeMetadata')"
                   >
-                    <span>Select databases and schemas</span>
+                    <span>Select catalogs and schemas</span>
                     <span class="dropdown-arrow">▼</span>
                   </div>
                   <div class="dropdown-content">

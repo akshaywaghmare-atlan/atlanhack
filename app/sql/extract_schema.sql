@@ -1,40 +1,28 @@
 /*
  * File: extract_schema.sql
- * Purpose: Extracts schema metadata from PostgreSQL database
- *
- * Parameters:
- *   {normalized_exclude_regex} - Regex pattern for schemas to exclude
- *   {normalized_include_regex} - Regex pattern for schemas to include
+ * Purpose: Extracts schema metadata from Trino catalog
  *
  * Returns:
- *   - Schema metadata including name, owner, and table/view counts
- *   - Includes table and view counts per schema
+ *   - Schema metadata including name and table/view counts
  *
  * Notes:
- *   - Excludes system schemas (pg_* and information_schema)
- *   - Results are filtered by include/exclude regex patterns
  *   - Ordered by schema name
  */
+WITH table_counts AS (
+    SELECT 
+        table_schema,
+        COUNT(CASE WHEN table_type = 'BASE TABLE' THEN 1 END) as table_count,
+        COUNT(CASE WHEN table_type = 'VIEW' THEN 1 END) as views_count
+    FROM information_schema.tables
+    GROUP BY table_schema
+)
 SELECT
-    current_database() AS CATALOG_NAME,
-    N.nspname AS SCHEMA_NAME,
-    S.schema_owner,
-    table_counts.table_count,
-    table_counts.views_count
-FROM pg_catalog.pg_namespace N
-LEFT JOIN
-	(
-	Select
-		C.relnamespace,
-	 	SUM(CASE WHEN C.relkind IN ('r', 'p', 'f') THEN 1 ELSE 0 END) as table_count,
-		SUM(CASE WHEN C.relkind IN ('m', 'v') THEN 1 ELSE 0 END) as views_count
-	FROM pg_class C
-	GROUP BY C.relnamespace
-) as table_counts
-ON (table_counts.relnamespace = N.oid)
-LEFT JOIN information_schema.schemata S ON S.schema_name = N.nspname
-WHERE
-    N.nspname NOT LIKE 'pg$_%' ESCAPE '$' AND N.nspname != 'information_schema'
-    AND concat(current_database(), concat('.', N.nspname)) !~ '{normalized_exclude_regex}'
-    AND concat(current_database(), concat('.', N.nspname)) ~ '{normalized_include_regex}'
-ORDER BY N.nspname;
+    CURRENT_CATALOG AS CATALOG_NAME,
+    s.schema_name AS SCHEMA_NAME,
+    NULL as schema_owner,
+    COALESCE(tc.table_count, 0) as table_count,
+    COALESCE(tc.views_count, 0) as views_count
+FROM information_schema.schemata s
+LEFT JOIN table_counts tc ON tc.table_schema = s.schema_name
+WHERE s.schema_name != 'information_schema'
+ORDER BY s.schema_name;

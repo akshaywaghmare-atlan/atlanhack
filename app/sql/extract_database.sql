@@ -1,14 +1,16 @@
 /*
  * File: extract_database.sql
- * Purpose: Extracts basic database metadata from the current PostgreSQL database
+ * Purpose: Extracts basic database metadata from the current Trino catalog
  *
- * This query retrieves fundamental database information including database name
- * and all associated metadata from the pg_database system catalog.
+ * This query retrieves fundamental catalog information from Trino's
+ * system tables.
  *
  * Returns:
- *   - Database metadata including name and system properties
- *
- * Notes:
- *   - Scoped to the current database (current_database())
+ *   - Catalog metadata including name and schema count
  */
-SELECT d.*, d.datname as database_name, 0 as schema_count FROM pg_database d WHERE datname = current_database();
+SELECT 
+    catalog_name,
+    catalog_name as database_name,
+    (SELECT COUNT(*) FROM information_schema.schemata) as schema_count
+FROM information_schema.catalogs 
+WHERE catalog_name = CURRENT_CATALOG;

@@ -2,6 +2,54 @@ let currentPage = 1;
 const formData = {};
 let currentAuthType = "basic";
 
+// Helper functions for showing success/error messages
+function showSuccess(message) {
+  const testButton = document.querySelector(".test-connection");
+  const errorElement = document.getElementById("connectionError");
+  const nextButton = document.getElementById("nextButton");
+
+  // Update button state
+  testButton.innerHTML = `Connection Successful <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="margin-left: 8px">
+    <path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.49 4.49 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+  </svg>`;
+  testButton.style.backgroundColor = "var(--success-color)";
+  testButton.style.color = "white";
+  testButton.style.borderColor = "var(--success-color)";
+  testButton.classList.add("success");
+  
+  // Enable next button
+  nextButton.disabled = false;
+  
+  // Hide error message if any
+  errorElement.classList.remove("visible");
+  
+  // Store authentication state
+  sessionStorage.setItem("authenticationComplete", "true");
+}
+
+function showError(message) {
+  const testButton = document.querySelector(".test-connection");
+  const errorElement = document.getElementById("connectionError");
+  const nextButton = document.getElementById("nextButton");
+
+  // Show error message
+  errorElement.textContent = message || "Connection failed. Please check your credentials and try again.";
+  errorElement.classList.add("visible");
+  
+  // Reset button state
+  testButton.style.backgroundColor = "";
+  testButton.style.color = "";
+  testButton.style.borderColor = "";
+  testButton.textContent = "Test Connection";
+  testButton.classList.remove("success");
+  
+  // Disable next button
+  nextButton.disabled = true;
+  
+  // Remove authentication state
+  sessionStorage.removeItem("authenticationComplete");
+}
+
 function updateFormData() {
   const activeSection = document.querySelector(".auth-section.active");
   if (!activeSection) return;
@@ -138,6 +186,55 @@ function previousPage() {
   }
 }
 
+function getConnectionParams() {
+  const host = document.getElementById('host').value;
+  const port = document.getElementById('port').value;
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  const catalog = document.getElementById('catalog').value;
+  const schema = document.getElementById('schema').value;
+
+  return {
+    host,
+    port,
+    username,
+    password,
+    catalog,
+    schema,
+    protocol: 'https',
+    verify: true,
+    source: 'atlan',
+    isolation_level: 'AUTOCOMMIT'
+  };
+}
+
+function validateConnectionParams(params) {
+  const required = ['host', 'port', 'username', 'password', 'catalog', 'schema'];
+  const missing = required.filter(param => !params[param]);
+  
+  if (missing.length > 0) {
+    throw new Error(`Missing required parameters: ${missing.join(', ')}`);
+  }
+
+  // Validate port number
+  if (isNaN(params.port) || params.port < 1 || params.port > 65535) {
+    throw new Error('Port must be a number between 1 and 65535');
+  }
+}
+
+function buildConnectionString(params) {
+  const baseUrl = `trino://${params.username}:${params.password}@${params.host}:${params.port}`;
+  const path = `/${params.catalog}/${params.schema}`;
+  const queryParams = new URLSearchParams({
+    protocol: params.protocol,
+    verify: params.verify,
+    source: params.source,
+    isolation_level: params.isolation_level
+  });
+  
+  return `${baseUrl}${path}?${queryParams}`;
+}
+
 async function testConnection() {
   const testButton = document.querySelector(".test-connection");
   const errorElement = document.getElementById("connectionError");
@@ -188,7 +285,6 @@ async function testConnection() {
   }
 }
 
-// Add a helper function to perform the actual connection test
 async function performConnectionTest() {
   const activeSection = document.querySelector(".auth-section.active");
   if (!activeSection) return false;
@@ -196,47 +292,27 @@ async function performConnectionTest() {
   // Get common values
   const host = document.getElementById("host").value;
   const port = document.getElementById("port").value;
-  const database = document.getElementById("database").value;
-  const sqlalchemyUrl = document.getElementById("sqlalchemy-url").value;
-
-  let extra = { database };
-  if (sqlalchemyUrl) {
-    extra.compiled_url = `postgresql+psycopg://${sqlalchemyUrl}`;
-  }
+  const catalog = document.getElementById("catalog").value;
+  const schema = document.getElementById("schema").value;
+  const username = activeSection.querySelector("#username").value;
+  const password = document.getElementById("password").value;
 
   let payload = {
     host,
     port,
-    extra,
-    authType: currentAuthType,
+    extra: {
+      catalog,
+      schema,
+      protocol: "http",
+      verify: "true",
+      source: "atlan",
+      isolation_level: "AUTOCOMMIT"
+    },
+    authType: "basic",
+    type: "all",
+    username,
+    password
   };
-
-  switch (currentAuthType) {
-    case "basic":
-      // Get username from the active section instead of hardcoding
-      const basicUsername = activeSection.querySelector("#username").value;
-      payload.username = basicUsername;
-      payload.password = document.getElementById("password").value;
-      break;
-
-    case "iam_user":
-      payload.username = document.getElementById("access-key-id").value;
-      payload.password = document.getElementById("secret-access-key").value;
-      // Get username from the active section for IAM user
-      payload.extra.username = activeSection.querySelector("#username").value;
-      payload.region = document.getElementById("region").value;
-      break;
-
-    case "iam_role":
-      // Get username from the active section for IAM role
-      const iamRoleUsername = activeSection.querySelector("#username").value;
-      payload.username = iamRoleUsername;
-      payload.extra.aws_role_arn = document.getElementById("role-arn").value;
-      payload.extra.aws_external_id =
-        document.getElementById("external-id").value;
-      payload.region = document.getElementById("region").value;
-      break;
-  }
 
   const response = await fetch(`/workflows/v1/auth`, {
     method: "POST",
@@ -248,7 +324,7 @@ async function performConnectionTest() {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.message || "Connection failed");
+    throw new Error(data.message || data.error || "Connection failed");
   }
 
   return data.success;
@@ -313,44 +389,28 @@ async function fetchMetadata() {
     // Get common values
     const host = document.getElementById("host").value;
     const port = document.getElementById("port").value;
-    const database = document.getElementById("database").value;
-    const sqlalchemyUrl = document.getElementById("sqlalchemy-url").value;
-
-    let extra = { database };
-    if (sqlalchemyUrl) {
-      extra.compiled_url = `postgresql+psycopg://${sqlalchemyUrl}`;
-    }
+    const catalog = document.getElementById("catalog").value;
+    const schema = document.getElementById("schema").value;
+    const username = activeSection.querySelector("#username").value;
+    const password = document.getElementById("password").value;
 
     let payload = {
       host,
       port,
-      database,
-      extra,
-      authType: currentAuthType,
+      database: catalog,
+      extra: {
+        catalog,
+        schema,
+        protocol: "http",
+        verify: "true",
+        source: "atlan",
+        isolation_level: "AUTOCOMMIT"
+      },
+      authType: "basic",
       type: "all",
+      username,
+      password
     };
-
-    switch (currentAuthType) {
-      case "basic":
-        payload.username = activeSection.querySelector("#username").value;
-        payload.password = document.getElementById("password").value;
-        break;
-
-      case "iam_user":
-        payload.username = document.getElementById("access-key-id").value;
-        payload.password = document.getElementById("secret-access-key").value;
-        payload.extra.username = activeSection.querySelector("#username").value;
-        payload.region = document.getElementById("region").value;
-        break;
-
-      case "iam_role":
-        payload.username = activeSection.querySelector("#username").value;
-        payload.extra.aws_role_arn = document.getElementById("role-arn").value;
-        payload.extra.aws_external_id =
-          document.getElementById("external-id").value;
-        payload.region = document.getElementById("region").value;
-        break;
-    }
 
     const response = await fetch(`/workflows/v1/metadata`, {
       method: "POST",
@@ -368,8 +428,7 @@ async function fetchMetadata() {
     return processMetadataResponse(data.data);
   } catch (error) {
     console.error("Error fetching metadata:", error);
-    // You might want to show an error message to the user
-    return new Map(); // Return empty map in case of error
+    return new Map();
   }
 }
 
@@ -665,76 +724,49 @@ async function runPreflightChecks() {
   checkButton.disabled = true;
   checkButton.textContent = "Checking...";
 
-  // Get or create the results container
   let resultsContainer = document.querySelector(".preflight-content");
   if (!resultsContainer) {
     resultsContainer = document.createElement("div");
     resultsContainer.className = "preflight-content";
-    // Insert after the header section
     const preflightSection = document.querySelector(".preflight-section");
     preflightSection.appendChild(resultsContainer);
   }
 
-  // Clear previous results
   resultsContainer.innerHTML = "";
 
   try {
     const activeSection = document.querySelector(".auth-section.active");
     if (!activeSection) return false;
 
-    const filters = formatFilters(metadataOptions);
-
-    // Get common values
     const host = document.getElementById("host").value;
     const port = document.getElementById("port").value;
-    const database = document.getElementById("database").value;
-    const sqlalchemyUrl = document.getElementById("sqlalchemy-url").value;
-
-    let extra = { database };
-    if (sqlalchemyUrl) {
-      extra.compiled_url = `postgresql+psycopg://${sqlalchemyUrl}`;
-    }
-
-    let credentials = {
-      host,
-      port,
-      extra,
-      authType: currentAuthType,
-      type: "all",
-    };
-
-    switch (currentAuthType) {
-      case "basic":
-        credentials.username = activeSection.querySelector("#username").value;
-        credentials.password = document.getElementById("password").value;
-        break;
-
-      case "iam_user":
-        credentials.username = document.getElementById("access-key-id").value;
-        credentials.password =
-          document.getElementById("secret-access-key").value;
-        credentials.extra.username =
-          activeSection.querySelector("#username").value;
-        credentials.region = document.getElementById("region").value;
-        break;
-
-      case "iam_role":
-        credentials.username = activeSection.querySelector("#username").value;
-        credentials.extra.aws_role_arn =
-          document.getElementById("role-arn").value;
-        credentials.extra.aws_external_id =
-          document.getElementById("external-id").value;
-        credentials.region = document.getElementById("region").value;
-        break;
-    }
+    const catalog = document.getElementById("catalog").value;
+    const schema = document.getElementById("schema").value;
+    const username = activeSection.querySelector("#username").value;
+    const password = document.getElementById("password").value;
 
     const payload = {
-      credentials,
-      metadata: {
-        ...filters,
-        "temp-table-regex":
-          document.getElementById("temp-table-regex").value || "",
+      credentials: {
+        host,
+        port,
+        extra: {
+          catalog,
+          schema,
+          protocol: "http",
+          verify: "true",
+          source: "atlan",
+          isolation_level: "AUTOCOMMIT"
+        },
+        authType: "basic",
+        type: "all",
+        username,
+        password
       },
+      metadata: {
+        "include-filter": "{}",
+        "exclude-filter": "{}",
+        "temp-table-regex": document.getElementById("temp-table-regex").value || ""
+      }
     };
 
     const response = await fetch(`/workflows/v1/check`, {
@@ -750,8 +782,6 @@ async function runPreflightChecks() {
     }
 
     const responseJson = await response.json();
-
-    // Create and append check results in sequence
     Object.entries(responseJson.data).forEach(([checkType, result]) => {
       const resultDiv = document.createElement("div");
       resultDiv.className = "check-result";
@@ -761,19 +791,19 @@ async function runPreflightChecks() {
 
       if (result.success) {
         statusElement.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
-                    </svg>
-                    <span>${result.successMessage}</span>
-                `;
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+          </svg>
+          <span>${result.successMessage}</span>
+        `;
         statusElement.classList.add("success");
       } else {
         statusElement.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd" />
-                    </svg>
-                    <span>${result.failureMessage || "Check failed"}</span>
-                `;
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd" />
+          </svg>
+          <span>${result.failureMessage || "Check failed"}</span>
+        `;
         statusElement.classList.add("error");
       }
 
@@ -785,11 +815,11 @@ async function runPreflightChecks() {
     const errorDiv = document.createElement("div");
     errorDiv.className = "check-status error";
     errorDiv.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd" />
-            </svg>
-            <span>Failed to perform check</span>
-        `;
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd" />
+      </svg>
+      <span>Failed to perform check</span>
+    `;
     resultsContainer.appendChild(errorDiv);
   } finally {
     checkButton.disabled = false;
@@ -822,73 +852,47 @@ async function handleRunWorkflow() {
       const activeSection = document.querySelector(".auth-section.active");
       if (!activeSection) return false;
 
-      // Get common values
       const host = document.getElementById("host").value;
       const port = document.getElementById("port").value;
-      const database = document.getElementById("database").value;
-      const sqlalchemyUrl = document.getElementById("sqlalchemy-url").value;
-
-      let extra = { database };
-      if (sqlalchemyUrl) {
-        extra.compiled_url = `postgresql+psycopg://${sqlalchemyUrl}`;
-      }
-
-      let credentials = {
-        host,
-        port,
-        extra,
-        authType: currentAuthType,
-        type: "all",
-      };
-
-      switch (currentAuthType) {
-        case "basic":
-          credentials.username = activeSection.querySelector("#username").value;
-          credentials.password = document.getElementById("password").value;
-          break;
-
-        case "iam_user":
-          credentials.username = document.getElementById("access-key-id").value;
-          credentials.password =
-            document.getElementById("secret-access-key").value;
-          credentials.extra.username =
-            activeSection.querySelector("#username").value;
-          credentials.region = document.getElementById("region").value;
-          break;
-
-        case "iam_role":
-          credentials.username = activeSection.querySelector("#username").value;
-          credentials.extra.aws_role_arn =
-            document.getElementById("role-arn").value;
-          credentials.extra.aws_external_id =
-            document.getElementById("external-id").value;
-          credentials.region = document.getElementById("region").value;
-          break;
-      }
+      const catalog = document.getElementById("catalog").value;
+      const schema = document.getElementById("schema").value;
+      const username = activeSection.querySelector("#username").value;
+      const password = document.getElementById("password").value;
+      const connectionName = document.getElementById("connectionName").value;
 
       runButton.disabled = true;
       runButton.textContent = "Starting...";
 
-      const connectionName = document.getElementById("connectionName").value;
       const tenantId = window.env.TENANT_ID || "default";
-      const appName = window.env.APP_NAME || "postgres";
-      //get epoch in milliseconds
+      const appName = window.env.APP_NAME || "trino";
       const currentEpoch = Math.floor(Date.now() / 1000);
-      const connection = {
-        connection_name: connectionName,
-        connection_qualified_name: `${tenantId}/${appName}/${currentEpoch}`,
-      };
-
-      // Get metadata filters from page 3
-      const filters = formatFilters(metadataOptions);
 
       const payload = {
-        credentials,
-        connection,
-        metadata: {
-          ...filters,
-          "temp-table-regex": document.getElementById("temp-table-regex").value,
+        credentials: {
+          host,
+          port,
+          extra: {
+            catalog,
+            schema,
+            protocol: "http",
+            verify: "true",
+            source: "atlan",
+            isolation_level: "AUTOCOMMIT"
+          },
+          authType: "basic",
+          type: "all",
+          username,
+          password
         },
+        connection: {
+          connection_name: connectionName,
+          connection_qualified_name: `${tenantId}/${appName}/${currentEpoch}`
+        },
+        metadata: {
+          "include-filter": "{}",
+          "exclude-filter": "{}",
+          "temp-table-regex": document.getElementById("temp-table-regex").value || ""
+        }
       };
 
       const response = await fetch(`/workflows/v1/start`, {
@@ -905,11 +909,9 @@ async function handleRunWorkflow() {
 
       const data = await response.json();
 
-      // Show success state
       runButton.textContent = "Started Successfully";
       runButton.classList.add("success");
 
-      // Show modal
       modal.classList.add("show");
     } catch (error) {
       console.error("Failed to start workflow:", error);
@@ -918,8 +920,7 @@ async function handleRunWorkflow() {
 
       const errorMessage = document.querySelector(".error-message");
       if (errorMessage) {
-        errorMessage.textContent =
-          "Failed to start workflow. Please try again.";
+        errorMessage.textContent = "Failed to start workflow. Please try again.";
         errorMessage.classList.add("visible");
       }
     } finally {
