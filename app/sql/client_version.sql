@@ -1,10 +1,10 @@
 /*
  * File: client_version.sql
- * Purpose: Retrieves Trino server version information
+ * Purpose: Retrieves Presto server version information
  *
- * This query returns the full version string of the connected Trino server,
+ * This query returns the full version string of the connected Presto server,
  * including version number.
  *
  * Returns: Server version string
  */
-SELECT version();
+SELECT DISTINCT node_version FROM system.runtime.nodes 

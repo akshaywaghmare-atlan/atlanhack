@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trino App</title>
+    <title>Atlan Connectors</title>
     <link
       rel="icon"
       type="image/png"
@@ -41,39 +41,48 @@
     <div class="container">
       <!-- Header -->
       <header class="header">
-        <div class="logo-container">
+        <div class="header-left">
           <img
-            src="https://trino.io/assets/trino.png"
-            alt="Trino Logo"
-            class="logo"
-            width="100"
-            height="100"
+            src="https://website-assets.atlan.com/img/atlan-blue.svg"
+            alt="Atlan"
+            class="atlan-logo"
           />
-          <h1>Trino App</h1>
+          <div class="connector-selector">
+            <select class="connector-select">
+              <option value="presto">Presto</option>
+              <option value="trino">Trino</option>
+              <option value="snowflake">Snowflake</option>
+              <option value="bigquery">BigQuery</option>
+              <option value="redshift">Redshift</option>
+              <option value="postgres">PostgreSQL</option>
+            </select>
+          </div>
         </div>
-        <div class="doc-link">
-          <a
-            href="https://trino.io/docs/current/"
-            target="_blank"
-            class="doc-link-button"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              width="24"
-              height="24"
+        <div class="header-right">
+          <div class="doc-link">
+            <a
+              href="https://prestodb.io/docs/current/"
+              target="_blank"
+              class="doc-link-button"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"
-              />
-            </svg>
-            <span>Documentation</span>
-          </a>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                width="20"
+                height="20"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"
+                />
+              </svg>
+              <span>Documentation</span>
+            </a>
+          </div>
         </div>
       </header>
 
@@ -111,12 +120,12 @@
             <div class="form-group">
               <label>SQLAlchemy URL</label>
               <div class="input-with-prefix">
-                <span class="prefix">trino://</span>
+                <span class="prefix">presto://</span>
                 <input
                   type="text"
                   id="sqlalchemy-url"
                   placeholder="username:password@hostname:port/catalog/schema"
-                  value="admin@localhost:8081/system/information_schema"
+                  value="admin@13.127.207.43:8080/tpcds/sf1"
                 />
               </div>
             </div>
@@ -127,13 +136,13 @@
                 <input
                   type="text"
                   id="host"
-                  placeholder="trino.example.com"
-                  value="localhost"
+                  placeholder="presto.example.com"
+                  value="13.127.207.43"
                 />
               </div>
               <div class="input-wrapper" style="width: 100px">
                 <label>Port *</label>
-                <input type="text" id="port" value="8081" />
+                <input type="text" id="port" value="8080" />
               </div>
             </div>
 
@@ -160,7 +169,7 @@
                       type="password"
                       id="password"
                       value=""
-                      placeholder="Leave empty for local Trino"
+                      placeholder="Leave empty for local Presto"
                     />
                   </div>
                 </div>
@@ -169,22 +178,23 @@
 
             <div class="form-group">
               <label>Catalog *</label>
-              <input 
-                type="text" 
-                id="catalog" 
-                placeholder="system" 
-                value="system"
-              />
+              <select id="catalog" class="form-select">
+                <option value="tpcds">tpcds</option>
+                <option value="tpch">tpch</option>
+                <option value="memory">memory</option>
+                <option value="system">system</option>
+              </select>
             </div>
 
             <div class="form-group">
               <label>Schema *</label>
-              <input 
-                type="text" 
-                id="schema" 
-                placeholder="information_schema" 
-                value="information_schema"
-              />
+              <select id="schema" class="form-select">
+                <option value="sf1">sf1</option>
+                <option value="sf10">sf10</option>
+                <option value="sf100">sf100</option>
+                <option value="sf1000">sf1000</option>
+                <option value="information_schema">information_schema</option>
+              </select>
             </div>
 
             <button

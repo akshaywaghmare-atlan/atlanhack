@@ -16,4 +16,3 @@ SELECT DISTINCT
     table_catalog AS catalog_name,
     table_schema AS schema_name
 FROM information_schema.tables
-WHERE table_schema != 'information_schema'

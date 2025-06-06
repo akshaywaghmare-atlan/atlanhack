@@ -15,4 +15,4 @@ SELECT
     r.routine_definition AS procedure_definition,
     r.routine_type AS procedure_type
 FROM information_schema.routines r
-WHERE r.routine_schema != 'information_schema';
+WHERE r.routine_schema != 'information_schema'

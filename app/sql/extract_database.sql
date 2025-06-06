@@ -13,4 +13,4 @@ SELECT
     catalog_name as database_name,
     (SELECT COUNT(*) FROM information_schema.schemata) as schema_count
 FROM information_schema.catalogs 
-WHERE catalog_name = CURRENT_CATALOG;
+WHERE catalog_name = CURRENT_CATALOG

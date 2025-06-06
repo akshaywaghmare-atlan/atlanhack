@@ -1,6 +1,6 @@
 /*
  * File: extract_column.sql
- * Purpose: Extracts detailed column metadata from Trino catalog
+ * Purpose: Extracts detailed column metadata from Presto catalog
  *
  * Returns:
  *   - Column metadata including:
@@ -9,7 +9,7 @@
  *     - Comments (if available)
  */
 SELECT
-    CURRENT_CATALOG as TABLE_CATALOG,
+    c.table_catalog as TABLE_CATALOG,
     c.table_schema as TABLE_SCHEMA,
     c.table_name as TABLE_NAME,
     c.column_name as COLUMN_NAME,
@@ -57,7 +57,9 @@ JOIN information_schema.tables t
     AND c.table_schema = t.table_schema 
     AND c.table_name = t.table_name
 WHERE t.table_schema != 'information_schema'
+  AND t.table_catalog IN ('tpcds', 'tpch', 'memory')  -- Filter for specific catalogs
 ORDER BY 
+    c.table_catalog,
     c.table_schema, 
     c.table_name, 
-    c.ordinal_position;
+    c.ordinal_position

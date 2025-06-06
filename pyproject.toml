@@ -9,7 +9,7 @@ readme = "README.md"
 dependencies = [
     # TODO: Add a local application-sdk dependency
     "atlan-application-sdk[daft,iam-auth,sqlalchemy,tests,workflows,pandas]==0.1.1rc10",
-    "trino>=0.328.0",
+    "pyhive[presto]>=0.7.0",
     "jinja2>=3.1.2",
 ]
 
